@@ -846,44 +846,63 @@ useEffect(() => {
         const w = window.open("", "_blank");
 
         w?.document.write(`
-          <html>
-          <head>
-            <title>${previewTemplate?.name}</title>
-            <style>
-              body{
-                display:flex;
-                flex-direction:column;
-                gap:40px;
-                align-items:center;
-                padding:40px;
-                background:#f1f5f9;
-                font-family:Inter,sans-serif;
-              }
+         <html>
+<head>
+  <title>${previewTemplate?.name}</title>
 
-              .page{
-                background:white;
-                padding:20px;
-                box-shadow:0 10px 30px rgba(0,0,0,0.1);
-              }
-            </style>
-          </head>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-          <body>
+    @page {
+      size: A4;
+      margin: 10mm;  /* ⭐ MAIN FIX */
+    }
 
-            <div class="page">
-              ${front}
-            </div>
+    body{
+      margin:0;
+      padding:0;
+      background:#f1f5f9;
+      font-family:Inter,sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
 
-            <div class="page">
-              ${back}
-            </div>
+    .page{
+      width:100%;
+      max-width: 780px; /* ⭐ IMPORTANT */
+      background:white;
+      padding:20px;
+      margin:20px auto;
+      box-shadow:0 10px 30px rgba(0,0,0,0.1);
+      overflow:hidden;
+    }
 
-            <script>
-              window.print()
-            <\/script>
+    img {
+      max-width: 100%;
+    }
 
-          </body>
-          </html>
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+    ${front}
+  </div>
+
+  <div class="page">
+    ${back}
+  </div>
+
+  <script>
+    window.print()
+  <\/script>
+
+</body>
+</html>
         `);
       };
 
