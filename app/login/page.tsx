@@ -29,7 +29,7 @@ const demoAccounts = [
     color: "from-green-500 to-green-700",
   },
   {
-    role: "LIBRARIAN",
+    role: "LIBRAIAN",
     email: "librarian123@gmail.com",
     password: "librarian@123",
     route: "/librarian/dashboard",
@@ -93,35 +93,32 @@ const [showDemo, setShowDemo] = useState(false);
       return;
     }
 
-    localStorage.setItem("token",response.data.data.access_token);
+    localStorage.setItem("token", response.data.data.access_token);
 
     toastNotifications.success.login();
 
-    if (response.data.data.role === "ADMIN") {
-      router.push("/admin/dashboard");
-      router.push("/admin/dashboard");
-      router.push("/admin/dashboard");
+    const rawRole = String(response.data.data.role || "").trim();
+    const role = rawRole.toUpperCase();
+    const routeMap: Record<string, string> = {
+      ADMIN: "/admin/dashboard",
+      SUPERADMIN: "/superAdmin/dashboard",
+      STUDENT: "/student/dashboard",
+      PARENT: "/parents/dashboard",
+      TEACHER: "/teacher/dashboard",
+      LIBRAIAN: "/librarian/dashboard",
+      ACCOUNTANT: "/accountant/dashboard",
+    };
+
+    const targetRoute = routeMap[role];
+    if (targetRoute) {
+      console.debug("Login role:", rawRole, "mapped:", role, "->", targetRoute);
+      router.push(targetRoute);
+      return;
     }
 
-    if (response.data.data.role === "STUDENT") {
-      router.push("/student/dashboard");
-    }
-
-    if (response.data.data.role === "PARENT") {
-      router.push("/parents/dashboard");
-    }
-
-    if (response.data.data.role === "TEACHER") {
-      router.push("/teacher/dashboard");
-    }
-
-    if (response.data.data.role === "LIBRARIAN") {
-      router.push("/librarian/dashboard");
-    }
-
-    if (response.data.data.role === "ACCOUNTANT") {
-      router.push("/accountant/dashboard");
-    }
+    console.error("Unknown login role", rawRole);
+    setError("Unable to redirect: unknown user role.");
+    toastNotifications.error.login("Unable to redirect: unknown user role.");
 
   } catch (err: any) {
     console.error(err);
