@@ -13,7 +13,8 @@
     ChevronRight,
     ChevronDown,
     IndianRupeeIcon,
-    ClipboardCheck
+    ClipboardCheck,
+    ClipboardList
   } from "lucide-react";
 
   const menuItems = [
@@ -82,10 +83,7 @@
     { label: "Scholarship", icon: Award, path: "/admin/scholarship" },
     // { label: "Lesson Plan", icon: BookMarked, path: "/admin/lesson-plan" },
     { label: "Download Center", icon: Download, path: "/admin/download/uploadContent"},
-    // { label: "Homework", icon: ClipboardList, path: "" , children: [
-    //   { label: "Add Homework", path: "/admin/homework/addHomework" },
-    //   { label: "Daily Assignment", path: "/admin/homework/dailyAssignment" },
-    // ] },
+    { label: "Homework", icon: ClipboardList, path: "/admin/homework/addHomework" },
 
     { label: "Transport", icon: Bus, path: "/admin/transport" },
     { label: "Hostel", icon: Building, path: "/admin/hostel" },
