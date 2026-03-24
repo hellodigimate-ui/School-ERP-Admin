@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -32,120 +33,41 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
+// import { time } from "console";
 
-const vehicles = [
-  {
-    id: "KA-01-1234",
-    type: "Bus",
-    capacity: 50,
-    year: 2022,
-    insurance: "2026-08-15",
-    fitness: "2026-12-31",
-    status: "Active",
-  },
-  {
-    id: "KA-01-5678",
-    type: "Bus",
-    capacity: 45,
-    year: 2021,
-    insurance: "2026-05-20",
-    fitness: "2026-11-30",
-    status: "Active",
-  },
-  {
-    id: "KA-01-9012",
-    type: "Mini Bus",
-    capacity: 30,
-    year: 2023,
-    insurance: "2027-01-10",
-    fitness: "2027-06-30",
-    status: "Active",
-  },
-  {
-    id: "KA-01-3456",
-    type: "Van",
-    capacity: 15,
-    year: 2020,
-    insurance: "2026-03-01",
-    fitness: "2026-09-30",
-    status: "Maintenance",
-  },
-];
+const API_URL = "/api/v1/transport";
+const DEFAULT_BRANCH_ID = "demo-branch-id"; // adjust to your branch id or set in localStorage
 
-const pickupPoints = [
-  {
-    id: 1,
-    name: "Central Park Gate",
-    route: "Route A",
-    time: "7:15 AM",
-    students: 8,
-  },
-  {
-    id: 2,
-    name: "Mall Road Junction",
-    route: "Route A",
-    time: "7:25 AM",
-    students: 6,
-  },
-  {
-    id: 3,
-    name: "Railway Station",
-    route: "Route B",
-    time: "7:10 AM",
-    students: 12,
-  },
-  {
-    id: 4,
-    name: "City Hospital",
-    route: "Route B",
-    time: "7:20 AM",
-    students: 5,
-  },
-  { id: 5, name: "MG Road", route: "Route C", time: "7:00 AM", students: 10 },
-  { id: 6, name: "Tech Park", route: "Route D", time: "7:30 AM", students: 7 },
-];
+const getBranchId = () => {
+  if (typeof window === "undefined") return DEFAULT_BRANCH_ID;
+  return typeof localStorage !== "undefined"
+    ? localStorage.getItem("branchId") || DEFAULT_BRANCH_ID
+    : DEFAULT_BRANCH_ID;
+};
 
-const Page = () => {
-  const stats = [
-    {
-      label: "Total Routes",
-      value: "12",
-      icon: Route,
-      gradient: "from-blue-500 to-indigo-500",
-    },
-    {
-      label: "Total Vehicles",
-      value: "18",
-      icon: Bus,
-      gradient: "from-emerald-500 to-teal-500",
-    },
-    {
-      label: "Students Using",
-      value: "856",
-      icon: Users,
-      gradient: "from-amber-500 to-orange-500",
-    },
-    {
-      label: "Pickup Points",
-      value: "96",
-      icon: MapPin,
-      gradient: "from-rose-500 to-pink-500",
-    },
-  ];
+// type RouteItem = {
+//   id: string;
+//   name?: string;
+//   students?: string | number;
+//   driver?: { name?: string } | string;
+//   drivers?: { name?: string };
+//   vehicle?: { vehicle_no?: string };
+//   vehicleId?: string;
+//   distance?: number;
+//   time?: string;
+//   PickupPoint?: any[];
+// };
 
-  const [routes, setRoutes] = useState([
-    {
-      id: 1,
-      name: "Route A",
-      stops: 5,
-      students: 30,
-      driver: "Ramesh",
-      bus: "RJ14-1234",
-      distance: "12 km",
-      time: "30 min",
-    },
-  ]);
+const Page: React.FC = () => {
+  const [stats, setStats] = useState({
+    totalRoutes: 0,
+    totalVehicles: 0,
+    activeVehicles: 0,
+    totalPickupPoints: 0,
+  });
 
+  const [routes, setRoutes] = useState<any[]>([]);
   const [search, setSearch] = useState("");
 
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -155,16 +77,17 @@ const Page = () => {
 
   const [form, setForm] = useState({
     name: "",
-    stops: "",
     students: "",
-    driver: "",
-    bus: "",
+    driver: "", // will store driverId
+    bus: "", // will store vehicleId
     distance: "",
-    time: "",
+    branchId: getBranchId(),
   });
 
-  const [vehicleList, setVehicleList] = useState(vehicles);
+  const [vehicleList, setVehicleList] = useState<any[]>([]);
   const [vehicleSearch, setVehicleSearch] = useState("");
+
+  const [drivers, setDrivers] = useState<any[]>([]);
 
   const [isVehicleAddOpen, setIsVehicleAddOpen] = useState(false);
   const [isVehicleEditOpen, setIsVehicleEditOpen] = useState(false);
@@ -179,10 +102,14 @@ const Page = () => {
     insurance: "",
     fitness: "",
     status: "Active",
+    driverId: "",
+    branchId: getBranchId(),
   });
 
-  const [pickupList, setPickupList] = useState(pickupPoints);
+  const [pickupList, setPickupList] = useState<any[]>([]);
   const [pickupSearch, setPickupSearch] = useState("");
+
+  const [branches, setBranches] = useState<any[]>([]);
 
   const [isPickupAddOpen, setIsPickupAddOpen] = useState(false);
   const [isPickupEditOpen, setIsPickupEditOpen] = useState(false);
@@ -195,55 +122,143 @@ const Page = () => {
     route: "",
     time: "",
     students: "",
+    address: "",
+    vehicleId: "",
+    branchId: getBranchId(),
   });
+
+  const statsCards = [
+    {
+      label: "Total Routes",
+      value: stats.totalRoutes,
+      icon: Route,
+      gradient: "from-blue-500 to-indigo-500",
+    },
+    {
+      label: "Total Vehicles",
+      value: stats.totalVehicles,
+      icon: Bus,
+      gradient: "from-emerald-500 to-teal-500",
+    },
+    {
+      label: "Active Vehicles",
+      value: stats.activeVehicles,
+      icon: Users,
+      gradient: "from-amber-500 to-orange-500",
+    },
+    {
+      label: "Pickup Points",
+      value: stats.totalPickupPoints,
+      icon: MapPin,
+      gradient: "from-rose-500 to-pink-500",
+    },
+  ];
+
+  const fetchStats = async () => {
+    try {
+      const { data } = await axiosInstance.get(`${API_URL}/stats`);
+      if (data?.data) setStats(data.data);
+    } catch (error) {
+      console.error("Failed to fetch transport stats", error);
+    }
+  };
+
+  const fetchRoutes = async () => {
+    try {
+      const { data } = await axiosInstance.get(`${API_URL}/routes`, {
+        params: {
+          page: 1,
+          limit: 100,
+          search,
+        },
+      });
+      setRoutes(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch routes", error);
+    }
+  };
+
+  const fetchVehicles = async () => {
+    try {
+      const { data } = await axiosInstance.get(`${API_URL}/vehicles`, {
+        params: {
+          page: 1,
+          limit: 200,
+        },
+      });
+      setVehicleList(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch vehicles", error);
+    }
+  };
+
+  const fetchPickupPoints = async () => {
+    try {
+      const { data } = await axiosInstance.get(`${API_URL}/pickup-points`, {
+        params: {
+          page: 1,
+          limit: 200,
+        },
+      });
+      setPickupList(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch pickup points", error);
+    }
+  };
+
+  const fetchDrivers = async () => {
+    try {
+      const branchId = getBranchId();
+      const { data } = await axiosInstance.get(`/api/v1/staff?role=DRIVER`, {
+        params: {
+          page: 1,
+          perPage: 200,
+          branch: branchId,
+        },
+      });
+      console.log("Fetched drivers:", data);
+      setDrivers(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch drivers", error);
+    }
+  };
+
+  const fetchBranches = async () => {
+    try {
+      const { data } = await axiosInstance.get(`/api/v1/branches`, {
+        params: {
+          page: 1,
+          perPage: 200,
+        },
+      });
+      setBranches(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch branches", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+    fetchRoutes();
+    fetchVehicles();
+    fetchPickupPoints();
+    fetchDrivers();
+    fetchBranches();
+  }, []);
+
+  useEffect(() => {
+    fetchRoutes();
+  }, [search]);
 
   const resetForm = () => {
     setForm({
       name: "",
-      stops: "",
       students: "",
       driver: "",
       bus: "",
       distance: "",
-      time: "",
+      branchId: getBranchId(),
     });
-  };
-
-  const handleAdd = () => {
-    setRoutes(
-      (prev) =>
-        [
-          ...prev,
-          {
-            id: Date.now(),
-            ...form,
-            stops: parseInt(form.stops) || 0,
-            students: parseInt(form.students) || 0,
-          },
-        ] as any,
-    );
-    setIsAddOpen(false);
-    resetForm();
-  };
-
-  const handleEditClick = (route: any) => {
-    setSelectedRoute(route);
-    setForm(route);
-    setIsEditOpen(true);
-  };
-
-  const handleUpdate = () => {
-    setRoutes((prev) =>
-      prev.map((r) =>
-        r.id === selectedRoute.id ? { ...selectedRoute, ...form } : r,
-      ),
-    );
-    setIsEditOpen(false);
-    resetForm();
-  };
-
-  const handleDelete = (id: number) => {
-    setRoutes((prev) => prev.filter((r) => r.id !== id));
   };
 
   const resetVehicleForm = () => {
@@ -255,45 +270,9 @@ const Page = () => {
       insurance: "",
       fitness: "",
       status: "Active",
+      driverId: "",
+      branchId: getBranchId(),
     });
-  };
-
-  const handleVehicleAdd = () => {
-    setVehicleList(
-      (prev) =>
-        [
-          ...prev,
-          {
-            ...vehicleForm,
-            capacity: parseInt(vehicleForm.capacity) || 0,
-            year: parseInt(vehicleForm.year) || 0,
-          },
-        ] as any,
-    );
-    setIsVehicleAddOpen(false);
-    resetVehicleForm();
-  };
-
-  const handleVehicleEditClick = (v: any) => {
-    setSelectedVehicle(v);
-    setVehicleForm(v);
-    setIsVehicleEditOpen(true);
-  };
-
-  const handleVehicleUpdate = () => {
-    setVehicleList((prev) =>
-      prev.map((v) =>
-        v.id === selectedVehicle.id
-          ? { ...selectedVehicle, ...vehicleForm }
-          : v,
-      ),
-    );
-    setIsVehicleEditOpen(false);
-    resetVehicleForm();
-  };
-
-  const handleVehicleDelete = (id: string) => {
-    setVehicleList((prev) => prev.filter((v) => v.id !== id));
   };
 
   const resetPickupForm = () => {
@@ -303,43 +282,238 @@ const Page = () => {
       route: "",
       time: "",
       students: "",
+      address: "",
+      vehicleId: "",
+      branchId: getBranchId(),
     });
   };
 
-  const handlePickupAdd = () => {
-    setPickupList(
-      (prev) =>
-        [
-          ...prev,
-          {
-            ...pickupForm,
-            id: Date.now(),
-            students: parseInt(pickupForm.students) || 0,
-          },
-        ] as any,
-    );
-    setIsPickupAddOpen(false);
-    resetPickupForm();
+  const handleAdd = async () => {
+    try {
+      // const branchId = getBranchId();
+
+      await axiosInstance.post(`${API_URL}/routes`, {
+        name: form.name,
+        students: String(form.students),
+        driverId: form.driver, // 🔥 FIX
+        vehicleId: form.bus,
+        distance: Number(form.distance),
+        branchId: form.branchId, // 🔥 use selected branch
+      });
+
+      setIsAddOpen(false);
+      resetForm();
+      fetchRoutes();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to add route", error);
+    }
+  };
+
+  const handleEditClick = (route: any) => {
+    setSelectedRoute(route);
+
+    setForm({
+      name: route?.name || "",
+      students: String(route?.students || ""),
+      driver: route?.driver?.id || route?.driver || "",
+      bus: route?.vehicleId || route?.vehicle?.id || "",
+      distance: String(route?.distance || ""),
+      branchId: getBranchId(),
+    });
+
+    setIsEditOpen(true);
+  };
+
+  const handleUpdate = async () => {
+    try {
+      if (!selectedRoute?.id) return;
+
+      await axiosInstance.put(`${API_URL}/routes/${selectedRoute.id}`, {
+        name: form.name,
+        students: String(form.students),
+        driver: form.driver,
+        vehicleId: form.bus,
+        distance: Number(form.distance),
+        branchId: getBranchId(), // 🔥 IMPORTANT
+      });
+
+      setIsEditOpen(false);
+      resetForm();
+      fetchRoutes();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to update route", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this route?")) return;
+    try {
+      await axiosInstance.delete(`${API_URL}/routes/${id}`);
+      fetchRoutes();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to delete route", error);
+    }
+  };
+
+  const handleVehicleAdd = async () => {
+    try {
+      const branchId = vehicleForm.branchId || getBranchId();
+
+      await axiosInstance.post(`${API_URL}/vehicles`, {
+        vehicle_no: vehicleForm.id,
+        type: vehicleForm.type,
+        year: String(vehicleForm.year || 0),
+        insurance: vehicleForm.insurance || null,
+        service: vehicleForm.fitness || null,
+        capacity: Number(vehicleForm.capacity || 0),
+        status: vehicleForm.status,
+        branchId,
+        driverId: vehicleForm.driverId || null,
+      });
+
+      setIsVehicleAddOpen(false);
+      resetVehicleForm();
+      fetchVehicles();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to add vehicle", error);
+    }
+  };
+
+  const handleVehicleEditClick = (v: any) => {
+    setSelectedVehicle(v);
+
+    setVehicleForm({
+      id: v?.vehicle_no || "",
+      type: v?.type || "",
+      capacity: String(v?.capacity || ""),
+      year: String(v?.year || ""),
+      insurance: v?.insurance
+        ? new Date(v.insurance).toISOString().split("T")[0]
+        : "",
+      fitness: v?.service
+        ? new Date(v.service).toISOString().split("T")[0]
+        : "",
+      status: v?.status || "Active",
+      driverId: v?.driverId || "",
+      branchId: v?.branchId || getBranchId(),
+    });
+
+    setIsVehicleEditOpen(true);
+  };
+
+  const handleVehicleUpdate = async () => {
+    try {
+      if (!selectedVehicle?.id) return;
+
+      await axiosInstance.put(`${API_URL}/vehicles/${selectedVehicle.id}`, {
+        vehicle_no: vehicleForm.id,
+        type: vehicleForm.type,
+        year: String(vehicleForm.year || 0),
+        insurance: vehicleForm.insurance || null,
+        service: vehicleForm.fitness || null,
+        capacity: Number(vehicleForm.capacity || 0),
+        status: vehicleForm.status,
+        driverId: vehicleForm.driverId || null,
+        branchId: vehicleForm.branchId || getBranchId(),
+      });
+
+      setIsVehicleEditOpen(false);
+      resetVehicleForm();
+      fetchVehicles();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to update vehicle", error);
+    }
+  };
+
+  const handleVehicleDelete = async (id: string) => {
+    if (!confirm("Delete this vehicle?")) return;
+    try {
+      await axiosInstance.delete(`${API_URL}/vehicles/${id}`);
+      fetchVehicles();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to delete vehicle", error);
+    }
+  };
+
+  const handlePickupAdd = async () => {
+    try {
+      const branchId = pickupForm.branchId || getBranchId();
+
+      await axiosInstance.post(`${API_URL}/pickup-points`, {
+        name: pickupForm.name,
+        address: pickupForm.address || `${pickupForm.name} address`,
+        routeId: pickupForm.route,
+        vehicleId: pickupForm.vehicleId || null,
+        branchId,
+        time: pickupForm.time || "08:00", // default time if not provided
+        students: String(pickupForm.students || 0),
+        sequence: 0,
+      });
+
+      setIsPickupAddOpen(false);
+      resetPickupForm();
+      fetchPickupPoints();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to add pickup point", error);
+    }
   };
 
   const handlePickupEditClick = (p: any) => {
     setSelectedPickup(p);
-    setPickupForm(p);
+
+    setPickupForm({
+      id: p?.id || "",
+      name: p?.name || "",
+      route: p?.route?.id || p?.routeId || "",
+      time: p?.time || "",
+      students: String(p?.capacity || p?.students || ""),
+      address: p?.address || "",
+      vehicleId: p?.vehicleId || "",
+      branchId: p?.branchId || getBranchId(),
+    });
+
     setIsPickupEditOpen(true);
   };
 
-  const handlePickupUpdate = () => {
-    setPickupList((prev) =>
-      prev.map((p) =>
-        p.id === selectedPickup.id ? { ...selectedPickup, ...pickupForm } : p,
-      ),
-    );
-    setIsPickupEditOpen(false);
-    resetPickupForm();
+  const handlePickupUpdate = async () => {
+    try {
+      if (!selectedPickup?.id) return;
+
+      await axiosInstance.put(`${API_URL}/pickup-points/${selectedPickup.id}`, {
+        name: pickupForm.name,
+        address: pickupForm.address,
+        routeId: pickupForm.route,
+        vehicleId: pickupForm.vehicleId || null,
+        branchId: pickupForm.branchId || getBranchId(),
+        capacity: Number(pickupForm.students || 0),
+        sequence: 0,
+      });
+
+      setIsPickupEditOpen(false);
+      resetPickupForm();
+      fetchPickupPoints();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to update pickup point", error);
+    }
   };
 
-  const handlePickupDelete = (id: number) => {
-    setPickupList((prev) => prev.filter((p) => p.id !== id));
+  const handlePickupDelete = async (id: string) => {
+    if (!confirm("Delete this pickup point?")) return;
+    try {
+      await axiosInstance.delete(`${API_URL}/pickup-points/${id}`);
+      fetchPickupPoints();
+      fetchStats();
+    } catch (error) {
+      console.error("Failed to delete pickup point", error);
+    }
   };
 
   return (
@@ -355,7 +529,7 @@ const Page = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat) => (
+          {statsCards.map((stat) => (
             <Card
               key={stat.label}
               className="relative overflow-hidden border-0 shadow-lg"
@@ -443,7 +617,7 @@ const Page = () => {
 
                         <TableCell>
                           <Badge className="bg-blue-100 text-blue-700">
-                            {route.stops} Stops
+                            {route.PickupPoint?.length || 0} Stops
                           </Badge>
                         </TableCell>
 
@@ -453,16 +627,22 @@ const Page = () => {
                           </Badge>
                         </TableCell>
 
-                        <TableCell>{route.driver}</TableCell>
-
-                        <TableCell className="font-mono text-sm">
-                          {route.bus}
+                                <TableCell>
+                          {typeof route.driver === "string"
+                            ? route.driver
+                            : route.driver?.name || route.drivers?.name || "-"}
                         </TableCell>
 
-                        <TableCell>{route.distance}</TableCell>
+                        <TableCell className="font-mono text-sm">
+                          {route.vehicle?.vehicle_no || route.vehicleId}
+                        </TableCell>
 
                         <TableCell>
-                          <Badge variant="outline">{route.time}</Badge>
+                          {route.distance ? `${route.distance} km` : "-"}
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge variant="outline">{route.time || "-"}</Badge>
                         </TableCell>
 
                         <TableCell>
@@ -489,16 +669,76 @@ const Page = () => {
                   </DialogHeader>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(form).map((key) => (
-                      <Input
-                        key={key}
-                        placeholder={key}
-                        value={(form as any)[key]}
-                        onChange={(e) =>
-                          setForm({ ...form, [key]: e.target.value })
-                        }
-                      />
-                    ))}
+                    <Input
+                      placeholder="Route Name"
+                      value={form.name}
+                      onChange={(e) =>
+                        setForm({ ...form, name: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Students"
+                      value={form.students}
+                      onChange={(e) =>
+                        setForm({ ...form, students: e.target.value })
+                      }
+                    />
+
+                    {/* DRIVER DROPDOWN */}
+                    <select
+                      value={form.driver}
+                      onChange={(e) =>
+                        setForm({ ...form, driver: e.target.value })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Driver</option>
+                      {drivers.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* VEHICLE DROPDOWN */}
+                    <select
+                      value={form.bus}
+                      onChange={(e) =>
+                        setForm({ ...form, bus: e.target.value })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Vehicle</option>
+                      {vehicleList.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.vehicle_no}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Input
+                      placeholder="Distance (km)"
+                      value={form.distance}
+                      onChange={(e) =>
+                        setForm({ ...form, distance: e.target.value })
+                      }
+                    />
+
+                    <select
+                      value={form.branchId}
+                      onChange={(e) =>
+                        setForm({ ...form, branchId: e.target.value })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Branch</option>
+                      {branches.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <Button onClick={handleAdd} className="w-full mt-3">
@@ -514,15 +754,74 @@ const Page = () => {
                   </DialogHeader>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(form).map((key) => (
-                      <Input
-                        key={key}
-                        value={(form as any)[key]}
-                        onChange={(e) =>
-                          setForm({ ...form, [key]: e.target.value })
-                        }
-                      />
-                    ))}
+                    <Input
+                      placeholder="Route Name"
+                      value={form.name}
+                      onChange={(e) =>
+                        setForm({ ...form, name: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Students"
+                      value={form.students}
+                      onChange={(e) =>
+                        setForm({ ...form, students: e.target.value })
+                      }
+                    />
+
+                    <select
+                      value={form.driver}
+                      onChange={(e) =>
+                        setForm({ ...form, driver: e.target.value })
+                      }
+                      className="border rounded px-3 py-2"
+                    >
+                      <option value="">Select Driver</option>
+                      {drivers.map((d: any) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={form.bus}
+                      onChange={(e) =>
+                        setForm({ ...form, bus: e.target.value })
+                      }
+                      className="border rounded px-3 py-2"
+                    >
+                      <option value="">Select Vehicle</option>
+                      {vehicleList.map((v: any) => (
+                        <option key={v.id} value={v.id}>
+                          {v.vehicle_no}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Input
+                      placeholder="Distance (km)"
+                      value={form.distance}
+                      onChange={(e) =>
+                        setForm({ ...form, distance: e.target.value })
+                      }
+                    />
+
+                    <select
+                      value={form.branchId}
+                      onChange={(e) =>
+                        setForm({ ...form, branchId: e.target.value })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Branch</option>
+                      {branches.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <Button onClick={handleUpdate} className="w-full mt-3">
@@ -570,7 +869,9 @@ const Page = () => {
                 <TableBody>
                   {vehicleList
                     .filter((v) =>
-                      v.id.toLowerCase().includes(vehicleSearch.toLowerCase()),
+                      (v.vehicle_no || "")
+                        .toLowerCase()
+                        .includes(vehicleSearch.toLowerCase()),
                     )
                     .map((v) => (
                       <TableRow
@@ -578,7 +879,7 @@ const Page = () => {
                         className="hover:bg-gray-50 transition"
                       >
                         <TableCell className="font-mono font-semibold text-emerald-600">
-                          {v.id}
+                          {v.vehicle_no || v.id}
                         </TableCell>
 
                         <TableCell>{v.type}</TableCell>
@@ -591,9 +892,17 @@ const Page = () => {
 
                         <TableCell>{v.year}</TableCell>
 
-                        <TableCell>{v.insurance}</TableCell>
+                        <TableCell>
+                          {v.insurance
+                            ? new Date(v.insurance).toLocaleDateString()
+                            : "-"}
+                        </TableCell>
 
-                        <TableCell>{v.fitness}</TableCell>
+                        <TableCell>
+                          {v.service
+                            ? new Date(v.service).toLocaleDateString()
+                            : "-"}
+                        </TableCell>
 
                         <TableCell>
                           <Badge
@@ -635,19 +944,116 @@ const Page = () => {
                   </DialogHeader>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(vehicleForm).map((key) => (
-                      <Input
-                        key={key}
-                        placeholder={key}
-                        value={(vehicleForm as any)[key]}
-                        onChange={(e) =>
-                          setVehicleForm({
-                            ...vehicleForm,
-                            [key]: e.target.value,
-                          })
-                        }
-                      />
-                    ))}
+                    <Input
+                      placeholder="Vehicle Number"
+                      value={vehicleForm.id}
+                      onChange={(e) =>
+                        setVehicleForm({ ...vehicleForm, id: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Type"
+                      value={vehicleForm.type}
+                      onChange={(e) =>
+                        setVehicleForm({ ...vehicleForm, type: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Capacity"
+                      type="number"
+                      value={vehicleForm.capacity}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          capacity: e.target.value,
+                        })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Year"
+                      type="number"
+                      value={vehicleForm.year}
+                      onChange={(e) =>
+                        setVehicleForm({ ...vehicleForm, year: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Insurance"
+                      type="date"
+                      value={vehicleForm.insurance}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          insurance: e.target.value,
+                        })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Fitness"
+                      type="date"
+                      value={vehicleForm.fitness}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          fitness: e.target.value,
+                        })
+                      }
+                    />
+
+                    <select
+                      value={vehicleForm.status}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          status: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Maintenance">Maintenance</option>
+                    </select>
+
+                    <select
+                      value={vehicleForm.driverId}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          driverId: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Driver</option>
+                      {drivers.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name || d.fullName || d.email}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={vehicleForm.branchId}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          branchId: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Branch</option>
+                      {branches.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <Button onClick={handleVehicleAdd} className="w-full mt-3">
@@ -666,18 +1072,116 @@ const Page = () => {
                   </DialogHeader>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(vehicleForm).map((key) => (
-                      <Input
-                        key={key}
-                        value={(vehicleForm as any)[key]}
-                        onChange={(e) =>
-                          setVehicleForm({
-                            ...vehicleForm,
-                            [key]: e.target.value,
-                          })
-                        }
-                      />
-                    ))}
+                    <Input
+                      placeholder="Vehicle Number"
+                      value={vehicleForm.id}
+                      onChange={(e) =>
+                        setVehicleForm({ ...vehicleForm, id: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Type"
+                      value={vehicleForm.type}
+                      onChange={(e) =>
+                        setVehicleForm({ ...vehicleForm, type: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Capacity"
+                      type="number"
+                      value={vehicleForm.capacity}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          capacity: e.target.value,
+                        })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Year"
+                      type="number"
+                      value={vehicleForm.year}
+                      onChange={(e) =>
+                        setVehicleForm({ ...vehicleForm, year: e.target.value })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Insurance"
+                      type="date"
+                      value={vehicleForm.insurance}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          insurance: e.target.value,
+                        })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Fitness"
+                      type="date"
+                      value={vehicleForm.fitness}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          fitness: e.target.value,
+                        })
+                      }
+                    />
+
+                    <select
+                      value={vehicleForm.status}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          status: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Maintenance">Maintenance</option>
+                    </select>
+
+                    <select
+                      value={vehicleForm.driverId}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          driverId: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Driver</option>
+                      {drivers.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name || d.fullName || d.email}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={vehicleForm.branchId}
+                      onChange={(e) =>
+                        setVehicleForm({
+                          ...vehicleForm,
+                          branchId: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Branch</option>
+                      {branches.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <Button onClick={handleVehicleUpdate} className="w-full mt-3">
@@ -735,7 +1239,9 @@ const Page = () => {
                         </TableCell>
 
                         <TableCell>
-                          <Badge variant="outline">{p.route}</Badge>
+                          <Badge variant="outline">
+                            {p.route?.name || p.route}
+                          </Badge>
                         </TableCell>
 
                         <TableCell className="flex items-center gap-1">
@@ -774,19 +1280,94 @@ const Page = () => {
                   </DialogHeader>
 
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(pickupForm).map((key) => (
-                      <Input
-                        key={key}
-                        placeholder={key}
-                        value={(pickupForm as any)[key]}
-                        onChange={(e) =>
-                          setPickupForm({
-                            ...pickupForm,
-                            [key]: e.target.value,
-                          })
-                        }
-                      />
-                    ))}
+                    <Input
+                      placeholder="Pickup Point Name"
+                      value={pickupForm.name}
+                      onChange={(e) =>
+                        setPickupForm({ ...pickupForm, name: e.target.value })
+                      }
+                    />
+
+                    <select
+                      value={pickupForm.route}
+                      onChange={(e) =>
+                        setPickupForm({ ...pickupForm, route: e.target.value })
+                      }
+                    >
+                      <option value="">Select Route</option>
+                      {routes.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Input
+                      placeholder="Pickup Time"
+                      value={pickupForm.time}
+                      onChange={(e) =>
+                        setPickupForm({ ...pickupForm, time: e.target.value })
+                      }
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Students"
+                      className="border p-2 rounded"
+                      value={pickupForm.students}
+                      onChange={(e) =>
+                        setPickupForm({
+                          ...pickupForm,
+                          students: e.target.value,
+                        })
+                      }
+                    />
+
+                    <Input
+                      placeholder="Address"
+                      value={pickupForm.address}
+                      onChange={(e) =>
+                        setPickupForm({
+                          ...pickupForm,
+                          address: e.target.value,
+                        })
+                      }
+                    />
+
+                    <select
+                      value={pickupForm.vehicleId}
+                      onChange={(e) =>
+                        setPickupForm({
+                          ...pickupForm,
+                          vehicleId: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select Vehicle</option>
+                      {vehicleList.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.vehicle_no}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={pickupForm.branchId}
+                      onChange={(e) =>
+                        setPickupForm({
+                          ...pickupForm,
+                          branchId: e.target.value,
+                        })
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="">Select Branch</option>
+                      {branches.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <Button onClick={handlePickupAdd} className="w-full mt-3">

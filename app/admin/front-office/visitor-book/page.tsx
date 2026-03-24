@@ -149,11 +149,17 @@ const handleEdit = (visitor: any) => {
 const handleEditSave = async () => {
   try {
     const updatedData = {
-      ...editForm,
-      entryTime: editForm.entryTime
+    ...editForm,
+
+    visitDate: editForm.visitDate
+        ? new Date(editForm.visitDate).toISOString()
+        : null,
+
+    entryTime: editForm.entryTime
         ? new Date(`${editForm.visitDate}T${editForm.entryTime}`).toISOString()
         : null,
-      exitTime: editForm.exitTime
+
+    exitTime: editForm.exitTime
         ? new Date(`${editForm.visitDate}T${editForm.exitTime}`).toISOString()
         : null,
     };
@@ -169,16 +175,21 @@ const handleEditSave = async () => {
 
     const handleAddVisitor = async () => {
     try {
-        const entryTimestamp = new Date(
-        `${form.visitDate}T${form.entryTime}`
-        ).toISOString();
+        const entryTimestamp = form.entryTime
+        ? new Date(`${form.visitDate}T${form.entryTime}`).toISOString()
+        : null;
+
+        const exitTimestamp = form.exitTime
+        ? new Date(`${form.visitDate}T${form.exitTime}`).toISOString()
+        : null;
 
         await addVisitor({
         ...form,
-        visitDate:entryTimestamp,
+        visitDate: form.visitDate
+            ? new Date(form.visitDate).toISOString()
+            : null,
         entryTime: entryTimestamp,
         exitTime: exitTimestamp,
-
         status: "In Campus",
         });
 
