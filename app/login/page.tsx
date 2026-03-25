@@ -14,6 +14,13 @@ import { toastNotifications } from "@/utils/toastNotifications";
 
 
 const demoAccounts = [
+  // {
+  //   role: "SUPERADMIN",
+  //   email: "superadmin123@gmail.com",
+  //   password: "superadmin@123",
+  //   route: "/superAdmin/dashboard",
+  //   color: "from-blue-500 to-blue-700",
+  // },
   {
     role: "ADMIN",
     email: "admin123@gmail.com",
@@ -55,6 +62,13 @@ const demoAccounts = [
     password: "sonuparent@123",
     route: "/parents/dashboard",
     color: "from-pink-500 to-red-500",
+  },
+  {
+    role: "RECEPTIONIST",
+    email: "harsh123@gmail.com",
+    password: "Harsh@123",
+    route: "/receptionist/dashboard",
+    color: "from-purple-500 to-indigo-500",
   },
 ];
 
@@ -101,12 +115,13 @@ const [showDemo, setShowDemo] = useState(false);
     const role = rawRole.toUpperCase();
     const routeMap: Record<string, string> = {
       ADMIN: "/admin/dashboard",
-      SUPERADMIN: "/superAdmin/dashboard",
+      // SUPERADMIN: "/superAdmin/dashboard",
       STUDENT: "/student/dashboard",
       PARENT: "/parents/dashboard",
       TEACHER: "/teacher/dashboard",
       LIBRAIAN: "/librarian/dashboard",
       ACCOUNTANT: "/accountant/dashboard",
+      RECEPTIONIST: "/receptionist/dashboard",
     };
 
     const targetRoute = routeMap[role];
