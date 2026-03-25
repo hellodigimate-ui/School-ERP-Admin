@@ -359,7 +359,7 @@ const Page = () => {
     try {
       await axiosInstance.put(`/api/v1/hostels/rooms/${selectedRoomId}`, {
         roomNumber: newRoom.roomNumber,
-        floor: Number(newRoom.floor),
+        floor: String(newRoom.floor),
         block: newRoom.block,
         hostelId: selectedHostelId,
         type: newRoom.type,
@@ -570,7 +570,7 @@ const Page = () => {
     try {
       await axiosInstance.post("/api/v1/hostels/rooms", {
         roomNumber: newRoom.roomNumber,
-        floor: Number(newRoom.floor),
+        floor: String(newRoom.floor),
         block: newRoom.block,
         hostelId: selectedHostelId, // 🔥 REQUIRED
         type: newRoom.type,
