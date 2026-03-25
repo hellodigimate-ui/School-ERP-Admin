@@ -251,7 +251,7 @@
                 <p className="text-sm font-semibold">Rahul Sharma</p>
                 <p className="text-xs opacity-80">Admin</p>
               </div>
-              <LogOut onClick={() => router.push("/login")} className="w-4 h-4 cursor-pointer hover:text-red-300" />
+              <LogOut onClick={() => router.push("/")} className="w-4 h-4 cursor-pointer hover:text-red-300" />
             </div>
           </div>
         )}

@@ -197,7 +197,7 @@ export default function AdminSidebar({
                 <p className="text-sm font-semibold">Abhishek</p>
                 <p className="text-xs opacity-80">Student</p>
               </div>
-              <LogOut className="w-4 h-4 cursor-pointer hover:text-red-300" />
+              <LogOut onClick={() => router.push("/")} className="w-4 h-4 cursor-pointer hover:text-red-300" />
             </div>
           </div>
         )}

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   GraduationCap,
@@ -66,6 +66,7 @@ export function SuperAdminSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <Sidebar
@@ -136,7 +137,7 @@ export function SuperAdminSidebar() {
                 <p className="text-xs text-slate-500">Super Admin</p>
               </div>
 
-              <LogOut className="w-4 h-4 text-slate-600 cursor-pointer" />
+              <LogOut onClick={()=>router.push("/")} className="w-4 h-4 text-slate-600 cursor-pointer" />
             </>
           )}
         </div>

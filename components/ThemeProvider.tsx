@@ -10,8 +10,11 @@ export default function ThemeProvider({
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="light"
+      defaultTheme="system"
       enableSystem
+      enableColorScheme
+      storageKey="theme"
+      forcedTheme={undefined}
     >
       {children}
     </NextThemesProvider>

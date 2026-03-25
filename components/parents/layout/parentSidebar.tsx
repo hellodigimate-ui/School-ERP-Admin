@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -42,6 +42,7 @@ export function ParentSidebar({
   setCollapsed,
 }: ParentSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside
@@ -121,7 +122,7 @@ export function ParentSidebar({
               </p>
             </div>
 
-            <LogOut className="w-4 h-4 cursor-pointer hover:text-red-400" />
+            <LogOut onClick={() => router.push("/")} className="w-4 h-4 cursor-pointer hover:text-red-400" />
           </div>
         </div>
       )}

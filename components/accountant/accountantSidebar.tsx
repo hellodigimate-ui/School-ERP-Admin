@@ -232,7 +232,7 @@ export default function AccountantSidebar() {
             </div>
             <LogOut
               className="w-4 h-4 cursor-pointer hover:text-red-400"
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/")}
             />
           </div>
         </div>
