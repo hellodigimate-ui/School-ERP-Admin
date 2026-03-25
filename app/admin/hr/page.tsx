@@ -362,7 +362,7 @@ useEffect(() => {
                   <SelectContent>
                     <SelectItem value="all">All Roles</SelectItem>
                     <SelectItem value="ACCOUNTANT">Accountant</SelectItem>
-                    <SelectItem value="LIBRARIAN">Librarian</SelectItem>
+                    <SelectItem value="LIBRAIAN">Librarian</SelectItem>
                     <SelectItem value="SCANNER">Scanner</SelectItem>
                     <SelectItem value="RECEPTIONIST">Receptionist</SelectItem>
                   </SelectContent>
