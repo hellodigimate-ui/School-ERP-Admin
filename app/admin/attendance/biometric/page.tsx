@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -12,14 +12,13 @@ import {
   CheckCircle,
   XCircle,
   TrendingUp,
-  Search,
   Download,
-  RefreshCw,
   Wifi,
-  WifiOff
+  RefreshCcw,
 } from "lucide-react";
 
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 
 const stats = [
@@ -54,30 +53,33 @@ const stats = [
 ];
 
 
-const devices = [
-  { id: 1, name: "BIO-001", location: "Main Gate A", type: "Fingerprint", status: "Online", scans: 142, lastSync: "2 min ago" },
-  { id: 2, name: "BIO-002", location: "Main Gate B", type: "Fingerprint", status: "Online", scans: 118, lastSync: "1 min ago" },
-  { id: 3, name: "BIO-003", location: "Block A Entry", type: "Fingerprint + Face", status: "Online", scans: 86, lastSync: "3 min ago" },
-  { id: 4, name: "BIO-004", location: "Block B Entry", type: "Fingerprint", status: "Online", scans: 74, lastSync: "2 min ago" },
-  { id: 5, name: "BIO-005", location: "Staff Room", type: "Fingerprint", status: "Online", scans: 45, lastSync: "1 min ago" },
-  { id: 6, name: "BIO-006", location: "Library", type: "Fingerprint", status: "Offline", scans: 0, lastSync: "45 min ago" },
-];
-
-
-const recentLogs = [
-  { id: 1, student: "Aarav Patel", class: "10-A", device: "BIO-001", finger: "Right Index", time: "07:55 AM", status: "Success" },
-  { id: 2, student: "Priya Sharma", class: "10-A", device: "BIO-001", finger: "Right Thumb", time: "07:57 AM", status: "Success" },
-  { id: 3, student: "Rohit Kumar", class: "10-A", device: "BIO-002", finger: "Left Index", time: "07:58 AM", status: "Success" },
-  { id: 4, student: "Unknown", class: "-", device: "BIO-001", finger: "N/A", time: "08:00 AM", status: "Failed" },
-  { id: 5, student: "Ananya Singh", class: "10-B", device: "BIO-003", finger: "Right Index", time: "08:02 AM", status: "Success" },
-  { id: 6, student: "Kiran Yadav", class: "10-B", device: "BIO-002", finger: "Right Thumb", time: "08:03 AM", status: "Retry" },
-  { id: 7, student: "Kiran Yadav", class: "10-B", device: "BIO-002", finger: "Left Index", time: "08:03 AM", status: "Success" },
-];
-
 
 const Page = () => {
 
-  const [search, setSearch] = useState("");
+  const [externalAttendance, setExternalAttendance] = useState<any[]>([]);
+  const [loadingExternal, setLoadingExternal] = useState(false);
+
+  const fetchExternalAttendance = async () => {
+  try {
+    setLoadingExternal(true);
+
+    const res = await axiosInstance.get("/api/v1/attendance/external");
+
+    if (res.data.success) {
+      setExternalAttendance(res.data.data);
+    } else {
+      console.error(res.data.message);
+    }
+  } catch (err) {
+    console.error("Failed to fetch external attendance:", err);
+  } finally {
+    setLoadingExternal(false);
+  }
+};
+
+useEffect(() => {
+  fetchExternalAttendance();
+}, []);
 
   return (
     <AdminLayout>
@@ -113,12 +115,6 @@ const Page = () => {
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
-
-            <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg">
-              <Fingerprint className="w-4 h-4 mr-2" />
-              Enroll Student
-            </Button>
-
           </div>
 
         </div>
@@ -166,215 +162,96 @@ const Page = () => {
         </div>
 
 
-        {/* Devices */}
-
-        <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-lg">
-
-          <CardHeader className="flex-row items-center justify-between">
-
-            <CardTitle>Biometric Devices</CardTitle>
-
-            <Button variant="outline" size="sm">
-              <RefreshCw className="w-3 h-3 mr-1" />
-              Sync All
-            </Button>
-
-          </CardHeader>
-
-
-          <CardContent>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-              {devices.map((dev) => (
-
-                <Card
-                  key={dev.id}
-                  className={`border hover:shadow-md transition ${dev.status === "Offline" ? "opacity-60" : ""
-                    }`}
-                >
-
-                  <CardContent className="p-4">
-
-                    <div className="flex items-start justify-between mb-3">
-
-                      <div className="flex items-center gap-2">
-
-                        <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center ${dev.status === "Online"
-                              ? "bg-gradient-to-r from-cyan-500 to-blue-500"
-                              : "bg-muted"
-                            }`}
-                        >
-                          <Fingerprint className="w-5 h-5 text-white" />
-                        </div>
-
-                        <div>
-                          <p className="text-sm font-semibold">{dev.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {dev.location}
-                          </p>
-                        </div>
-
-                      </div>
-
-                      <Badge
-                        className={`text-xs border ${dev.status === "Online"
-                            ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                            : "bg-red-100 text-red-700 border-red-200"
-                          }`}
-                      >
-                        {dev.status === "Online"
-                          ? <Wifi className="w-3 h-3 mr-1" />
-                          : <WifiOff className="w-3 h-3 mr-1" />
-                        }
-                        {dev.status}
-                      </Badge>
-
-                    </div>
-
-
-                    <div className="grid grid-cols-3 gap-2 text-center bg-muted/50 rounded-lg p-2">
-
-                      <div>
-                        <p className="text-lg font-bold">{dev.scans}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          Scans
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-xs font-medium">{dev.type}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          Type
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-xs font-medium">{dev.lastSync}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          Last Sync
-                        </p>
-                      </div>
-
-                    </div>
-
-                  </CardContent>
-
-                </Card>
-
-              ))}
-
-            </div>
-
-          </CardContent>
-
-        </Card>
-
-
         {/* Scan Log */}
 
-        <Card className="border-0 shadow-xl">
+<Card className="border-0 shadow-xl mt-6">
 
-          <CardHeader className="flex-row items-center justify-between">
+  <CardHeader className="flex-row items-center justify-between">
+    <CardTitle>External Biometric Attendance</CardTitle>
 
-            <CardTitle>Scan Log</CardTitle>
+    <Button variant="outline" size="sm" onClick={fetchExternalAttendance}>
+      <RefreshCcw className="w-4 h-4 mr-1" />
+      Refresh
+    </Button>
+  </CardHeader>
 
-            <div className="relative">
+  <CardContent>
 
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+    <Table>
 
-              <Input
-                className="pl-9 w-56"
-                placeholder="Search student..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+      <TableHeader>
+        <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
+          <TableHead>Emp Code</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>In Time</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
 
-            </div>
+      <TableBody>
 
-          </CardHeader>
+        {loadingExternal ? (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center py-6">
+              Loading...
+            </TableCell>
+          </TableRow>
+        ) : externalAttendance.length > 0 ? (
+          externalAttendance.map((item, index) => (
+            <TableRow key={index} className="hover:bg-indigo-50/40">
 
+              <TableCell className="font-mono">
+                {item.empCode}
+              </TableCell>
 
-          <CardContent>
+              <TableCell>
+                {item.user?.name || "-" }
+              </TableCell>
 
-            <Table>
+              <TableCell>
+                {item.user?.role || "-" }
+              </TableCell>
 
-              <TableHeader>
+              <TableCell>
+                {item.user?.email || "-"}
+              </TableCell>
 
-                <TableRow className="bg-gradient-to-r from-green-50 to-emerald-50">
+              <TableCell>{item.date}</TableCell>
 
-                  <TableHead>Student</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Device</TableHead>
-                  <TableHead>Finger</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Status</TableHead>
+              <TableCell className="font-mono">
+                {item.inTime}
+              </TableCell>
 
-                </TableRow>
+              <TableCell>
+                <Badge className={
+                  item.status === "P"
+                    ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                    : "bg-red-100 text-red-700 border-red-200"
+                }>
+                  {item.status === "P" ? "Present" : item.status}
+                </Badge>
+              </TableCell>
 
-              </TableHeader>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+              No external attendance found
+            </TableCell>
+          </TableRow>
+        )}
 
+      </TableBody>
 
-              <TableBody>
+    </Table>
 
-                {recentLogs
-                  .filter((l) =>
-                    l.student.toLowerCase().includes(search.toLowerCase())
-                  )
-                  .map((log) => (
+  </CardContent>
 
-                    <TableRow
-                      key={log.id}
-                      className="hover:bg-emerald-50/40 transition"
-                    >
-
-                      <TableCell className="font-medium">
-                        {log.student}
-                      </TableCell>
-
-                      <TableCell>
-                        <Badge variant="outline">{log.class}</Badge>
-                      </TableCell>
-
-                      <TableCell className="font-mono text-sm">
-                        {log.device}
-                      </TableCell>
-
-                      <TableCell className="text-sm">
-                        {log.finger}
-                      </TableCell>
-
-                      <TableCell className="font-mono text-sm">
-                        {log.time}
-                      </TableCell>
-
-                      <TableCell>
-
-                        <Badge
-                          className={`border text-xs ${log.status === "Success"
-                              ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                              : log.status === "Retry"
-                                ? "bg-amber-100 text-amber-700 border-amber-200"
-                                : "bg-red-100 text-red-700 border-red-200"
-                            }`}
-                        >
-                          {log.status}
-                        </Badge>
-
-                      </TableCell>
-
-                    </TableRow>
-
-                  ))}
-
-              </TableBody>
-
-            </Table>
-
-          </CardContent>
-
-        </Card>
+</Card>
 
       </div>
 

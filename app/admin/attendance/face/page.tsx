@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Progress } from "@/components/ui/progress"
 
 import {
   ScanFace,
@@ -19,13 +19,12 @@ import {
   CheckCircle,
   AlertTriangle,
   TrendingUp,
-  Upload,
-  Eye,
   RefreshCw,
-  Shield,
 } from "lucide-react"
 
 import { AdminLayout } from "@/components/layout/AdminLayout"
+import { useEffect, useState } from "react"
+import { axiosInstance } from "@/apiHome/axiosInstanc"
 
 const stats = [
   {
@@ -62,25 +61,36 @@ const stats = [
   },
 ]
 
-const cameraFeeds = [
-  { id: 1, name: "Main Gate - Camera 1", location: "Entry Gate", status: "Active", recognized: 124, fps: 30 },
-  { id: 2, name: "Main Gate - Camera 2", location: "Entry Gate", status: "Active", recognized: 98, fps: 28 },
-  { id: 3, name: "Building A - Entrance", location: "Block A", status: "Active", recognized: 86, fps: 30 },
-  { id: 4, name: "Building B - Entrance", location: "Block B", status: "Active", recognized: 72, fps: 29 },
-  { id: 5, name: "Corridor - Floor 1", location: "Block A", status: "Active", recognized: 45, fps: 25 },
-  { id: 6, name: "Corridor - Floor 2", location: "Block A", status: "Maintenance", recognized: 0, fps: 0 },
-]
 
-const recognitionLog = [
-  { id: 1, student: "Aarav Patel", class: "10-A", confidence: 98.5, time: "07:58 AM", camera: "Main Gate - 1", status: "Verified" },
-  { id: 2, student: "Priya Sharma", class: "10-A", confidence: 97.2, time: "08:01 AM", camera: "Main Gate - 1", status: "Verified" },
-  { id: 3, student: "Unknown", class: "-", confidence: 42.1, time: "08:03 AM", camera: "Main Gate - 2", status: "Unrecognized" },
-  { id: 4, student: "Rohit Kumar", class: "10-A", confidence: 95.8, time: "08:04 AM", camera: "Building A", status: "Verified" },
-  { id: 5, student: "Ananya Singh", class: "10-B", confidence: 99.1, time: "08:05 AM", camera: "Main Gate - 1", status: "Verified" },
-  { id: 6, student: "Kiran Yadav", class: "10-B", confidence: 68.3, time: "08:07 AM", camera: "Main Gate - 2", status: "Low Confidence" },
-]
 
 const Page = () => {
+
+  const [externalAttendance, setExternalAttendance] = useState<any[]>([]);
+  const [loadingExternal, setLoadingExternal] = useState(false);
+
+  const fetchExternalAttendance = async () => {
+  try {
+    setLoadingExternal(true);
+
+    const res = await axiosInstance.get("/api/v1/attendance/external");
+
+    if (res.data.success) {
+      setExternalAttendance(res.data.data);
+    } else {
+      console.error(res.data.message);
+    }
+  } catch (err) {
+    console.error("Error fetching external attendance:", err);
+  } finally {
+    setLoadingExternal(false);
+  }
+};
+
+useEffect(() => {
+  fetchExternalAttendance();
+}, []);
+
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -102,20 +112,6 @@ const Page = () => {
             <p className="text-sm text-muted-foreground mt-1">
               AI powered facial recognition attendance
             </p>
-          </div>
-
-          <div className="flex gap-2">
-
-            <Button variant="outline">
-              <Upload className="w-4 h-4 mr-2" />
-              Enroll Faces
-            </Button>
-
-            <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg">
-              <Camera className="w-4 h-4 mr-2" />
-              Start Recognition
-            </Button>
-
           </div>
         </div>
 
@@ -152,192 +148,91 @@ const Page = () => {
 
         </div>
 
-        {/* Camera Feeds */}
-        <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-xl">
-
-          <CardHeader className="flex-row items-center justify-between">
-
-            <CardTitle>Camera Feeds</CardTitle>
-
-            <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200">
-              5 / 6 Active
-            </Badge>
-
-          </CardHeader>
-
-          <CardContent>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-              {cameraFeeds.map((cam) => (
-
-                <Card key={cam.id} className="overflow-hidden">
-
-                  <div className={`h-32 flex items-center justify-center relative ${
-                    cam.status === "Active"
-                      ? "bg-gradient-to-br from-slate-900 to-slate-700"
-                      : "bg-muted"
-                  }`}>
-
-                    {cam.status === "Active" ? (
-                      <>
-                        <Camera className="w-10 h-10 text-white/50" />
-
-                        <Badge className="absolute top-2 left-2 bg-red-500 text-white text-[10px]">
-                          REC
-                        </Badge>
-
-                        <Badge className="absolute top-2 right-2 text-[10px]">
-                          {cam.fps} FPS
-                        </Badge>
-
-                        <span className="absolute bottom-2 right-2 text-[10px] text-white">
-                          {cam.recognized} scans
-                        </span>
-                      </>
-                    ) : (
-                      <AlertTriangle className="w-8 h-8 text-muted-foreground" />
-                    )}
-
-                  </div>
-
-                  <CardContent className="p-3 flex justify-between items-center">
-
-                    <div>
-                      <p className="text-sm font-medium">{cam.name}</p>
-                      <p className="text-xs text-muted-foreground">{cam.location}</p>
-                    </div>
-
-                    <Badge className={cam.status === "Active"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-amber-100 text-amber-700"
-                    }>
-                      {cam.status}
-                    </Badge>
-
-                  </CardContent>
-
-                </Card>
-
-              ))}
-
-            </div>
-
-          </CardContent>
-
-        </Card>
-
         {/* Recognition Log */}
-        <Card className="border-0 shadow-xl">
+<Card className="border-0 shadow-xl mt-6">
 
-          <CardHeader className="flex-row justify-between items-center">
+  <CardHeader className="flex-row justify-between items-center">
+    <CardTitle>External Attendance</CardTitle>
 
-            <CardTitle>Recognition Log</CardTitle>
+    <Button variant="outline" size="sm" onClick={fetchExternalAttendance}>
+      <RefreshCw className="w-3 h-3 mr-1" />
+      Refresh
+    </Button>
+  </CardHeader>
 
-            <Button variant="outline" size="sm">
-              <RefreshCw className="w-3 h-3 mr-1" />
-              Refresh
-            </Button>
+  <CardContent>
 
-          </CardHeader>
+    <Table>
 
-          <CardContent>
+      <TableHeader>
+        <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
+          <TableHead>Emp Code</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>In Time</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
 
-            <Table>
+      <TableBody>
 
-              <TableHeader>
-                <TableRow className="bg-gradient-to-r from-emerald-50 to-green-50">
+        {loadingExternal ? (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center py-6">
+              Loading...
+            </TableCell>
+          </TableRow>
+        ) : externalAttendance.length > 0 ? (
+          externalAttendance.map((item, index) => (
+            <TableRow key={index} className="hover:bg-indigo-50/40">
 
-                  <TableHead>Student</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Confidence</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Camera</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+              <TableCell>{item.empCode}</TableCell>
 
-                </TableRow>
-              </TableHeader>
+              <TableCell>
+                {item.user?.name || "-"}
+              </TableCell>
 
-              <TableBody>
+              <TableCell>
+                {item.user?.role || "-"}
+              </TableCell>
 
-                {recognitionLog.map((log) => (
+              <TableCell>
+                {item.user?.email || "-"}
+              </TableCell>
 
-                  <TableRow key={log.id} className="hover:bg-emerald-50/40">
+              <TableCell>{item.date}</TableCell>
 
-                    <TableCell className="font-medium">{log.student}</TableCell>
+              <TableCell>{item.inTime}</TableCell>
 
-                    <TableCell>
-                      <Badge variant="outline">{log.class}</Badge>
-                    </TableCell>
+              <TableCell>
+                <Badge className={
+                  item.status === "P"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-red-100 text-red-700"
+                }>
+                  {item.status === "P" ? "Present" : item.status}
+                </Badge>
+              </TableCell>
 
-                    <TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+              No external attendance found
+            </TableCell>
+          </TableRow>
+        )}
 
-                      <div className="flex items-center gap-2">
+      </TableBody>
 
-                        <Progress value={log.confidence} className="w-20 h-2" />
+    </Table>
 
-                        <span className={`text-xs font-mono ${
-                          log.confidence > 90
-                            ? "text-emerald-600"
-                            : log.confidence > 60
-                            ? "text-amber-600"
-                            : "text-red-600"
-                        }`}>
-                          {log.confidence}%
-                        </span>
+  </CardContent>
 
-                      </div>
-
-                    </TableCell>
-
-                    <TableCell className="text-sm font-mono">
-                      {log.time}
-                    </TableCell>
-
-                    <TableCell>{log.camera}</TableCell>
-
-                    <TableCell>
-
-                      <Badge className={
-                        log.status === "Verified"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : log.status === "Low Confidence"
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-red-100 text-red-700"
-                      }>
-                        {log.status}
-                      </Badge>
-
-                    </TableCell>
-
-                    <TableCell>
-
-                      <div className="flex gap-1">
-
-                        <Button size="sm" variant="ghost">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-
-                        <Button size="sm" variant="ghost">
-                          <Shield className="w-4 h-4" />
-                        </Button>
-
-                      </div>
-
-                    </TableCell>
-
-                  </TableRow>
-
-                ))}
-
-              </TableBody>
-
-            </Table>
-
-          </CardContent>
-
-        </Card>
+</Card>
 
       </div>
     </AdminLayout>

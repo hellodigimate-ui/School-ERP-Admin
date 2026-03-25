@@ -32,6 +32,7 @@ import {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -362,7 +363,7 @@ useEffect(() => {
                   <SelectContent>
                     <SelectItem value="all">All Roles</SelectItem>
                     <SelectItem value="ACCOUNTANT">Accountant</SelectItem>
-                    <SelectItem value="LIBRAIAN">Librarian</SelectItem>
+                    <SelectItem value="LIBRARIAN">Librarian</SelectItem>
                     <SelectItem value="SCANNER">Scanner</SelectItem>
                     <SelectItem value="RECEPTIONIST">Receptionist</SelectItem>
                   </SelectContent>
@@ -370,24 +371,31 @@ useEffect(() => {
 
                 <Dialog open={addOpen} onOpenChange={setAddOpen}>
                   <DialogTrigger asChild>
-                    <Button size="sm"><Plus size={16} className="mr-1" /> Add Staff</Button>
+                    <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-md hover:from-indigo-700 hover:to-blue-700">
+                      <Plus size={16} className="mr-1" /> Add Staff
+                    </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+
+                  <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl p-6 bg-gradient-to-br from-white to-indigo-50 shadow-xl">
+
                     <DialogHeader>
-                      <DialogTitle>Add New Staff Member</DialogTitle>
+                      <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                        👤 Add New Staff Member
+                      </DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4 mt-4">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
 
                       {/* Branch */}
-                      <div >
-                        <label className="font-semibold">Branch *</label>
+                      <div className="flex flex-col gap-1">
+                        <Label className="text-sm text-gray-600">Branch *</Label>
                         <Select 
                           value={formData.branchId}
                           onValueChange={(val) =>
                             setFormData({ ...formData, branchId: val })
                           }
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500">
                             <SelectValue placeholder="Select Branch" />
                           </SelectTrigger>
                           <SelectContent>
@@ -400,17 +408,21 @@ useEffect(() => {
                         </Select>
                       </div>
 
-                      <div>
+                      {/* Name */}
+                      <div className="flex flex-col gap-1">
                         <Label>Full Name *</Label>
-                        <Input placeholder="Enter full name" 
-                            value={formData.name}
-                            onChange={(e) =>
-                              setFormData({ ...formData, name: e.target.value })
-                            }
+                        <Input
+                          placeholder="Enter full name"
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div>
+                      {/* Role */}
+                      <div className="flex flex-col gap-1">
                         <Label>Role *</Label>
                         <Select
                           value={formData.role}
@@ -418,7 +430,7 @@ useEffect(() => {
                             setFormData({ ...formData, role: val })
                           }
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="rounded-xl focus:ring-2 focus:ring-indigo-500">
                             <SelectValue placeholder="Select role" />
                           </SelectTrigger>
                           <SelectContent>
@@ -433,25 +445,32 @@ useEffect(() => {
                         </Select>
                       </div>
 
-                      <div>
+                      {/* Designation */}
+                      <div className="flex flex-col gap-1">
                         <Label>Designation</Label>
-                        <Input placeholder="Designation" 
+                        <Input
+                          placeholder="Designation"
                           onChange={(e) =>
                             setFormData({ ...formData, designation: e.target.value })
                           }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div>
+                      {/* Qualification */}
+                      <div className="flex flex-col gap-1">
                         <Label>Qualification</Label>
-                        <Input placeholder="e.g. M.Sc., B.Ed." 
+                        <Input
+                          placeholder="e.g. M.Sc., B.Ed."
                           onChange={(e) =>
                             setFormData({ ...formData, qualification: e.target.value })
                           }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div>
+                      {/* Phone */}
+                      <div className="flex flex-col gap-1">
                         <Label>Phone *</Label>
                         <Input
                           placeholder="Enter phone number"
@@ -459,58 +478,78 @@ useEffect(() => {
                           onChange={(e) =>
                             setFormData({ ...formData, phone: e.target.value })
                           }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div>
+                      {/* Email */}
+                      <div className="flex flex-col gap-1">
                         <Label>Email *</Label>
-                        <Input placeholder="Enter email" type="email" 
-                            onChange={(e) =>
+                        <Input
+                          placeholder="Enter email"
+                          type="email"
+                          onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
-                          }/>
+                          }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
+                        />
                       </div>
 
-                      <div>
+                      {/* Password */}
+                      <div className="flex flex-col gap-1">
                         <Label>Password *</Label>
-                        <Input placeholder="Enter password" type="password"
+                        <Input
+                          placeholder="Enter password"
+                          type="password"
                           onChange={(e) =>
                             setFormData({ ...formData, password: e.target.value })
                           }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div>
+                      {/* Join Date */}
+                      <div className="flex flex-col gap-1">
                         <Label>Date of Joining</Label>
-                        <Input type="date" 
+                        <Input
+                          type="date"
                           onChange={(e) => {
-                            const date = e.target.value
+                            const date = e.target.value;
                             setFormData({
                               ...formData,
                               joinDate: date.concat("T10:00:00.000Z"),
-                            })
+                            });
                           }}
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div>
+                      {/* Experience */}
+                      <div className="flex flex-col gap-1">
                         <Label>Experience</Label>
-                        <Input placeholder="e.g. 5 years" 
+                        <Input
+                          placeholder="e.g. 5 years"
                           onChange={(e) =>
                             setFormData({ ...formData, experienceYears: e.target.value })
                           }
+                          className="rounded-xl focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div className="col-span-2">
+                      {/* Address */}
+                      <div className="md:col-span-2 flex flex-col gap-1">
                         <Label>Address *</Label>
-                        <Textarea placeholder="Enter full address" 
+                        <Textarea
+                          placeholder="Enter full address"
                           onChange={(e) =>
                             setFormData({ ...formData, address: e.target.value })
                           }
+                          className="rounded-xl min-h-[100px] focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
 
-                      <div className="col-span-2">
+                      {/* Photo */}
+                      <div className="md:col-span-2 flex flex-col gap-1">
                         <Label>Photo</Label>
                         <Input
                           type="file"
@@ -521,22 +560,30 @@ useEffect(() => {
                               file: e.target.files?.[0],
                             })
                           }
+                          className="rounded-xl"
                         />
                       </div>
 
                     </div>
 
-                    <div className="flex justify-end gap-2 mt-4">
+                    {/* Footer */}
+                    <div className="flex justify-end gap-3 mt-6">
                       <DialogClose>
-                        <Button variant="outline" >Cancel</Button>
+                        <Button variant="outline" className="rounded-xl">
+                          Cancel
+                        </Button>
                       </DialogClose>
-                      <Button onClick={handleCreateStaff} >Save Staff</Button>
+
+                      <Button
+                        onClick={handleCreateStaff}
+                        className="rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-md hover:from-indigo-700 hover:to-blue-700"
+                      >
+                        💾 Save Staff
+                      </Button>
                     </div>
 
                   </DialogContent>
                 </Dialog>
-
-                
 
               </div>
             </div>
@@ -609,166 +656,191 @@ useEffect(() => {
 
                         </div>
 
-                        <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-                          <DialogContent className="max-w-lg">
-                            <DialogHeader>
-                              <DialogTitle>Staff Details</DialogTitle>
-                            </DialogHeader>
+                      <Dialog  open={viewOpen} onOpenChange={setViewOpen}  >
 
-                            {selectedStaff && (
-                              <div className="space-y-5">
+                        {/* Content */}
+                        <DialogContent className="z-50 max-w-2xl p-6 rounded-2xl bg-white shadow-xl">
 
-                                {/* Staff Image */}
-                                <div className="flex justify-center">
-                                  {selectedStaff.photo ? (
-                                    <img
-                                      src={selectedStaff.photo}
-                                      alt={selectedStaff.name}
-                                      className="size-32 rounded-full object-fill border shadow"
-                                    />
-                                  ) : (
-                                    <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-lg font-semibold">
-                                      {selectedStaff.name?.charAt(0)}
-                                    </div>
-                                  )}
+                          <DialogHeader>
+                            <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                              👤 Staff Details
+                            </DialogTitle>
+                          </DialogHeader>
+
+                          {selectedStaff && (
+                            <div className="space-y-6 mt-4">
+
+                              {/* Profile Section */}
+                              <div className="flex flex-col items-center gap-3">
+                                {selectedStaff.photo ? (
+                                  <img
+                                    src={selectedStaff.photo}
+                                    alt={selectedStaff.name}
+                                    className="w-28 h-28 rounded-full object-cover border-4 border-indigo-200 shadow-md"
+                                  />
+                                ) : (
+                                  <div className="w-28 h-28 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
+                                    {selectedStaff.name?.charAt(0)}
+                                  </div>
+                                )}
+
+                                <h2 className="text-xl font-semibold text-gray-800">
+                                  {selectedStaff.name}
+                                </h2>
+
+                                <span
+                                  className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                                    selectedStaff.isActive
+                                      ? "bg-green-100 text-green-700"
+                                      : "bg-red-100 text-red-700"
+                                  }`}
+                                >
+                                  {selectedStaff.isActive ? "Active" : "Inactive"}
+                                </span>
+                              </div>
+
+                              {/* Info Cards */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                <div className="bg-white p-4 rounded-xl shadow-sm border">
+                                  <p className="text-xs text-gray-500">Role</p>
+                                  <p className="font-medium text-gray-800">{selectedStaff.role}</p>
                                 </div>
 
-                                {/* Staff Info */}
-                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div className="bg-white p-4 rounded-xl shadow-sm border">
+                                  <p className="text-xs text-gray-500">Designation</p>
+                                  <p className="font-medium text-gray-800">{selectedStaff.designation}</p>
+                                </div>
 
-                                  <div>
-                                    <Label>Name</Label>
-                                    <p>{selectedStaff.name}</p>
-                                  </div>
+                                <div className="bg-white p-4 rounded-xl shadow-sm border">
+                                  <p className="text-xs text-gray-500">Phone</p>
+                                  <p className="font-medium text-gray-800">{selectedStaff.phone}</p>
+                                </div>
 
-                                  <div>
-                                    <Label>Role</Label>
-                                    <p>{selectedStaff.role}</p>
-                                  </div>
+                                <div className="bg-white p-4 rounded-xl shadow-sm border">
+                                  <p className="text-xs text-gray-500">Email</p>
+                                  <p className="font-medium text-gray-800 break-all">
+                                    {selectedStaff.email}
+                                  </p>
+                                </div>
 
-                                  <div>
-                                    <Label>Designation</Label>
-                                    <p>{selectedStaff.designation}</p>
-                                  </div>
+                                <div className="bg-white p-4 rounded-xl shadow-sm border">
+                                  <p className="text-xs text-gray-500">Join Date</p>
+                                  <p className="font-medium text-gray-800">
+                                    {new Date(selectedStaff.joinDate).toLocaleDateString()}
+                                  </p>
+                                </div>
 
-                                  <div>
-                                    <Label>Phone</Label>
-                                    <p>{selectedStaff.phone}</p>
-                                  </div>
-
-                                  <div>
-                                    <Label>Email</Label>
-                                    <p>{selectedStaff.email}</p>
-                                  </div>
-
-                                  <div>
-                                    <Label>Join Date</Label>
-                                    <p>{new Date(selectedStaff.joinDate).toLocaleDateString()}</p>
-                                  </div>
-
-                                  <div>
-                                    <Label>Status</Label>
-                                    <p>{selectedStaff.isActive ? "Active" : "Inactive"}</p>
-                                  </div>
-
-                                  <div>
-                                    <Label>Address</Label>
-                                    <p>{selectedStaff.address}</p>
-                                  </div>
-
+                                <div className="bg-white p-4 rounded-xl shadow-sm border md:col-span-2">
+                                  <p className="text-xs text-gray-500">Address</p>
+                                  <p className="font-medium text-gray-800">
+                                    {selectedStaff.address}
+                                  </p>
                                 </div>
 
                               </div>
-                            )}
-                          </DialogContent>
-                        </Dialog>
 
-                        <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                          <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                              <DialogTitle>Edit Staff</DialogTitle>
-                            </DialogHeader>
-
-                            {editData && (
-                              <div className="grid grid-cols-2 gap-4 mt-4">
-
-                                {/* Name */}
-                                <div>
-                                  <Label>Name</Label>
-                                  <Input
-                                    value={editData.name}
-                                    onChange={(e) =>
-                                      setEditData({ ...editData, name: e.target.value })
-                                    }
-                                  />
-                                </div>
-
-
-                                {/* Designation */}
-                                <div>
-                                  <Label>Designation</Label>
-                                  <Input
-                                    value={editData.designation}
-                                    onChange={(e) =>
-                                      setEditData({ ...editData, designation: e.target.value })
-                                    }
-                                  />
-                                </div>
-
-                                {/* Phone */}
-                                <div>
-                                  <Label>Phone</Label>
-                                  <Input
-                                    value={editData.phone}
-                                    onChange={(e) =>
-                                      setEditData({ ...editData, phone: e.target.value })
-                                    }
-                                  />
-                                </div>
-
-                                {/* Status Dropdown */}
-                                <div>
-                                  <Label>Status</Label>
-                                  <Select
-                                    value={editData.status}
-                                    onValueChange={(value) =>
-                                      setEditData({ ...editData, status: value })
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="Active">Active</SelectItem>
-                                      <SelectItem value="InActive">InActive</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-
-                                {/* Address */}
-                                <div className="col-span-2">
-                                  <Label>Address</Label>
-                                  <Textarea
-                                    value={editData.address}
-                                    onChange={(e) =>
-                                      setEditData({ ...editData, address: e.target.value })
-                                    }
-                                  />
-                                </div>
-
-                              </div>
-                            )}
-
-                            <div className="flex justify-end mt-4">
-                              <Button
-                                onClick={handleUpdateStaff}
-                              >
-                                Save Changes
-                              </Button>
                             </div>
+                          )}
 
-                          </DialogContent>
-                        </Dialog>
+                        </DialogContent>
+                      </Dialog>
+
+                      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+                        <DialogContent className="max-w-3xl p-6 rounded-2xl bg-gradient-to-br from-white to-indigo-50 shadow-xl">
+
+                          <DialogHeader>
+                            <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                              ✏️ Edit Staff
+                            </DialogTitle>
+                          </DialogHeader>
+
+                          {editData && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+
+                              {/* Name */}
+                              <div className="flex flex-col gap-1">
+                                <Label className="text-sm text-gray-600">Name</Label>
+                                <Input
+                                  value={editData.name}
+                                  onChange={(e) =>
+                                    setEditData({ ...editData, name: e.target.value })
+                                  }
+                                  className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                                />
+                              </div>
+
+                              {/* Designation */}
+                              <div className="flex flex-col gap-1">
+                                <Label className="text-sm text-gray-600">Designation</Label>
+                                <Input
+                                  value={editData.designation}
+                                  onChange={(e) =>
+                                    setEditData({ ...editData, designation: e.target.value })
+                                  }
+                                  className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                                />
+                              </div>
+
+                              {/* Phone */}
+                              <div className="flex flex-col gap-1">
+                                <Label className="text-sm text-gray-600">Phone</Label>
+                                <Input
+                                  value={editData.phone}
+                                  onChange={(e) =>
+                                    setEditData({ ...editData, phone: e.target.value })
+                                  }
+                                  className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                                />
+                              </div>
+
+                              {/* Status */}
+                              <div className="flex flex-col gap-1">
+                                <Label className="text-sm text-gray-600">Status</Label>
+                                <Select
+                                  value={editData.status}
+                                  onValueChange={(value) =>
+                                    setEditData({ ...editData, status: value })
+                                  }
+                                >
+                                  <SelectTrigger className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500">
+                                    <SelectValue placeholder="Select status" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Active">🟢 Active</SelectItem>
+                                    <SelectItem value="InActive">🔴 InActive</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              {/* Address */}
+                              <div className="flex flex-col gap-1 md:col-span-2">
+                                <Label className="text-sm text-gray-600">Address</Label>
+                                <Textarea
+                                  value={editData.address}
+                                  onChange={(e) =>
+                                    setEditData({ ...editData, address: e.target.value })
+                                  }
+                                  className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 min-h-[100px]"
+                                />
+                              </div>
+
+                            </div>
+                          )}
+
+                          {/* Footer Button */}
+                          <div className="flex justify-end mt-6">
+                            <Button
+                              onClick={handleUpdateStaff}
+                              className="px-6 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 
+                              hover:from-indigo-700 hover:to-blue-700 text-white shadow-md transition-all"
+                            >
+                              💾 Save Changes
+                            </Button>
+                          </div>
+
+                        </DialogContent>
+                      </Dialog>
 
                       </TableCell>
                     </TableRow>

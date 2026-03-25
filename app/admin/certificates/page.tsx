@@ -741,129 +741,184 @@ useEffect(() => {
 
         {/* ================= PREVIEW DIALOG ================= */}
         <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-3xl max-h-[80vh] rounded-2xl shadow-2xl border-none bg-white/90 backdrop-blur-xl flex flex-col">
+          <DialogContent className="max-w-3xl max-h-[80vh] rounded-2xl shadow-2xl border-none bg-white/90 backdrop-blur-xl flex flex-col">
             
             <DialogHeader className="pb-4 border-b flex-shrink-0">
-            <DialogTitle className="text-lg font-bold text-gray-800">
+              <DialogTitle className="text-lg font-bold text-gray-800">
                 {previewTemplate?.name} — Preview
-            </DialogTitle>
+              </DialogTitle>
             </DialogHeader>
 
             {/* Scrollable preview area */}
             <div
-            className="flex-1 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-auto shadow-inner"
-            id="template-preview"
+              className="flex-1 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-auto shadow-inner"
+              id="template-preview"
             >
-            {previewTemplate && (() => {
+              {previewTemplate && (() => {
 
-              const html = renderHtmlWithData(previewTemplate.template);
-              const { front, back } = splitTemplatePages(html);
+                const html = renderHtmlWithData(previewTemplate.template);
+                const { front, back } = splitTemplatePages(html);
 
-              return (
+                return (
+                  <div className="space-y-6">
 
-                <div className="space-y-6">
+                    {/* FRONT */}
+                    <div className="bg-white rounded-lg shadow-lg p-4">
+                      <p className="text-xs text-gray-500 mb-2">
+                        Front Side
+                      </p>
+                      <div dangerouslySetInnerHTML={{ __html: front }} />
+                    </div>
 
-                  {/* FRONT */}
-                  <div className="bg-white rounded-lg shadow-lg p-4">
-                    <p className="text-xs text-gray-500 mb-2">
-                      Front Side
-                    </p>
+                    {/* BACK */}
+                    <div className="bg-white rounded-lg shadow-lg p-4">
+                      <p className="text-xs text-gray-500 mb-2">
+                        Back Side
+                      </p>
+                      <div dangerouslySetInnerHTML={{ __html: back }} />
+                    </div>
 
-                    <div dangerouslySetInnerHTML={{ __html: front }} />
                   </div>
+                );
 
-                  {/* BACK */}
-                  <div className="bg-white rounded-lg shadow-lg p-4">
-                    <p className="text-xs text-gray-500 mb-2">
-                      Back Side
-                    </p>
-
-                    <div dangerouslySetInnerHTML={{ __html: back }} />
-                  </div>
-
-                </div>
-
-              );
-
-            })()}
+              })()}
             </div>
 
-            <DialogFooter className="flex gap-3 pt-4 border-t flex-shrink-0">
-            <Button
-                variant="outline"
-                onClick={() => setShowPreview(false)}
-                className="rounded-xl"
-            >
-                Close
-            </Button>
+            {/* ================= BUTTON FUNCTIONS ================= */}
+            {(() => {
 
-            <Button
-                className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md hover:opacity-90"
-                onClick={() => {
+              const handleFullView = () => {
+                const html = renderHtmlWithData(previewTemplate?.template || "");
+                const { front, back } = splitTemplatePages(html);
 
-                  const html = renderHtmlWithData(previewTemplate?.template || "");
-                  const { front, back } = splitTemplatePages(html);
+                const w = window.open("", "_blank");
 
-                  const w = window.open("", "_blank");
-
-                  w?.document.write(`
-
+                w?.document.write(`
                   <html>
-
                   <head>
+                    <title>${previewTemplate?.name} - Full View</title>
+                    <style>
+                      body{
+                        margin:0;
+                        padding:20px;
+                        background:#e2e8f0;
+                        font-family:Inter,sans-serif;
+                      }
 
-                  <title>${previewTemplate?.name}</title>
-
-                  <style>
-
-                  body{
-                    display:flex;
-                    flex-direction:column;
-                    gap:40px;
-                    align-items:center;
-                    padding:40px;
-                    background:#f1f5f9;
-                    font-family:Inter,sans-serif;
-                  }
-
-                  .page{
-                    background:white;
-                    padding:20px;
-                    box-shadow:0 10px 30px rgba(0,0,0,0.1);
-                  }
-
-                  </style>
-
+                      .container{
+                        display:flex;
+                        flex-direction:column;
+                        align-items:center;
+                        gap:40px;
+                      }
+                    </style>
                   </head>
 
                   <body>
+                    <div class="container">
+                      ${front}
+                      ${back}
+                    </div>
+                  </body>
+                  </html>
+                `);
+              };
 
-                  <div class="page">
-                  ${front}
-                  </div>
+              const handlePrint = () => {
+                const html = renderHtmlWithData(previewTemplate?.template || "");
+                const { front, back } = splitTemplatePages(html);
 
-                  <div class="page">
-                  ${back}
-                  </div>
+                const w = window.open("", "_blank");
 
-                  <script>
-                  window.print()
-                  <\/script>
+                w?.document.write(`
+                  <html>
+                  <head>
+                    <title></title>
+
+                    <style>
+                      * {
+                        box-sizing: border-box;
+                      }
+
+                      @page {
+                        size: A4;
+                        margin: 0;
+                      }
+
+                      html, body {
+                        margin: 0;
+                        padding: 0;
+                        background: white;
+                        font-family: Inter, sans-serif;
+                      }
+
+                      .print-page {
+                        width: 100%;
+                        min-height: 100vh;
+                        page-break-after: always;
+                      }
+
+                      .print-page:last-child {
+                        page-break-after: auto;
+                      }
+
+                      img {
+                        max-width: 100%;
+                      }
+                    </style>
+                  </head>
+
+                  <body onload="window.print(); window.close();">
+
+                    <div class="print-page">
+                      ${front}
+                    </div>
+
+                    <div class="print-page">
+                      ${back}
+                    </div>
 
                   </body>
-
                   </html>
+                `);
 
-                  `);
+                w?.document.close(); // ⭐ IMPORTANT
+              };
 
-                }}
-            >
-                <Download size={16} className="mr-1" />
-                Download / Print
-            </Button>
-            </DialogFooter>
+              return (
+                <DialogFooter className="flex gap-3 pt-4 border-t flex-shrink-0">
 
-        </DialogContent>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowPreview(false)}
+                    className="rounded-xl"
+                  >
+                    Close
+                  </Button>
+
+                  {/* ✅ NEW BUTTON */}
+                  <Button
+                    variant="outline"
+                    className="rounded-xl"
+                    onClick={handleFullView}
+                  >
+                    View Full Page
+                  </Button>
+
+                  <Button
+                    className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md hover:opacity-90"
+                    onClick={handlePrint}
+                  >
+                    <Download size={16} className="mr-1" />
+                    Download / Print
+                  </Button>
+
+                </DialogFooter>
+              );
+
+            })()}
+
+          </DialogContent>
         </Dialog>
     </AdminLayout>
   );

@@ -192,125 +192,163 @@ fetchEnquiries();
   return (
     <AdminLayout>
       <div className="space-y-6 max-w-[1400px]">
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 space-y-6">
+        <div className="relative flex flex-col md:flex-row md:items-center 
+                        justify-between gap-6 mb-8 p-6 rounded-3xl 
+                        bg-gradient-to-r from-primary/10 via-background to-pink-500/10 
+                        border shadow-xl overflow-hidden">
 
-            {/* Header */}
-            <div className="flex items-center justify-between bg-white/70 backdrop-blur-xl p-6 rounded-2xl shadow-md border border-white/40">
-                <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                        Admission Enquiry
-                    </h1>
-                    <p className="text-gray-500 text-sm mt-2">
-                        Manage student admission enquiries and follow-ups
-                    </p>
+        {/* Decorative Glow Effects */}
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full opacity-40"></div>
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-pink-400/20 blur-3xl rounded-full opacity-40"></div>
+
+        {/* Header Section */}
+        <div className="relative">
+            <h1 className="text-3xl font-bold font-display tracking-tight 
+                        bg-gradient-to-r from-primary to-pink-500 
+                        bg-clip-text text-transparent">
+            Admission Enquiry
+            </h1>
+            <p className="text-muted-foreground text-sm mt-2">
+            Manage student admission enquiries and follow-ups
+            </p>
+        </div>
+
+        {/* Add Button */}
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+            <Button className="relative gap-2 px-6 h-11 rounded-xl 
+                                bg-gradient-to-r from-primary to-pink-500 
+                                hover:from-primary/90 hover:to-pink-500/90
+                                text-white shadow-lg hover:shadow-xl 
+                                hover:scale-[1.04] transition-all duration-200">
+                <Plus className="w-4 h-4" />
+                {open ? "Edit Enquiry" : "Add Enquiry"}
+            </Button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-2xl rounded-3xl p-8 
+                        bg-background/80 backdrop-blur-xl 
+                        border shadow-2xl">
+
+            <DialogHeader className="space-y-2">
+                <DialogTitle className="text-2xl font-semibold 
+                                        bg-gradient-to-r from-primary to-pink-500 
+                                        bg-clip-text text-transparent">
+                {open ? "Edit Admission Enquiry" : "Add Admission Enquiry"}
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground">
+                Fill in the details of the admission enquiry
+                </p>
+            </DialogHeader>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+
+                {/* Student Name */}
+                <div className="space-y-2">
+                <Label>Student Name *</Label>
+                <Input
+                    placeholder="Enter student name"
+                    name="studentName"
+                    value={form.studentName}
+                    onChange={handleInputChange}
+                    className="h-11 rounded-xl bg-muted/40 border-primary/20
+                            focus-visible:ring-2 focus-visible:ring-primary/40
+                            transition-all"
+                />
                 </div>
 
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg hover:scale-105 transition-all duration-300 gap-2 rounded-xl px-5 py-2">
-                        <Plus className="w-4 h-4" /> Add Enquiry
-                        </Button>
-                    </DialogTrigger>
+                {/* Parent Name */}
+                <div className="space-y-2">
+                <Label>Parent Name *</Label>
+                <Input
+                    placeholder="Enter parent name"
+                    name="parentName"
+                    value={form.parentName}
+                    onChange={handleInputChange}
+                    className="h-11 rounded-xl bg-muted/40 border-primary/20
+                            focus-visible:ring-2 focus-visible:ring-primary/40
+                            transition-all"
+                />
+                </div>
 
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl">
-                        <DialogHeader>
-                        <DialogTitle className="font-display text-xl font-semibold text-gray-800">
-                            New Admission Enquiry
-                        </DialogTitle>
-                        </DialogHeader>
+                {/* Phone */}
+                <div className="space-y-2">
+                <Label>Phone *</Label>
+                <Input
+                    placeholder="Enter phone number"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleInputChange}
+                    className="h-11 rounded-xl bg-muted/40 border-primary/20
+                            focus-visible:ring-2 focus-visible:ring-primary/40
+                            transition-all"
+                />
+                </div>
 
-                        <div className="grid grid-cols-2 gap-5 pt-6">
+                {/* Email */}
+                <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                    type="email"
+                    placeholder="Enter email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleInputChange}
+                    className="h-11 rounded-xl bg-muted/40 border-primary/20
+                            focus-visible:ring-2 focus-visible:ring-primary/40
+                            transition-all"
+                />
+                </div>
 
-                        <div className="space-y-2">
-                            <Label className="text-gray-600">Student Name *</Label>
-                            <Input
-                            name="studentName"
-                            value={form.studentName}
-                            onChange={handleInputChange}
-                            className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-                            placeholder="Enter student name"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-600">Parent Name *</Label>
-                            <Input
-                            name="parentName"
-                            value={form.parentName}
-                            onChange={handleInputChange}
-                            className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-                            placeholder="Enter Parent name"
-                            />
-                        </div>
+                {/* Description */}
+                <div className="col-span-full space-y-2">
+                <Label>Description</Label>
+                <Textarea
+                    placeholder="Enter enquiry details..."
+                    name="description"
+                    value={form.description}
+                    onChange={handleInputChange}
+                    className="rounded-xl min-h-[110px] bg-muted/40 
+                            border-primary/20 focus-visible:ring-2 
+                            focus-visible:ring-primary/40"
+                />
+                </div>
 
-                        <div className="space-y-2">
-                            <Label className="text-gray-600">Phone *</Label>
-                            <Input
-                            name="phone"
-                            value={form.phone}
-                            onChange={handleInputChange}
-                            className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-                            placeholder="Enter phone number"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label className="text-gray-600">Email</Label>
-                            <Input
-                            type="email"
-                            name="email"
-                            value={form.email}
-                            onChange={handleInputChange}
-                            className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-                            placeholder="Enter email"
-                            />
-                        </div>
-
-                        
-
-                        <div className="col-span-2 space-y-2">
-                            <Label className="text-gray-600">Description</Label>
-                            <Textarea
-                            name="description"
-                            value={form.description}
-                            onChange={handleInputChange}
-                            className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-                            placeholder="Enter enquiry details..."
-                            />
-                        </div>
-
-                        <div className="col-span-2 flex justify-end gap-3 mt-4">
-                            <Button
-                            variant="outline"
-                            className="rounded-xl border-gray-300 hover:bg-gray-100"
-                            onClick={() => setOpen(false)}
-                            >
-                            Cancel
-                            </Button>
-                            <Button
-                            className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300"
-                            onClick={handleSave}
-                            >
-                            Save Enquiry
-                            </Button>
-                        </div>
-
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                {/* Actions */}
+                <div className="col-span-full flex justify-end gap-3 pt-6 border-t mt-4">
+                <Button
+                    variant="outline"
+                    onClick={() => setOpen(false)}
+                    className="rounded-xl"
+                >
+                Cancel
+                </Button>
+                <Button
+                    className="bg-gradient-to-r from-primary to-pink-500 
+                            hover:from-primary/90 hover:to-pink-500/90
+                            text-white rounded-xl shadow-lg hover:shadow-xl
+                            transition-all duration-200"
+                    onClick={handleSave}
+                >
+                Save Enquiry
+                </Button>
+                </div>
             </div>
-
+            </DialogContent>
+        </Dialog>
+        </div>
 
             {/* Search & Filter */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl">
+            <Card className="border-0 shadow-md bg-card rounded-2xl">
                 <CardContent className="p-6">
                     <div className="flex flex-wrap gap-4 items-end">
 
                     <div className="flex-1 min-w-[220px]">
-                        <Label className="text-xs text-gray-500">Search</Label>
+                        <Label className="text-xs text-muted-foreground">Search</Label>
                         <div className="relative mt-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <Input
-                            className="pl-9 rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
+                            className="pl-9 rounded-xl bg-background border-border focus-visible:ring-2 focus-visible:ring-primary/40"
                             placeholder="Search by name, phone..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -322,7 +360,7 @@ fetchEnquiries();
 
                     <Button
                         variant="outline"
-                        className="gap-2 rounded-xl border-gray-300 hover:bg-indigo-50 hover:border-indigo-300 transition"
+                        className="gap-2 rounded-xl border-border hover:bg-secondary transition"
                         onClick={handleDownload}
                     >
                         <Download className="w-4 h-4" />
@@ -334,19 +372,19 @@ fetchEnquiries();
             </Card>
 
             {/* Table */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl overflow-hidden">
+            <Card className="border-0 shadow-md bg-card rounded-2xl overflow-hidden">
                 <CardContent className="p-0">
                     <Table>
 
                     <TableHeader>
-                        <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                        <TableHead className="font-semibold text-gray-700">Name</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Parent`s Name</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Phone</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Email</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Date</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Description</TableHead>
-                        <TableHead className="font-semibold text-right text-gray-700">Actions</TableHead>
+                        <TableRow className="bg-secondary hover:bg-secondary">
+                        <TableHead className="font-semibold text-foreground">Name</TableHead>
+                        <TableHead className="font-semibold text-foreground">Parent`s Name</TableHead>
+                        <TableHead className="font-semibold text-foreground">Phone</TableHead>
+                        <TableHead className="font-semibold text-foreground">Email</TableHead>
+                        <TableHead className="font-semibold text-foreground">Date</TableHead>
+                        <TableHead className="font-semibold text-foreground">Description</TableHead>
+                        <TableHead className="font-semibold text-right text-foreground">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -354,25 +392,25 @@ fetchEnquiries();
                         {enquiries.map(e => (
                         <TableRow
                             key={e.id}
-                            className="hover:bg-indigo-50/50 transition-all duration-200"
+                            className="hover:bg-accent/10 transition-all duration-200 border-border"
                         >
-                            <TableCell className="font-medium text-gray-800">
+                            <TableCell className="font-medium text-foreground">
                             {e.studentName}
                             </TableCell>
-                            <TableCell className="font-medium text-gray-800">
+                            <TableCell className="font-medium text-foreground">
                             {e.parentName}
                             </TableCell>
 
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-muted-foreground">
                             {e.phone}
                             </TableCell>
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-muted-foreground">
                             {e.email}
                             </TableCell>
 
                             
 
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-muted-foreground">
                              {e.enquiryDate
                             ? new Date(e.enquiryDate).toLocaleDateString("en-GB", {
                                 day: "2-digit",
@@ -382,7 +420,7 @@ fetchEnquiries();
                             : "-"}
                             </TableCell>
 
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-muted-foreground">
                             {e.description}
                             </TableCell>
 
@@ -392,25 +430,25 @@ fetchEnquiries();
                                     <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 rounded-lg hover:bg-indigo-100 transition"
+                                    className="h-8 w-8 rounded-lg hover:bg-accent/20 transition"
                                     onClick={() => handleView(e)}
                                     >
-                                    <Eye className="w-4 h-4 text-indigo-600" />
+                                    <Eye className="w-4 h-4 text-accent" />
                                     </Button>
 
                                     <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 rounded-lg hover:bg-emerald-100 transition"
+                                    className="h-8 w-8 rounded-lg hover:bg-success/20 transition"
                                     onClick={() => handleEdit(e)}
                                     >
-                                    <Edit className="w-4 h-4 text-emerald-600" />
+                                    <Edit className="w-4 h-4 text-success" />
                                     </Button>
 
                                     <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 rounded-lg hover:bg-red-100 transition"
+                                    className="h-8 w-8 rounded-lg hover:bg-destructive/20 transition"
                                     onClick={async () => {
                                         if (confirm("Are you sure you want to delete this enquiry?")) {
                                         await deleteEnquiry(e.id);
@@ -418,16 +456,16 @@ fetchEnquiries();
                                         }
                                     }}
                                     >
-                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                    <Trash2 className="w-4 h-4 text-destructive" />
                                     </Button>
 
                                 </div>
 
                                 <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-                                <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl">
+                                <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl bg-background border shadow-2xl">
 
                                     {/* Header */}
-                                    <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white p-5">
+                                    <div className="bg-gradient-to-r from-primary to-pink-500 text-primary-foreground p-5">
                                     <DialogTitle className="text-lg font-semibold">
                                         Enquiry Details
                                     </DialogTitle>
@@ -437,23 +475,23 @@ fetchEnquiries();
                                     {selectedEnquiry && (
                                     <div className="p-6 space-y-4">
 
-                                        <div className="bg-gray-50 p-4 rounded-xl shadow-sm grid grid-cols-2 gap-3 text-sm">
-                                        <p><strong>Student Name:</strong> {selectedEnquiry.studentName}</p>
-                                        <p><strong>Parent Name:</strong> {selectedEnquiry.parentName}</p>
-                                        <p><strong>Phone:</strong> {selectedEnquiry.phone}</p>
-                                        <p><strong>Email:</strong> {selectedEnquiry.email}</p>
+                                        <div className="bg-secondary p-4 rounded-xl shadow-sm grid grid-cols-2 gap-3 text-sm">
+                                        <p><strong className="text-foreground">Student Name:</strong> <span className="text-muted-foreground">{selectedEnquiry.studentName}</span></p>
+                                        <p><strong className="text-foreground">Parent Name:</strong> <span className="text-muted-foreground">{selectedEnquiry.parentName}</span></p>
+                                        <p><strong className="text-foreground">Phone:</strong> <span className="text-muted-foreground">{selectedEnquiry.phone}</span></p>
+                                        <p><strong className="text-foreground">Email:</strong> <span className="text-muted-foreground">{selectedEnquiry.email}</span></p>
                                         </div>
 
-                                        <div className="bg-blue-50 p-4 rounded-xl shadow-sm">
-                                        <p className="font-semibold text-gray-700 mb-1">Description</p>
-                                        <p className="text-sm text-gray-600">
+                                        <div className="bg-accent/10 p-4 rounded-xl shadow-sm border border-accent/20">
+                                        <p className="font-semibold text-foreground mb-1">Description</p>
+                                        <p className="text-sm text-muted-foreground">
                                             {selectedEnquiry.description}
                                         </p>
                                         </div>
 
                                         <div className="flex justify-end">
                                         <Button
-                                            className="bg-indigo-600 hover:bg-indigo-700"
+                                            className="bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-500/90 text-white"
                                             onClick={() => setViewOpen(false)}
                                         >
                                             Close
@@ -467,71 +505,104 @@ fetchEnquiries();
                                 </Dialog>
 
                                 <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                                <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl">
+                                <DialogContent className="max-w-2xl rounded-3xl p-8 
+                                        bg-background/80 backdrop-blur-xl 
+                                        border shadow-2xl">
 
                                     {/* Header */}
-                                    <div className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white p-5">
-                                    <DialogTitle className="text-lg font-semibold">
-                                        Edit Enquiry
+                                    <DialogHeader className="space-y-2">
+                                    <DialogTitle className="text-2xl font-semibold 
+                                                    bg-gradient-to-r from-primary to-pink-500 
+                                                    bg-clip-text text-transparent">
+                                        Edit Admission Enquiry
                                     </DialogTitle>
-                                    <p className="text-sm opacity-90">
+                                    <p className="text-sm text-muted-foreground">
                                         Update enquiry information
                                     </p>
-                                    </div>
+                                    </DialogHeader>
 
-                                    <div className="p-6 space-y-4">
+                                    <div className="space-y-4 pt-6">
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+                                        <div className="space-y-2">
+                                        <Label>Student Name</Label>
                                         <Input
                                         name="studentName"
                                         value={editForm.studentName}
                                         onChange={handleEditChange}
                                         placeholder="Student Name"
+                                        className="h-11 rounded-xl bg-muted/40 border-primary/20
+                                                focus-visible:ring-2 focus-visible:ring-primary/40"
                                         />
+                                        </div>
 
+                                        <div className="space-y-2">
+                                        <Label>Parent Name</Label>
                                         <Input
                                         name="parentName"
                                         value={editForm.parentName}
                                         onChange={handleEditChange}
                                         placeholder="Parent Name"
+                                        className="h-11 rounded-xl bg-muted/40 border-primary/20
+                                                focus-visible:ring-2 focus-visible:ring-primary/40"
                                         />
+                                        </div>
 
+                                        <div className="space-y-2">
+                                        <Label>Phone</Label>
                                         <Input
                                         name="phone"
                                         value={editForm.phone}
                                         onChange={handleEditChange}
                                         placeholder="Phone"
+                                        className="h-11 rounded-xl bg-muted/40 border-primary/20
+                                                focus-visible:ring-2 focus-visible:ring-primary/40"
                                         />
+                                        </div>
 
+                                        <div className="space-y-2">
+                                        <Label>Email</Label>
                                         <Input
                                         name="email"
                                         value={editForm.email}
                                         onChange={handleEditChange}
                                         placeholder="Email"
+                                        className="h-11 rounded-xl bg-muted/40 border-primary/20
+                                                focus-visible:ring-2 focus-visible:ring-primary/40"
                                         />
+                                        </div>
 
                                     </div>
 
+                                    <div className="space-y-2">
+                                    <Label>Description</Label>
                                     <Textarea
                                         name="description"
                                         value={editForm.description}
                                         onChange={handleEditChange}
                                         placeholder="Description"
-                                        className="min-h-[100px]"
+                                        className="rounded-xl min-h-[100px] bg-muted/40 
+                                                border-primary/20 focus-visible:ring-2 
+                                                focus-visible:ring-primary/40"
                                     />
+                                    </div>
 
-                                    <div className="flex justify-end gap-3 pt-2">
+                                    <div className="flex justify-end gap-3 pt-6 border-t mt-4">
 
                                         <Button
                                         variant="outline"
                                         onClick={() => setEditOpen(false)}
+                                        className="rounded-xl"
                                         >
                                         Cancel
                                         </Button>
 
                                         <Button
-                                        className="bg-indigo-600 hover:bg-indigo-700"
+                                        className="bg-gradient-to-r from-primary to-pink-500 
+                                                hover:from-primary/90 hover:to-pink-500/90
+                                                text-white rounded-xl shadow-lg hover:shadow-xl
+                                                transition-all duration-200"
                                         onClick={handleEditSave}
                                         >
                                         Save Changes
@@ -555,8 +626,8 @@ fetchEnquiries();
                 </CardContent>
             </Card>
 
-            <div className="flex justify-between items-center p-4 bg-white/80 backdrop-blur-xl border-t border-gray-200">
-                <span className="text-gray-600 text-sm">
+            <div className="flex justify-between items-center p-4 bg-card border-t border-border rounded-b-2xl">
+                <span className="text-muted-foreground text-sm">
                     Page {pageNumber} of {totalPages}
                 </span>
                 <input
@@ -565,7 +636,7 @@ fetchEnquiries();
                     max={totalPages}
                     value={pageNumber}
                     onChange={(e) => setPageNumber(Number(e.target.value))}
-                    className="border rounded px-2 py-1 w-16 text-center"
+                    className="border border-border rounded px-2 py-1 w-16 text-center bg-background text-foreground"
                 />
                 <div className="flex gap-2">
                     <Button
@@ -586,8 +657,6 @@ fetchEnquiries();
                     </Button>
                 </div>
             </div>
-
-        </div>
 
       </div>
     </AdminLayout>

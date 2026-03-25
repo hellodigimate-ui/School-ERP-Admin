@@ -417,7 +417,6 @@ const handleDeleteIssue = async (id: string) => {
                           <SelectItem value="all">All Categories</SelectItem>
                           <SelectItem value="stationery">Stationery</SelectItem>
                           <SelectItem value="electronics">Electronics</SelectItem>
-                            <SelectItem value="Canteen">Canteen</SelectItem>
                           <SelectItem value="furniture">Furniture</SelectItem>
                           <SelectItem value="lab">Lab Equipment</SelectItem>
                           <SelectItem value="sports">Sports</SelectItem>
@@ -449,7 +448,6 @@ const handleDeleteIssue = async (id: string) => {
                                   <SelectContent>
                                   <SelectItem value="Stationery">Stationery</SelectItem>
                                   <SelectItem value="Electronics">Electronics</SelectItem>
-                                    <SelectItem value="Canteen">Canteen</SelectItem>
                                   <SelectItem value="Furniture">Furniture</SelectItem>
                                   <SelectItem value="Lab Equipment">Lab Equipment</SelectItem>
                                   <SelectItem value="Sports">Sports</SelectItem>
@@ -547,7 +545,6 @@ const handleDeleteIssue = async (id: string) => {
                                                   <SelectContent>
                                                       <SelectItem value="Stationery">Stationery</SelectItem>
                                                       <SelectItem value="Electronics">Electronics</SelectItem>
-                                                    <SelectItem value="Canteen">Canteen</SelectItem>
                                                       <SelectItem value="Furniture">Furniture</SelectItem>
                                                       <SelectItem value="Lab Equipment">Lab Equipment</SelectItem>
                                                       <SelectItem value="Sports">Sports</SelectItem>

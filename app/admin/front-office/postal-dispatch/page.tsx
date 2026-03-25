@@ -182,7 +182,6 @@ const Page = () => {
                                     text-white shadow-lg hover:shadow-xl
                                     hover:scale-[1.04] transition-all duration-200">
                     <Plus className="w-4 h-4" />
-                    Add Dispatch
                     {isEditing ? "Edit Dispatch" : "Add Dispatch"}
                 </Button>
             </DialogTrigger>
@@ -195,7 +194,6 @@ const Page = () => {
                     <DialogTitle className="text-2xl font-semibold 
                                             bg-gradient-to-r from-primary to-purple-500 
                                             bg-clip-text text-transparent">
-                    Add Postal Dispatch
                     {isEditing ? "Edit Postal Dispatch" : "Add Postal Dispatch"}
                     </DialogTitle>
                     <p className="text-sm text-muted-foreground">

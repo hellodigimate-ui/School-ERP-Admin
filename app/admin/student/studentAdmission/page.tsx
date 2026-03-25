@@ -141,7 +141,7 @@ const [formData, setFormData] = useState<StudentForm>({
   branch: "",
   className: "",
   sectionId: "",
-  name: "Amit",
+  name: "",
   email: "",
   rollNumber: "",
   password: "",
@@ -174,13 +174,13 @@ const [formData, setFormData] = useState<StudentForm>({
   penNumber: "",
 
   // Fees
-  admissionFee: 1000,
-  tutionFee: 50000,
-  transportFee: 5000,
-  hostelFee: 60000,
-  otherFee: 20000,
+  admissionFee: 0,
+  tutionFee: 0,
+  transportFee: 0,
+  hostelFee: 0,
+  otherFee: 0,
   discountType: "",
-  discountValue: "20",
+  discountValue: "",
   installments: 1,
   dueDate: "",
 });
@@ -396,16 +396,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     );
 
     toast({
-      title: "Success",
-      description: "Student saved successfully",
-    });
-
-    // ✅ SUCCESS TOAST
-    toast({
       title: "🎉 Admission Successful",
-      description:
-        response?.data?.message ||
-        `${formData.name} has been admitted successfully`,
+      description: `${formData.name} student admission admitted successfully`,
     });
 
     handleReset();

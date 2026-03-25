@@ -46,19 +46,6 @@ const getBranchId = () => {
     : DEFAULT_BRANCH_ID;
 };
 
-// type RouteItem = {
-//   id: string;
-//   name?: string;
-//   students?: string | number;
-//   driver?: { name?: string } | string;
-//   drivers?: { name?: string };
-//   vehicle?: { vehicle_no?: string };
-//   vehicleId?: string;
-//   distance?: number;
-//   time?: string;
-//   PickupPoint?: any[];
-// };
-
 const Page: React.FC = () => {
   const [stats, setStats] = useState({
     totalRoutes: 0,
@@ -556,281 +543,12 @@ const Page: React.FC = () => {
           ))}
         </div>
 
-        <Tabs defaultValue="routes" className="space-y-4">
+        <Tabs defaultValue="vehicles" className="space-y-4">
           <TabsList className="bg-muted/50 p-1">
-            <TabsTrigger value="routes">Routes</TabsTrigger>
             <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
+            <TabsTrigger value="routes">Routes</TabsTrigger>
             <TabsTrigger value="pickup">Pickup Points</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="routes" className="space-y-5">
-            {/* Top Bar */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
-              {/* Search */}
-              <div className="relative w-full max-w-sm">
-                <Input
-                  placeholder="🔍 Search routes..."
-                  className="pl-4 bg-white shadow-sm"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-
-              {/* Add Button */}
-              <Button
-                onClick={() => setIsAddOpen(true)}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
-              >
-                <Plus className="h-4 w-4 mr-2" /> Add Route
-              </Button>
-            </div>
-
-            {/* Table */}
-            <Card className="shadow-lg border-0">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gradient-to-r from-blue-50 to-indigo-50">
-                    <TableHead>Route</TableHead>
-                    <TableHead>Stops</TableHead>
-                    <TableHead>Students</TableHead>
-                    <TableHead>Driver</TableHead>
-                    <TableHead>Vehicle</TableHead>
-                    <TableHead>Distance</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {routes
-                    .filter((r) =>
-                      r.name.toLowerCase().includes(search.toLowerCase()),
-                    )
-                    .map((route) => (
-                      <TableRow
-                        key={route.id}
-                        className="hover:bg-gray-50 transition"
-                      >
-                        <TableCell className="font-semibold text-blue-600">
-                          {route.name}
-                        </TableCell>
-
-                        <TableCell>
-                          <Badge className="bg-blue-100 text-blue-700">
-                            {route.PickupPoint?.length || 0} Stops
-                          </Badge>
-                        </TableCell>
-
-                        <TableCell>
-                          <Badge className="bg-green-100 text-green-700">
-                            {route.students}
-                          </Badge>
-                        </TableCell>
-
-                                <TableCell>
-                          {typeof route.driver === "string"
-                            ? route.driver
-                            : route.driver?.name || route.drivers?.name || "-"}
-                        </TableCell>
-
-                        <TableCell className="font-mono text-sm">
-                          {route.vehicle?.vehicle_no || route.vehicleId}
-                        </TableCell>
-
-                        <TableCell>
-                          {route.distance ? `${route.distance} km` : "-"}
-                        </TableCell>
-
-                        <TableCell>
-                          <Badge variant="outline">{route.time || "-"}</Badge>
-                        </TableCell>
-
-                        <TableCell>
-                          <div className="flex gap-3">
-                            <Edit
-                              onClick={() => handleEditClick(route)}
-                              className="w-5 h-5 text-blue-500 cursor-pointer hover:scale-110"
-                            />
-
-                            <Trash2
-                              onClick={() => handleDelete(route.id)}
-                              className="w-5 h-5 text-red-500 cursor-pointer hover:scale-110"
-                            />
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-              <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Add Route</DialogTitle>
-                  </DialogHeader>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input
-                      placeholder="Route Name"
-                      value={form.name}
-                      onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
-                      }
-                    />
-
-                    <Input
-                      placeholder="Students"
-                      value={form.students}
-                      onChange={(e) =>
-                        setForm({ ...form, students: e.target.value })
-                      }
-                    />
-
-                    {/* DRIVER DROPDOWN */}
-                    <select
-                      value={form.driver}
-                      onChange={(e) =>
-                        setForm({ ...form, driver: e.target.value })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Driver</option>
-                      {drivers.map((d) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    {/* VEHICLE DROPDOWN */}
-                    <select
-                      value={form.bus}
-                      onChange={(e) =>
-                        setForm({ ...form, bus: e.target.value })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Vehicle</option>
-                      {vehicleList.map((v) => (
-                        <option key={v.id} value={v.id}>
-                          {v.vehicle_no}
-                        </option>
-                      ))}
-                    </select>
-
-                    <Input
-                      placeholder="Distance (km)"
-                      value={form.distance}
-                      onChange={(e) =>
-                        setForm({ ...form, distance: e.target.value })
-                      }
-                    />
-
-                    <select
-                      value={form.branchId}
-                      onChange={(e) =>
-                        setForm({ ...form, branchId: e.target.value })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Branch</option>
-                      {branches.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <Button onClick={handleAdd} className="w-full mt-3">
-                    Add Route
-                  </Button>
-                </DialogContent>
-              </Dialog>
-
-              <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Route</DialogTitle>
-                  </DialogHeader>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input
-                      placeholder="Route Name"
-                      value={form.name}
-                      onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
-                      }
-                    />
-
-                    <Input
-                      placeholder="Students"
-                      value={form.students}
-                      onChange={(e) =>
-                        setForm({ ...form, students: e.target.value })
-                      }
-                    />
-
-                    <select
-                      value={form.driver}
-                      onChange={(e) =>
-                        setForm({ ...form, driver: e.target.value })
-                      }
-                      className="border rounded px-3 py-2"
-                    >
-                      <option value="">Select Driver</option>
-                      {drivers.map((d: any) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={form.bus}
-                      onChange={(e) =>
-                        setForm({ ...form, bus: e.target.value })
-                      }
-                      className="border rounded px-3 py-2"
-                    >
-                      <option value="">Select Vehicle</option>
-                      {vehicleList.map((v: any) => (
-                        <option key={v.id} value={v.id}>
-                          {v.vehicle_no}
-                        </option>
-                      ))}
-                    </select>
-
-                    <Input
-                      placeholder="Distance (km)"
-                      value={form.distance}
-                      onChange={(e) =>
-                        setForm({ ...form, distance: e.target.value })
-                      }
-                    />
-
-                    <select
-                      value={form.branchId}
-                      onChange={(e) =>
-                        setForm({ ...form, branchId: e.target.value })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Branch</option>
-                      {branches.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <Button onClick={handleUpdate} className="w-full mt-3">
-                    Update Route
-                  </Button>
-                </DialogContent>
-              </Dialog>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="vehicles" className="space-y-5">
             {/* Top Bar */}
@@ -934,261 +652,799 @@ const Page: React.FC = () => {
                 </TableBody>
               </Table>
 
-              <Dialog
-                open={isVehicleAddOpen}
-                onOpenChange={setIsVehicleAddOpen}
-              >
-                <DialogContent>
+              <Dialog open={isVehicleAddOpen} onOpenChange={setIsVehicleAddOpen}>
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-white shadow-xl">
+                  
                   <DialogHeader>
-                    <DialogTitle>Add Vehicle</DialogTitle>
+                    <DialogTitle className="text-2xl font-semibold text-gray-800 text-center">
+                      🚗 Add Vehicle
+                    </DialogTitle>
                   </DialogHeader>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input
-                      placeholder="Vehicle Number"
-                      value={vehicleForm.id}
-                      onChange={(e) =>
-                        setVehicleForm({ ...vehicleForm, id: e.target.value })
-                      }
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
 
-                    <Input
-                      placeholder="Type"
-                      value={vehicleForm.type}
-                      onChange={(e) =>
-                        setVehicleForm({ ...vehicleForm, type: e.target.value })
-                      }
-                    />
+                    {/* Vehicle Number */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Vehicle Number</label>
+                      <Input
+                        placeholder="Enter vehicle number"
+                        value={vehicleForm.id}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, id: e.target.value })
+                        }
+                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Capacity"
-                      type="number"
-                      value={vehicleForm.capacity}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          capacity: e.target.value,
-                        })
-                      }
-                    />
+                    {/* Vehicle Type */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Vehicle Type</label>
+                      <Input
+                        placeholder="e.g. Bus, Van"
+                        value={vehicleForm.type}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, type: e.target.value })
+                        }
+                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Year"
-                      type="number"
-                      value={vehicleForm.year}
-                      onChange={(e) =>
-                        setVehicleForm({ ...vehicleForm, year: e.target.value })
-                      }
-                    />
+                    {/* Capacity */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Student Capacity</label>
+                      <Input
+                        type="number"
+                        placeholder="Capacity"
+                        value={vehicleForm.capacity}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, capacity: e.target.value })
+                        }
+                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Insurance"
-                      type="date"
-                      value={vehicleForm.insurance}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          insurance: e.target.value,
-                        })
-                      }
-                    />
+                    {/* Year */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Assign Year</label>
+                      <Input
+                        type="number"
+                        placeholder="Year"
+                        value={vehicleForm.year}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, year: e.target.value })
+                        }
+                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Fitness"
-                      type="date"
-                      value={vehicleForm.fitness}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          fitness: e.target.value,
-                        })
-                      }
-                    />
+                    {/* Insurance */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Insurance Date</label>
+                      <Input
+                        type="date"
+                        value={vehicleForm.insurance}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            insurance: e.target.value,
+                          })
+                        }
+                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                      />
+                    </div>
 
-                    <select
-                      value={vehicleForm.status}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          status: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Maintenance">Maintenance</option>
-                    </select>
+                    {/* Fitness */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Last Checked</label>
+                      <Input
+                        type="date"
+                        value={vehicleForm.fitness}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            fitness: e.target.value,
+                          })
+                        }
+                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                      />
+                    </div>
 
-                    <select
-                      value={vehicleForm.driverId}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          driverId: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Driver</option>
-                      {drivers.map((d) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name || d.fullName || d.email}
-                        </option>
-                      ))}
-                    </select>
+                    {/* Status */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Status</label>
+                      <select
+                        value={vehicleForm.status}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            status: e.target.value,
+                          })
+                        }
+                        className="border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
+                      >
+                        <option value="Active">🟢 Active</option>
+                        <option value="Maintenance">🟡 Maintenance</option>
+                      </select>
+                    </div>
 
-                    <select
-                      value={vehicleForm.branchId}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          branchId: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Branch</option>
-                      {branches.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
+                    {/* Driver */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Vehicle Driver</label>
+                      <select
+                        value={vehicleForm.driverId}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            driverId: e.target.value,
+                          })
+                        }
+                        className="border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
+                      >
+                        <option value="">Select Driver</option>
+                        {drivers.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.name || d.fullName || d.email}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Branch */}
+                    <div className="flex flex-col gap-1 md:col-span-2">
+                      <label className="text-sm font-medium text-gray-600">
+                        Select Branch
+                      </label>
+
+                      <div className="relative group">
+                        <select
+                          value={vehicleForm.branchId}
+                          onChange={(e) =>
+                            setVehicleForm({
+                              ...vehicleForm,
+                              branchId: e.target.value,
+                            })
+                          }
+                          className="
+                            w-full appearance-none
+                            bg-gradient-to-br from-white to-gray-50
+                            border border-gray-300
+                            px-4 py-2.5 pr-12
+                            rounded-xl
+                            text-gray-700
+                            shadow-sm
+
+                            transition-all duration-200 ease-in-out
+
+                            hover:border-gray-400 hover:shadow-md
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:shadow-md
+                          "
+                        >
+                          <option value="">Select Branch</option>
+                          {branches.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        {/* Premium Arrow */}
+                        <div className="
+                          pointer-events-none 
+                          absolute inset-y-0 right-3 
+                          flex items-center 
+                          text-gray-400 
+                          group-hover:text-gray-600 
+                          transition
+                        ">
+                          <svg
+                            className="w-5 h-5 transform transition-transform duration-200 group-focus-within:rotate-180"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
-                  <Button onClick={handleVehicleAdd} className="w-full mt-3">
-                    Add Vehicle
-                  </Button>
+                  {/* Submit Button */}
+                  <div className="mt-6">
+                    <Button
+                      onClick={handleVehicleAdd}
+                      className="w-full py-2 text-lg bg-blue-600 hover:bg-blue-700 transition-all rounded-xl shadow-md"
+                    >
+                      ➕ Add Vehicle
+                    </Button>
+                  </div>
+
                 </DialogContent>
               </Dialog>
 
-              <Dialog
-                open={isVehicleEditOpen}
-                onOpenChange={setIsVehicleEditOpen}
-              >
-                <DialogContent>
+              <Dialog open={isVehicleEditOpen} onOpenChange={setIsVehicleEditOpen}>
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-white shadow-xl">
+
                   <DialogHeader>
-                    <DialogTitle>Edit Vehicle</DialogTitle>
+                    <DialogTitle className="text-2xl font-semibold text-gray-800 text-center">
+                      ✏️ Edit Vehicle
+                    </DialogTitle>
                   </DialogHeader>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input
-                      placeholder="Vehicle Number"
-                      value={vehicleForm.id}
-                      onChange={(e) =>
-                        setVehicleForm({ ...vehicleForm, id: e.target.value })
-                      }
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
 
-                    <Input
-                      placeholder="Type"
-                      value={vehicleForm.type}
-                      onChange={(e) =>
-                        setVehicleForm({ ...vehicleForm, type: e.target.value })
-                      }
-                    />
+                    {/* Vehicle Number */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Vehicle Number</label>
+                      <Input
+                        value={vehicleForm.id}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, id: e.target.value })
+                        }
+                        className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-xl"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Capacity"
-                      type="number"
-                      value={vehicleForm.capacity}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          capacity: e.target.value,
-                        })
-                      }
-                    />
+                    {/* Type */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Vehicle Type</label>
+                      <Input
+                        value={vehicleForm.type}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, type: e.target.value })
+                        }
+                        className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-xl"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Year"
-                      type="number"
-                      value={vehicleForm.year}
-                      onChange={(e) =>
-                        setVehicleForm({ ...vehicleForm, year: e.target.value })
-                      }
-                    />
+                    {/* Capacity */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Student Capacity</label>
+                      <Input
+                        type="number"
+                        value={vehicleForm.capacity}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            capacity: e.target.value,
+                          })
+                        }
+                        className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-xl"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Insurance"
-                      type="date"
-                      value={vehicleForm.insurance}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          insurance: e.target.value,
-                        })
-                      }
-                    />
+                    {/* Year */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Assign Year</label>
+                      <Input
+                        type="number"
+                        value={vehicleForm.year}
+                        onChange={(e) =>
+                          setVehicleForm({ ...vehicleForm, year: e.target.value })
+                        }
+                        className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-xl"
+                      />
+                    </div>
 
-                    <Input
-                      placeholder="Fitness"
-                      type="date"
-                      value={vehicleForm.fitness}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          fitness: e.target.value,
-                        })
-                      }
-                    />
+                    {/* Insurance */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Insurance Date</label>
+                      <Input
+                        type="date"
+                        value={vehicleForm.insurance}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            insurance: e.target.value,
+                          })
+                        }
+                        className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-xl"
+                      />
+                    </div>
 
-                    <select
-                      value={vehicleForm.status}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          status: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Maintenance">Maintenance</option>
-                    </select>
+                    {/* Fitness */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Last Checked</label>
+                      <Input
+                        type="date"
+                        value={vehicleForm.fitness}
+                        onChange={(e) =>
+                          setVehicleForm({
+                            ...vehicleForm,
+                            fitness: e.target.value,
+                          })
+                        }
+                        className="border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-xl"
+                      />
+                    </div>
 
-                    <select
-                      value={vehicleForm.driverId}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          driverId: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Driver</option>
-                      {drivers.map((d) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name || d.fullName || d.email}
-                        </option>
-                      ))}
-                    </select>
+                    {/* Status */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Status</label>
+                      <div className="relative">
+                        <select
+                          value={vehicleForm.status}
+                          onChange={(e) =>
+                            setVehicleForm({
+                              ...vehicleForm,
+                              status: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none border border-gray-300 bg-white px-4 py-2.5 pr-10 rounded-xl shadow-sm 
+                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="Active">🟢 Active</option>
+                          <option value="Maintenance">🟡 Maintenance</option>
+                        </select>
 
-                    <select
-                      value={vehicleForm.branchId}
-                      onChange={(e) =>
-                        setVehicleForm({
-                          ...vehicleForm,
-                          branchId: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Branch</option>
-                      {branches.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Driver */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Vehicle Driver</label>
+                      <div className="relative">
+                        <select
+                          value={vehicleForm.driverId}
+                          onChange={(e) =>
+                            setVehicleForm({
+                              ...vehicleForm,
+                              driverId: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none border border-gray-300 bg-white px-4 py-2.5 pr-10 rounded-xl shadow-sm 
+                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Driver</option>
+                          {drivers.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name || d.fullName || d.email}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Branch */}
+                    <div className="flex flex-col gap-1 md:col-span-2">
+                      <label className="text-sm font-medium text-gray-600">Select Branch</label>
+                      <div className="relative">
+                        <select
+                          value={vehicleForm.branchId}
+                          onChange={(e) =>
+                            setVehicleForm({
+                              ...vehicleForm,
+                              branchId: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none border border-gray-300 bg-white px-4 py-2.5 pr-10 rounded-xl shadow-sm 
+                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Branch</option>
+                          {branches.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
-                  <Button onClick={handleVehicleUpdate} className="w-full mt-3">
-                    Update Vehicle
-                  </Button>
+                  {/* Update Button */}
+                  <div className="mt-6">
+                    <Button
+                      onClick={handleVehicleUpdate}
+                      className="w-full py-2 text-lg bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all"
+                    >
+                      💾 Update Vehicle
+                    </Button>
+                  </div>
+
                 </DialogContent>
               </Dialog>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="routes" className="space-y-5">
+            {/* Top Bar */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
+              {/* Search */}
+              <div className="relative w-full max-w-sm">
+                <Input
+                  placeholder="🔍 Search routes..."
+                  className="pl-4 bg-white shadow-sm"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+
+              {/* Add Button */}
+              <Button
+                onClick={() => setIsAddOpen(true)}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
+              >
+                <Plus className="h-4 w-4 mr-2" /> Add Route
+              </Button>
+            </div>
+
+            {/* Table */}
+            <Card className="shadow-lg border-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <TableHead>Route</TableHead>
+                    <TableHead>Stops</TableHead>
+                    <TableHead>Students</TableHead>
+                    <TableHead>Driver</TableHead>
+                    <TableHead>Vehicle</TableHead>
+                    <TableHead>Distance</TableHead>
+                    <TableHead>Duration</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {routes
+                    .filter((r) =>
+                      r.name.toLowerCase().includes(search.toLowerCase()),
+                    )
+                    .map((route) => (
+                      <TableRow
+                        key={route.id}
+                        className="hover:bg-gray-50 transition"
+                      >
+                        <TableCell className="font-semibold text-blue-600">
+                          {route.name}
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge className="bg-blue-100 text-blue-700">
+                            {route.PickupPoint?.length || 0} Stops
+                          </Badge>
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge className="bg-green-100 text-green-700">
+                            {route.students}
+                          </Badge>
+                        </TableCell>
+
+                        <TableCell>
+                          {typeof route.driver === "string"
+                            ? route.driver
+                            : route.driver?.name || route.drivers?.name || "-"}
+                        </TableCell>
+
+                        <TableCell className="font-mono text-sm">
+                          {route.vehicle?.vehicle_no || route.vehicleId}
+                        </TableCell>
+
+                        <TableCell>
+                          {route.distance ? `${route.distance} km` : "-"}
+                        </TableCell>
+
+                        <TableCell>
+                          <Badge variant="outline">{route.time || "-"}</Badge>
+                        </TableCell>
+
+                        <TableCell>
+                          <div className="flex gap-3">
+                            <Edit
+                              onClick={() => handleEditClick(route)}
+                              className="w-5 h-5 text-blue-500 cursor-pointer hover:scale-110"
+                            />
+
+                            <Trash2
+                              onClick={() => handleDelete(route.id)}
+                              className="w-5 h-5 text-red-500 cursor-pointer hover:scale-110"
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+
+              <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-gradient-to-br from-white to-blue-50 shadow-xl">
+
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                      🛣️ Add Route
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+
+                    {/* Route Name */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Route Name</label>
+                      <Input
+                        placeholder="Enter route name"
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm({ ...form, name: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* Students */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Number of Students</label>
+                      <Input
+                        placeholder="Enter student count"
+                        value={form.students}
+                        onChange={(e) =>
+                          setForm({ ...form, students: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* Driver */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Driver</label>
+                      <div className="relative">
+                        <select
+                          value={form.driver}
+                          onChange={(e) =>
+                            setForm({ ...form, driver: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Driver</option>
+                          {drivers.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Vehicle */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Vehicle</label>
+                      <div className="relative">
+                        <select
+                          value={form.bus}
+                          onChange={(e) =>
+                            setForm({ ...form, bus: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Vehicle</option>
+                          {vehicleList.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.vehicle_no}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Distance */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Distance (km)</label>
+                      <Input
+                        placeholder="Enter distance"
+                        value={form.distance}
+                        onChange={(e) =>
+                          setForm({ ...form, distance: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* Branch */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Branch</label>
+                      <div className="relative">
+                        <select
+                          value={form.branchId}
+                          onChange={(e) =>
+                            setForm({ ...form, branchId: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Branch</option>
+                          {branches.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Button */}
+                  <div className="mt-6">
+                    <Button
+                      onClick={handleAdd}
+                      className="w-full py-2 text-lg rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 
+                      hover:from-blue-700 hover:to-indigo-700 text-white shadow-md transition-all"
+                    >
+                      ➕ Add Route
+                    </Button>
+                  </div>
+
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-gradient-to-br from-white to-indigo-50 shadow-xl">
+
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                      ✏️ Edit Route
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+
+                    {/* Route Name */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Route Name</label>
+                      <Input
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm({ ...form, name: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+
+                    {/* Students */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Number of Students</label>
+                      <Input
+                        value={form.students}
+                        onChange={(e) =>
+                          setForm({ ...form, students: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+
+                    {/* Driver */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Driver</label>
+                      <div className="relative">
+                        <select
+                          value={form.driver}
+                          onChange={(e) =>
+                            setForm({ ...form, driver: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                          <option value="">Select Driver</option>
+                          {drivers.map((d: any) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Vehicle */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Vehicle</label>
+                      <div className="relative">
+                        <select
+                          value={form.bus}
+                          onChange={(e) =>
+                            setForm({ ...form, bus: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                          <option value="">Select Vehicle</option>
+                          {vehicleList.map((v: any) => (
+                            <option key={v.id} value={v.id}>
+                              {v.vehicle_no}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Distance */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Distance (km)</label>
+                      <Input
+                        value={form.distance}
+                        onChange={(e) =>
+                          setForm({ ...form, distance: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                      />
+                    </div>
+
+                    {/* Branch */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Branch</label>
+                      <div className="relative">
+                        <select
+                          value={form.branchId}
+                          onChange={(e) =>
+                            setForm({ ...form, branchId: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                          <option value="">Select Branch</option>
+                          {branches.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Button */}
+                  <div className="mt-6">
+                    <Button
+                      onClick={handleUpdate}
+                      className="w-full py-2 text-lg rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 
+                      hover:from-indigo-700 hover:to-blue-700 text-white shadow-md transition-all"
+                    >
+                      💾 Update Route
+                    </Button>
+                  </div>
+
+                </DialogContent>
+              </Dialog>
+              
             </Card>
           </TabsContent>
 
@@ -1274,135 +1530,336 @@ const Page: React.FC = () => {
               </Table>
 
               <Dialog open={isPickupAddOpen} onOpenChange={setIsPickupAddOpen}>
-                <DialogContent>
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-gradient-to-br from-white to-purple-50 shadow-xl">
+
                   <DialogHeader>
-                    <DialogTitle>Add Pickup Point</DialogTitle>
+                    <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                      📍 Add Pickup Point
+                    </DialogTitle>
                   </DialogHeader>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input
-                      placeholder="Pickup Point Name"
-                      value={pickupForm.name}
-                      onChange={(e) =>
-                        setPickupForm({ ...pickupForm, name: e.target.value })
-                      }
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
 
-                    <select
-                      value={pickupForm.route}
-                      onChange={(e) =>
-                        setPickupForm({ ...pickupForm, route: e.target.value })
-                      }
-                    >
-                      <option value="">Select Route</option>
-                      {routes.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    <Input
-                      placeholder="Pickup Time"
-                      value={pickupForm.time}
-                      onChange={(e) =>
-                        setPickupForm({ ...pickupForm, time: e.target.value })
-                      }
-                    />
-
-                    <input
-                      type="number"
-                      placeholder="Students"
-                      className="border p-2 rounded"
-                      value={pickupForm.students}
-                      onChange={(e) =>
-                        setPickupForm({
-                          ...pickupForm,
-                          students: e.target.value,
-                        })
-                      }
-                    />
-
-                    <Input
-                      placeholder="Address"
-                      value={pickupForm.address}
-                      onChange={(e) =>
-                        setPickupForm({
-                          ...pickupForm,
-                          address: e.target.value,
-                        })
-                      }
-                    />
-
-                    <select
-                      value={pickupForm.vehicleId}
-                      onChange={(e) =>
-                        setPickupForm({
-                          ...pickupForm,
-                          vehicleId: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Vehicle</option>
-                      {vehicleList.map((v) => (
-                        <option key={v.id} value={v.id}>
-                          {v.vehicle_no}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={pickupForm.branchId}
-                      onChange={(e) =>
-                        setPickupForm({
-                          ...pickupForm,
-                          branchId: e.target.value,
-                        })
-                      }
-                      className="border p-2 rounded"
-                    >
-                      <option value="">Select Branch</option>
-                      {branches.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <Button onClick={handlePickupAdd} className="w-full mt-3">
-                    Add Point
-                  </Button>
-                </DialogContent>
-              </Dialog>
-
-              <Dialog
-                open={isPickupEditOpen}
-                onOpenChange={setIsPickupEditOpen}
-              >
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Pickup Point</DialogTitle>
-                  </DialogHeader>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    {Object.keys(pickupForm).map((key) => (
+                    {/* Pickup Name */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Pickup Point Name</label>
                       <Input
-                        key={key}
-                        value={(pickupForm as any)[key]}
+                        placeholder="Enter pickup name"
+                        value={pickupForm.name}
+                        onChange={(e) =>
+                          setPickupForm({ ...pickupForm, name: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+
+                    {/* Route */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Route</label>
+                      <div className="relative">
+                        <select
+                          value={pickupForm.route}
+                          onChange={(e) =>
+                            setPickupForm({ ...pickupForm, route: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="">Select Route</option>
+                          {routes.map((r) => (
+                            <option key={r.id} value={r.id}>
+                              {r.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pickup Time */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Pickup Time</label>
+                      <Input
+                        type="time"
+                        value={pickupForm.time}
+                        onChange={(e) =>
+                          setPickupForm({ ...pickupForm, time: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+
+                    {/* Students */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Number of Students</label>
+                      <Input
+                        type="number"
+                        placeholder="Enter students"
+                        value={pickupForm.students}
                         onChange={(e) =>
                           setPickupForm({
                             ...pickupForm,
-                            [key]: e.target.value,
+                            students: e.target.value,
                           })
                         }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-purple-500"
                       />
-                    ))}
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex flex-col gap-1 md:col-span-2">
+                      <label className="text-sm font-medium text-gray-600">Address</label>
+                      <Input
+                        placeholder="Enter address"
+                        value={pickupForm.address}
+                        onChange={(e) =>
+                          setPickupForm({
+                            ...pickupForm,
+                            address: e.target.value,
+                          })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+
+                    {/* Vehicle */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Vehicle</label>
+                      <div className="relative">
+                        <select
+                          value={pickupForm.vehicleId}
+                          onChange={(e) =>
+                            setPickupForm({
+                              ...pickupForm,
+                              vehicleId: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="">Select Vehicle</option>
+                          {vehicleList.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.vehicle_no}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Branch */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Branch</label>
+                      <div className="relative">
+                        <select
+                          value={pickupForm.branchId}
+                          onChange={(e) =>
+                            setPickupForm({
+                              ...pickupForm,
+                              branchId: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="">Select Branch</option>
+                          {branches.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
-                  <Button onClick={handlePickupUpdate} className="w-full mt-3">
-                    Update Point
-                  </Button>
+                  {/* Button */}
+                  <div className="mt-6">
+                    <Button
+                      onClick={handlePickupAdd}
+                      className="w-full py-2 text-lg rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 
+                      hover:from-purple-700 hover:to-pink-700 text-white shadow-md transition-all"
+                    >
+                      ➕ Add Pickup Point
+                    </Button>
+                  </div>
+
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isPickupEditOpen} onOpenChange={setIsPickupEditOpen}>
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-gradient-to-br from-white to-pink-50 shadow-xl">
+
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+                      ✏️ Edit Pickup Point
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+
+                    {/* Pickup Name */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Pickup Point Name</label>
+                      <Input
+                        value={pickupForm.name}
+                        onChange={(e) =>
+                          setPickupForm({ ...pickupForm, name: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+
+                    {/* Route */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Route</label>
+                      <div className="relative">
+                        <select
+                          value={pickupForm.route}
+                          onChange={(e) =>
+                            setPickupForm({ ...pickupForm, route: e.target.value })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-pink-500"
+                        >
+                          <option value="">Select Route</option>
+                          {routes.map((r) => (
+                            <option key={r.id} value={r.id}>
+                              {r.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Time */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Pickup Time</label>
+                      <Input
+                        type="time"
+                        value={pickupForm.time}
+                        onChange={(e) =>
+                          setPickupForm({ ...pickupForm, time: e.target.value })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+
+                    {/* Students */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Number of Students</label>
+                      <Input
+                        type="number"
+                        value={pickupForm.students}
+                        onChange={(e) =>
+                          setPickupForm({
+                            ...pickupForm,
+                            students: e.target.value,
+                          })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex flex-col gap-1 md:col-span-2">
+                      <label className="text-sm font-medium text-gray-600">Address</label>
+                      <Input
+                        value={pickupForm.address}
+                        onChange={(e) =>
+                          setPickupForm({
+                            ...pickupForm,
+                            address: e.target.value,
+                          })
+                        }
+                        className="rounded-xl border-gray-300 focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+
+                    {/* Vehicle */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Vehicle</label>
+                      <div className="relative">
+                        <select
+                          value={pickupForm.vehicleId}
+                          onChange={(e) =>
+                            setPickupForm({
+                              ...pickupForm,
+                              vehicleId: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-pink-500"
+                        >
+                          <option value="">Select Vehicle</option>
+                          {vehicleList.map((v) => (
+                            <option key={v.id} value={v.id}>
+                              {v.vehicle_no}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Branch */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-600">Select Branch</label>
+                      <div className="relative">
+                        <select
+                          value={pickupForm.branchId}
+                          onChange={(e) =>
+                            setPickupForm({
+                              ...pickupForm,
+                              branchId: e.target.value,
+                            })
+                          }
+                          className="w-full appearance-none bg-white border border-gray-300 px-4 py-2.5 pr-10 rounded-xl shadow-sm
+                          focus:ring-2 focus:ring-pink-500"
+                        >
+                          <option value="">Select Branch</option>
+                          {branches.map((b) => (
+                            <option key={b.id} value={b.id}>
+                              {b.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          ▼
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Button */}
+                  <div className="mt-6">
+                    <Button
+                      onClick={handlePickupUpdate}
+                      className="w-full py-2 text-lg rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 
+                      hover:from-pink-700 hover:to-rose-700 text-white shadow-md transition-all"
+                    >
+                      💾 Update Pickup Point
+                    </Button>
+                  </div>
+
                 </DialogContent>
               </Dialog>
             </Card>
