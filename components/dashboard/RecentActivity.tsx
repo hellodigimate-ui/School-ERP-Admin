@@ -1,88 +1,19 @@
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-// const activities = [
-//   {
-//     id: 1,
-//     user: "Sarah Wilson",
-//     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
-//     action: "enrolled in",
-//     target: "Advanced Mathematics",
-//     time: "2 min ago",
-//   },
-//   {
-//     id: 2,
-//     user: "Michael Chen",
-//     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-//     action: "submitted grades for",
-//     target: "Physics 101",
-//     time: "15 min ago",
-//   },
-//   {
-//     id: 3,
-//     user: "Emily Davis",
-//     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-//     action: "updated schedule for",
-//     target: "Class 10-A",
-//     time: "1 hour ago",
-//   },
-//   {
-//     id: 4,
-//     user: "James Anderson",
-//     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-//     action: "added new student to",
-//     target: "Grade 8",
-//     time: "2 hours ago",
-//   },
-//   {
-//     id: 5,
-//     user: "Lisa Thompson",
-//     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
-//     action: "created report for",
-//     target: "Q4 Performance",
-//     time: "3 hours ago",
-//   },
-// ];
-
-// export function RecentActivity() {
-//   return (
-//     <div className="bg-card rounded-xl border border-border/50 p-6">
-//       <h3 className="font-semibold text-lg mb-4">Recent Activity</h3>
-//       <div className="space-y-4">
-//         {activities.map((activity) => (
-//           <div key={activity.id} className="flex items-center gap-4">
-//             <Avatar className="w-10 h-10">
-//               <AvatarImage src={activity.avatar} />
-//               <AvatarFallback>{activity.user.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-//             </Avatar>
-//             <div className="flex-1 min-w-0">
-//               <p className="text-sm">
-//                 <span className="font-medium">{activity.user}</span>{" "}
-//                 <span className="text-muted-foreground">{activity.action}</span>{" "}
-//                 <span className="font-medium text-accent">{activity.target}</span>
-//               </p>
-//               <p className="text-xs text-muted-foreground mt-0.5">{activity.time}</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
+/* eslint-disable react-hooks/exhaustive-deps */
 
 "use client";
 
-import { ArrowUpRight, UserPlus, DollarSign, CheckCircle, Calendar, AlertCircle } from "lucide-react";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
+import {
+  ArrowUpRight,
+  UserPlus,
+  DollarSign,
+  CheckCircle,
+  Calendar,
+  AlertCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
-const activities = [
-  { text: "New admission: Priya Patel - Class 8A", time: "2 min ago", type: "admission" },
-  { text: "Fees collected: ₹25,000 from Amit K.", time: "15 min ago", type: "fees" },
-  { text: "Leave approved: Mrs. Sharma (Math)", time: "1 hour ago", type: "leave" },
-  { text: "Exam schedule published for Class 10", time: "2 hours ago", type: "exam" },
-  { text: "New complaint registered: ID #1247", time: "3 hours ago", type: "complaint" },
-];
+
 
 const typeDetails: Record<
   string,
@@ -115,15 +46,58 @@ const typeDetails: Record<
   },
 };
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
 const RecentActivity = () => {
+  const [users, setUsers] = useState<User[]>([]);
+
+  const [page, setPage] = useState(1);
+  const [perPage] = useState(10);
+
+
+  const [loading, setLoading] = useState(false);
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+
+      const res = await axiosInstance.get("/api/v1/users", {
+        params: {
+          page,
+          perPage: 5,
+        },
+      });
+
+      console.log("Users:", res.data.data);
+
+      setUsers(res.data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
   return (
     <div
-      className="bg-white rounded-2xl p-6 border border-gray-200 shadow-md animate-fade-in"
+      className="bg-white rounded-2xl p-6 border border-gray-200 shadow-md dark:bg-gray-900 animate-fade-in"
       style={{ animationDelay: "400ms" }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="font-display font-bold text-gray-900 text-lg">Recent Activity</h3>
+        <h3 className="font-display font-bold text-gray-900 dark:text-gray-100 text-lg">
+          Recent Activity
+        </h3>
         <button className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors">
           View All <ArrowUpRight className="w-4 h-4" />
         </button>
@@ -131,31 +105,26 @@ const RecentActivity = () => {
 
       {/* Activities List */}
       <div className="space-y-5">
-        {activities.map((activity, index) => {
-          const { bgColor, icon } = typeDetails[activity.type] || {};
-          return (
-            <div
-              key={index}
-              className="flex items-start gap-4 cursor-pointer hover:bg-gray-50 rounded-lg p-3 transition"
-              title={activity.text}
-            >
-              {/* Icon circle */}
-              <div
-                className={`${bgColor} flex items-center justify-center rounded-full w-10 h-10 flex-shrink-0 shadow-md`}
-              >
-                {icon}
-              </div>
-
-              {/* Text */}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 leading-snug truncate">
-                  {activity.text}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-              </div>
+        {users.map((user) => (
+          <div
+            key={user.id}
+            className="border p-4 rounded-lg flex justify-between items-center "
+          >
+            <div>
+              <p className="font-semibold">{user.name}</p>
+              <p className="text-sm text-gray-500">{user.email}</p>
             </div>
-          );
-        })}
+
+            <div className="text-right">
+              <p className="text-xs bg-gray-100 dark:text-gray-500 px-2 py-1 rounded">
+                {user.role}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                {new Date(user.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

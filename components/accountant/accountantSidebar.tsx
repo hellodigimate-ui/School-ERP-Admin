@@ -126,11 +126,11 @@ export default function AccountantSidebar() {
       className={`
       ${collapsed ? "w-[80px]" : "w-[270px]"}
       sticky top-0 h-screen
-      bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 
-      text-gray-800 flex flex-col shadow-lg transition-all duration-300`}
+      bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-sidebar-background dark:via-sidebar-background dark:to-sidebar-background
+      text-foreground dark:text-foreground flex flex-col shadow-lg transition-all duration-300`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-white/20 shrink-0">
+      <div className="flex items-center justify-between p-4 border-b border-border dark:border-border shrink-0">
         {!collapsed && (
           <div className="flex items-center gap-2">
             <CreditCard className="w-6 h-6" />
@@ -140,7 +140,7 @@ export default function AccountantSidebar() {
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-white/20 transition"
+          className="p-2 rounded-lg hover:bg-secondary/50 dark:hover:bg-secondary/50 transition"
         >
           {collapsed ? (
             <PanelLeftOpen className="w-5 h-5" />
@@ -176,8 +176,8 @@ export default function AccountantSidebar() {
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200
                 ${
                   active
-                    ? "bg-white text-indigo-700 shadow-lg"
-                    : "hover:bg-white/20"
+                    ? "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground shadow-lg"
+                    : "hover:bg-secondary/50 dark:hover:bg-secondary/50"
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -205,8 +205,8 @@ export default function AccountantSidebar() {
                       className={`block w-full text-left px-3 py-2 text-sm rounded-lg transition
                         ${
                           currentPath === child.path
-                            ? "bg-white text-indigo-700"
-                            : "hover:bg-white/20"
+                            ? "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground"
+                            : "hover:bg-secondary/50 dark:hover:bg-secondary/50"
                         }`}
                     >
                       {child.label}
@@ -221,9 +221,9 @@ export default function AccountantSidebar() {
 
       {/* User Section */}
       {!collapsed && (
-        <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md">
+        <div className="p-4 border-t border-border dark:border-border bg-secondary/30 dark:bg-secondary/30 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-full bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground flex items-center justify-center font-bold">
               RK
             </div>
             <div className="flex-1">

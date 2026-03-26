@@ -41,10 +41,10 @@ export default function TrustBadges() {
                 </div>
 
                 <div>
-                  <h4 className="font-semibold text-gray-900">
+                  <h4 className="font-semibold text-foreground dark:text-foreground">
                     {item.title}
                   </h4>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                     {item.subtitle}
                   </p>
                 </div>

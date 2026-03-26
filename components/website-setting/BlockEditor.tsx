@@ -65,7 +65,7 @@ const AddLinkModal = ({
       />
 
       {/* modal */}
-      <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <div className="relative bg-card dark:bg-card rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-lg font-semibold mb-4">Add Navigation Link</h2>
       
 
@@ -544,7 +544,7 @@ const AddFeatureModal = ({
         onClick={() => setOpen(false)}
       />
 
-      <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <div className="relative bg-card dark:bg-card rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-lg font-semibold mb-4">
           Add Feature
         </h2>
@@ -886,7 +886,7 @@ const AddTestimonialModal = ({
       />
 
       {/* modal */}
-      <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <div className="relative bg-card dark:bg-card rounded-lg shadow-lg p-6 w-full max-w-md">
         <h2 className="text-lg font-semibold mb-4">Add Testimonial</h2>
 
         <div className="space-y-3">

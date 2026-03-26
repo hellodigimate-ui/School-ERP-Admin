@@ -1,17 +1,10 @@
 "use client";
 
-import { Search, Bell, ChevronDown } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Search, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../ThemeToggle";
 
 export function ReceptionistHeader() {
   const router = useRouter();
@@ -32,16 +25,16 @@ export function ReceptionistHeader() {
       <div className="flex items-center gap-4">
         
         {/* Notifications */}
-        <button
+        {/* <button
           onClick={() => router.push("/receptionist/notifications")}
           className="relative p-2 rounded-lg hover:bg-secondary transition-colors"
         >
           <Bell className="w-5 h-5 text-muted-foreground" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full" />
-        </button>
+        </button> */}
 
         {/* User Menu */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary transition-colors">
               <Avatar className="w-8 h-8">
@@ -83,8 +76,30 @@ export function ReceptionistHeader() {
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-2">
+        
+        {/* Notifications */}
+        <button
+          onClick={() => router.push("/receptionist/notifications")}
+          className="relative w-10 h-10 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Bell className="w-5 h-5" />
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
+        </button>
+
+        {/* Session Badge */}
+        <div className="ml-2 px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground">
+          2025-26
+        </div>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
+      </div>
+
     </header>
   );
 }

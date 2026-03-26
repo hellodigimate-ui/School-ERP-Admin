@@ -56,12 +56,12 @@ const Sidebar = () => {
     <aside
       className={`sticky top-0 left-0 h-screen z-50
       ${collapsed ? "w-[80px]" : "w-[270px]"}
-      bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200
-      text-gray-800 flex flex-col shadow-lg
+      bg-sidebar
+      text-sidebar-foreground flex flex-col shadow-lg
       transition-all duration-300`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-white/30">
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         {!collapsed && (
           <div className="flex items-center gap-2">
             <Users className="w-6 h-6" />
@@ -71,7 +71,7 @@ const Sidebar = () => {
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-white/30 transition"
+          className="p-2 rounded-lg hover:bg-sidebar-accent/30 transition"
         >
           {collapsed ? (
             <PanelLeftOpen className="w-5 h-5" />
@@ -94,8 +94,8 @@ const Sidebar = () => {
               className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200
               ${
                 active
-                  ? "bg-white text-indigo-700 shadow-lg border-l-4 border-indigo-600"
-                  : "hover:bg-white/30"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-lg border-l-4 border-sidebar-primary"
+                  : "hover:bg-sidebar-accent/30"
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -112,9 +112,9 @@ const Sidebar = () => {
 
       {/* User Section */}
       {!collapsed && (
-        <div className="p-4 border-t border-white/30 bg-white/20 backdrop-blur-md">
+        <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/20 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-full bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center font-bold">
               HR
             </div>
             <div className="flex-1">

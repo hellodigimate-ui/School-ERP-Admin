@@ -48,12 +48,12 @@ export function ParentSidebar({
     <aside
       className={cn(
         "h-screen flex flex-col shadow-lg transition-all duration-300",
-        "bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 text-gray-800",
+        "bg-sidebar text-sidebar-foreground",
         collapsed ? "w-[80px]" : "w-[270px]"
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-white/20">
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         {!collapsed && (
           <div className="flex items-center gap-2">
             <GraduationCap className="w-6 h-6" />
@@ -63,7 +63,7 @@ export function ParentSidebar({
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-white/20 transition"
+          className="p-2 rounded-lg hover:bg-sidebar-accent/30 transition"
         >
           {collapsed ? (
             <PanelLeftOpen className="w-5 h-5" />
@@ -85,8 +85,8 @@ export function ParentSidebar({
                 className={cn(
                   "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-white text-indigo-700 shadow-lg"
-                    : "hover:bg-white/20"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-lg"
+                    : "hover:bg-sidebar-accent/30"
                 )}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
@@ -104,11 +104,11 @@ export function ParentSidebar({
 
       {/* User Section */}
       {!collapsed && (
-        <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md">
+        <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/20 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <Avatar className="w-10 h-10 border-2 border-white/40">
+            <Avatar className="w-10 h-10 border-2 border-sidebar-accent/40">
               <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=parent" />
-              <AvatarFallback className="bg-white text-indigo-600 font-semibold">
+              <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground font-semibold">
                 PS
               </AvatarFallback>
             </Avatar>

@@ -71,15 +71,15 @@ const CanteenDashboard = () => {
       >
         {/* Left Section */}
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-700 flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
             ✨ Dashboard Overview
           </p>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-3 text-gray-900">
+          <h1 className="text-4xl md:text-5xl font-extrabold mt-3 text-foreground dark:text-foreground">
             Welcome back, {loading ? "..." : data.name} 👋
           </h1>
 
-          <p className="text-sm text-gray-700 mt-2">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-2">
             Here’s what’s happening at your school today
           </p>
 
@@ -91,22 +91,23 @@ const CanteenDashboard = () => {
         {/* Earnings Card */}
         <div
           className="
-          bg-white/40
+          bg-secondary/50
+          dark:bg-secondary/50
           backdrop-blur-md
           px-10
           py-6
           rounded-2xl
-          border border-white/50
+          border border-border/50 dark:border-border/50
           shadow-xl
           text-center
           min-w-[260px]
         "
         >
-          <p className="text-5xl font-extrabold text-gray-900 tracking-wide">
+          <p className="text-5xl font-extrabold text-foreground dark:text-foreground tracking-wide">
             {loading ? "..." : formattedEarnings}
           </p>
 
-          <p className="text-sm mt-2 text-gray-700 font-medium">
+          <p className="text-sm mt-2 text-muted-foreground dark:text-muted-foreground font-medium">
             Today’s Earnings
           </p>
         </div>

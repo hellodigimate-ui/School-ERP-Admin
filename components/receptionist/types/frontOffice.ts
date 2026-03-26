@@ -16,7 +16,7 @@ export interface VisitorEntry {
   name: string;
   phone: string;
   purpose: string;
-  personToMeet: string;
+  visitingTo: string;
   idProof: string;
   noOfPersons: number;
   inTime: string;
@@ -27,15 +27,11 @@ export interface VisitorEntry {
 
 export interface PhoneCall {
   id: string;
-  name: string;
-  phone: string;
+  callerName: string;
+  phoneNumber: string;
   callType: "Incoming" | "Outgoing";
   purpose: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  followUpDate: string;
-  note: string;
+  createdAt: string;
 }
 
 export interface PostalRecord {

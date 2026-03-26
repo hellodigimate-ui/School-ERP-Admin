@@ -16,7 +16,7 @@ export function StudentStatCard({
   iconColor,
 }: Props) {
   return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
+    <div className="rounded-xl border bg-card dark:bg-card p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>

@@ -14,7 +14,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className=" bg-background">
+    <div className="flex flex-col bg-background min-h-screen">
 
       {/* Sidebar */}
       <AdminSidebar
@@ -24,8 +24,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Right Side */}
       <div
-        className={`flex flex-col flex-1 h-[100%] transition-all duration-300
-        ${collapsed ? "ml-[80px]" : "ml-[270px]"}`}
+        className={`flex flex-col flex-1 min-h-screen transition-all duration-300
+        ${collapsed ? "pl-[80px]" : "pl-[270px]"}`}
       >
         {/* Header */}
         <TopHeader />

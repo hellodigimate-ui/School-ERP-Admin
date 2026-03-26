@@ -64,7 +64,7 @@ export default function CanteenSidebar({ children }: { children: React.ReactNode
 
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-2 rounded-lg hover:bg-white/20 transition"
+            className="p-2 rounded-lg hover:bg-secondary/50 dark:hover:bg-secondary/50 transition"
           >
             {collapsed ? (
               <PanelLeftOpen className="w-5 h-5" />
@@ -87,8 +87,8 @@ export default function CanteenSidebar({ children }: { children: React.ReactNode
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200
                 ${
                   active
-                    ? "bg-white text-indigo-700 shadow-lg"
-                    : "hover:bg-white/20"
+                    ? "bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground shadow-lg"
+                    : "hover:bg-secondary/50 dark:hover:bg-secondary/50"
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -103,9 +103,9 @@ export default function CanteenSidebar({ children }: { children: React.ReactNode
 
         {/* User Section */}
         {!collapsed && (
-          <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md">
+          <div className="p-4 border-t border-border dark:border-border bg-secondary/30 dark:bg-secondary/30 backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-full bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground flex items-center justify-center font-bold">
                 CM
               </div>
 
@@ -127,14 +127,14 @@ export default function CanteenSidebar({ children }: { children: React.ReactNode
       <main className="flex-1 flex flex-col overflow-hidden">
 
         {/* Topbar */}
-        <header className="flex items-center justify-between border-b bg-white px-6 py-3">
+        <header className="flex items-center justify-between border-b border-border dark:border-border bg-card dark:bg-card px-6 py-3">
           <h2 className="text-lg font-semibold">
             {navItems.find((n) => pathname.startsWith(n.path))?.label ||
               "Dashboard"}
           </h2>
 
           <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-gray-600 cursor-pointer" />
+            <Bell className="w-5 h-5 text-muted-foreground dark:text-muted-foreground cursor-pointer" />
           </div>
         </header>
 

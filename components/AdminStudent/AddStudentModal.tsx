@@ -143,7 +143,7 @@ export function AddStudentModal({ open, onClose }: AddStudentModalProps) {
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-white w-full max-w-xl rounded-2xl shadow-lg p-6 z-10 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-card dark:bg-card w-full max-w-xl rounded-2xl shadow-lg p-6 z-10 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -288,7 +288,7 @@ function Select({
     <div className="flex flex-col">
       <label className="text-sm font-medium mb-2">{label}</label>
       <select
-        className="px-3 py-2 rounded-lg border w-full bg-white"
+        className="px-3 py-2 rounded-lg border w-full bg-input dark:bg-input text-foreground dark:text-foreground"
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
       >

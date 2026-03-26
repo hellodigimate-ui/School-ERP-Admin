@@ -33,23 +33,23 @@ export default function ProfileMenu({ name }: ProfileMenuProps) {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center cursor-pointer gap-2 rounded-full px-3 py-2 bg-gray-900
-        hover:bg-blue-300  transition"
+        className="flex items-center cursor-pointer gap-2 rounded-full px-3 py-2 bg-secondary dark:bg-secondary
+        hover:bg-secondary/80 dark:hover:bg-secondary/80  transition"
       >
-        <div className="w-9 h-9 rounded-full bg-blue-600 text-white 
+        <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground 
         flex items-center justify-center font-semibold">
           {name.charAt(0)}
         </div>
 
-        <span className="hidden sm:block font-medium text-gray-100 hover:text-gray-800">
+        <span className="hidden sm:block font-medium text-foreground dark:text-foreground">
           {name}
         </span>
       </button>
 
       {open && (
         <div
-          className="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-900
-          border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden z-50"
+          className="absolute right-0 mt-2 w-44 bg-card dark:bg-card
+          border border-border dark:border-border rounded-xl shadow-lg overflow-hidden z-50"
         >
           <button
             onClick={handleLogout}

@@ -13,7 +13,7 @@ export function StudentQuickActions() {
       {actions.map((a) => (
         <button
           key={a.label}
-          className="rounded-xl border bg-white p-4 hover:bg-muted transition text-left"
+          className="rounded-xl border bg-card dark:bg-card p-4 hover:bg-secondary dark:hover:bg-secondary transition text-left"
         >
           <a.icon className="w-5 h-5 mb-2 text-primary" />
           <p className="text-sm font-medium">{a.label}</p>

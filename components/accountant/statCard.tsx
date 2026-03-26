@@ -16,10 +16,10 @@ const StatCard = ({ icon: Icon, value, label, trend, colorClass, delay = 0 }: St
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-start justify-between mb-4 relative z-10">
-        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+        <div className="w-10 h-10 rounded-xl bg-secondary/60 dark:bg-secondary/60 flex items-center justify-center backdrop-blur-sm">
           <Icon className="w-5 h-5" />
         </div>
-        <span className="flex items-center gap-1 text-xs font-medium bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+        <span className="flex items-center gap-1 text-xs font-medium bg-secondary/60 dark:bg-secondary/60 px-2 py-1 rounded-full backdrop-blur-sm">
           <TrendingUp className="w-3 h-3" />
           {trend}
         </span>

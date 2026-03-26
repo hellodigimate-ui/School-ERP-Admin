@@ -76,7 +76,7 @@ export function SuperAdminSidebar() {
       {/* Header */}
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center shadow">
+          <div className="w-10 h-10 rounded-xl bg-secondary/60 dark:bg-secondary/60 flex items-center justify-center shadow">
             <GraduationCap className="w-5 h-5 text-sky-700" />
           </div>
 
@@ -107,8 +107,8 @@ export function SuperAdminSidebar() {
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all
                     ${
                       pathname === item.url
-                        ? "bg-white text-sky-700 font-semibold shadow-md"
-                        : "text-slate-700 hover:bg-white/60"
+                        ? "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground font-semibold shadow-md"
+                        : "text-muted-foreground dark:text-muted-foreground hover:bg-secondary/50 dark:hover:bg-secondary/50"
                     }`}
                   >
                     <item.icon className="w-[18px] h-[18px]" />
@@ -123,8 +123,8 @@ export function SuperAdminSidebar() {
 
       {/* Footer */}
       <SidebarFooter className="p-4">
-        <div className="flex items-center gap-3 bg-white/50 p-2 rounded-xl shadow-sm">
-          <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center font-semibold text-sky-700">
+        <div className="flex items-center gap-3 bg-secondary/30 dark:bg-secondary/30 p-2 rounded-xl shadow-sm">
+          <div className="w-9 h-9 rounded-full bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground flex items-center justify-center font-semibold">
             RS
           </div>
 
@@ -167,7 +167,7 @@ function CollapsibleMenuItem({
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <SidebarMenuItem>
-        <CollapsibleTrigger className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/40 w-full">
+        <CollapsibleTrigger className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-secondary/50 dark:hover:bg-secondary/50 w-full">
           <item.icon className="w-[18px] h-[18px]" />
           <span className="flex-1 text-left">{item.title}</span>
           <ChevronRight className={`w-4 h-4 ${open ? "rotate-90" : ""}`} />
@@ -182,8 +182,8 @@ function CollapsibleMenuItem({
                 className={`block px-3 py-1.5 rounded-lg text-sm
                 ${
                   currentPath === child.url
-                    ? "bg-white text-indigo-600 font-medium"
-                    : "hover:bg-white/40"
+                    ? "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground font-medium"
+                    : "hover:bg-secondary/50 dark:hover:bg-secondary/50"
                 }`}
               >
                 {child.title}

@@ -27,6 +27,7 @@ interface DataTableProps<T extends { id: string }> {
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   searchKey?: keyof T;
+  loading?: boolean;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -36,6 +37,7 @@ export function DataTable<T extends { id: string }>({
   onEdit,
   onDelete,
   searchKey,
+  loading = false,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
 
@@ -89,7 +91,16 @@ export function DataTable<T extends { id: string }>({
 
           {/* Body */}
           <TableBody>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + 2}
+                  className="text-center py-8 text-muted-foreground"
+                >
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : filtered.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length + 2}

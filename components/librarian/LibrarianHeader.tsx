@@ -3,9 +3,8 @@
 import {
   Search,
   Bell,
-  Calendar,
-  MessageSquare,
 } from "lucide-react";
+import ThemeToggle from "../ThemeToggle";
 
 
 export function LibrarianHeader() {
@@ -21,13 +20,13 @@ export function LibrarianHeader() {
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
+        {/* <button className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
           <MessageSquare className="h-5 w-5" />
         </button>
 
         <button className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
           <Calendar className="h-5 w-5" />
-        </button>
+        </button> */}
 
         <button className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
           <Bell className="h-5 w-5" />
@@ -37,6 +36,8 @@ export function LibrarianHeader() {
         <div className="ml-2 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold">
           2025-26
         </div>
+
+        <ThemeToggle/>
       </div>
     </header>
   );

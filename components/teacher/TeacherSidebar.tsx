@@ -204,7 +204,7 @@ export function TeacherSidebar() {
     <aside
       className={cn(
         "h-screen flex flex-col transition-all duration-300 sticky top-0",
-        "bg-gradient-to-b from-sky-400 to-blue-200 text-gray-900",
+        "bg-gradient-to-b from-sky-400 to-blue-200 dark:from-sidebar-background dark:to-sidebar-background text-foreground dark:text-foreground",
         collapsed ? "w-20" : "w-64"
       )}
     >
@@ -239,8 +239,8 @@ export function TeacherSidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-xl transition-all",
                 isActive
-                  ? "bg-white text-blue-600 font-medium shadow"
-                  : "hover:bg-white/40",
+                  ? "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground font-medium shadow"
+                  : "hover:bg-secondary/50 dark:hover:bg-secondary/50",
                 collapsed && "justify-center"
               )}
               title={collapsed ? item.label : undefined}
@@ -264,8 +264,8 @@ export function TeacherSidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-xl transition-all",
                 isActive
-                  ? "bg-white text-blue-600 font-medium shadow"
-                  : "hover:bg-white/40",
+                  ? "bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground font-medium shadow"
+                  : "hover:bg-secondary/50 dark:hover:bg-secondary/50",
                 collapsed && "justify-center"
               )}
               title={collapsed ? item.label : undefined}
@@ -286,7 +286,7 @@ export function TeacherSidebar() {
       >
         <Avatar className="w-10 h-10">
           <AvatarImage src="" />
-          <AvatarFallback className="bg-white text-blue-600">
+          <AvatarFallback className="bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground">
             T
           </AvatarFallback>
         </Avatar>
@@ -294,7 +294,7 @@ export function TeacherSidebar() {
         {!collapsed && (
           <div className="flex flex-col">
             <span className="font-medium">Jane Doe</span>
-            <span className="text-xs text-gray-600">Teacher</span>
+            <span className="text-xs text-muted-foreground dark:text-muted-foreground">Teacher</span>
           </div>
         )}
       </div>

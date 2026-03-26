@@ -1,4 +1,4 @@
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
   "use client";
 
@@ -8,7 +8,7 @@
     LayoutDashboard, UserPlus, Users, Award, 
     AlertTriangle,  Clock, FileText, Medal, GraduationCap, Calendar,
      Briefcase, Bell, Download,  Library, Package,
-     Bus, Building, UtensilsCrossed, Trophy, Globe, 
+     Bus, Building, UtensilsCrossed, Trophy, 
     BarChart3, Settings, LogOut, PanelLeftClose, PanelLeftOpen,
     ChevronRight,
     ChevronDown,
@@ -91,7 +91,7 @@
     { label: "Sports", icon: Trophy, path: "/admin/sports" },
     // { label: "Alumni", icon: UserCheck, path: "/admin/alumni" },
     { label: "Reports", icon: BarChart3, path: "/admin/reports" },
-    { label: "Front CMS", icon: Globe, path: "/admin/website-settings" },
+    // { label: "Front CMS", icon: Globe, path: "/admin/website-settings" },
     { label: "System Settings", icon: Settings, path: "/admin/setting" },
 
   ];
@@ -143,14 +143,14 @@
       <aside
         className={`fixed top-0 left-0 h-screen z-50
         ${collapsed ? "w-[80px]" : "w-[270px]"}
-        bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 text-gray-800 flex flex-col shadow-lg transition-all duration-300`}
+        bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 text-gray-800 flex flex-col shadow-lg transition-all duration-300 dark:bg-gray-900`}
       >
         {/* Logo Section */}
-        <div className="flex items-center justify-between p-4 border-b border-white/20">
+        <div className="flex items-center justify-between p-4 border-b border-white/20 dark:bg-gray-900">
           {!collapsed && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 dark:text-gray-400">
               <GraduationCap className="w-6 h-6" />
-              <h2 className="font-bold text-lg">School Admin</h2>
+              <h2 className="font-bold text-lg dark:text-gray-400">School Admin</h2>
             </div>
           )}
 
@@ -167,7 +167,7 @@
         </div>
 
         {/* Menu Section */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2 scrollbar-thin scrollbar-thumb-white/40 scrollbar-track-transparent">
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2 scrollbar-thin scrollbar-thumb-white/40 scrollbar-track-transparent dark:bg-gray-900 dark:text-gray-400">
 
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -242,13 +242,13 @@
 
         {/* User Section */}
         {!collapsed && (
-          <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md">
+          <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md dark:bg-gray-900 dark:text-gray-400">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
                 RS
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold">Rahul Sharma</p>
+                <p className="text-sm font-semibold">Admin panel</p>
                 <p className="text-xs opacity-80">Admin</p>
               </div>
               <LogOut onClick={() => router.push("/")} className="w-4 h-4 cursor-pointer hover:text-red-300" />
@@ -258,4 +258,3 @@
       </aside>
     );
   }
-

@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/immutability */
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -11,29 +13,44 @@ import {
   Legend,
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
-
-const data = [
-  { month: "Jan", income: 4000, expenses: 2400 },
-  { month: "Feb", income: 3000, expenses: 1398 },
-  { month: "Mar", income: 5000, expenses: 2800 },
-  { month: "Apr", income: 4780, expenses: 3908 },
-  { month: "May", income: 5890, expenses: 3200 },
-  { month: "Jun", income: 6390, expenses: 4100 },
-];
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 export default function IncomeExpenseChart() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  const fetchPayments = async () => {
+    try {
+      const res = await axiosInstance.get("/api/v1/payments/daily-amount");
+
+      // Transform API data
+      const formatted = res.data.data.map((item) => ({
+        day: new Date(item.date).getDate(), // 1,2,3...
+        income: item.totalAmount,
+        expenses: 0, // optional (or remove line)
+      }));
+
+      setData(formatted);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
+  };
+
   return (
     <Card className="border-0 shadow-md animate-fade-in">
       <CardContent className="p-6">
         <h3 className="text-lg font-bold mb-4">
-          Income & Expenses Report
+          Daily Income Report (Current Month)
         </h3>
 
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
+              <XAxis dataKey="day" />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -42,14 +59,6 @@ export default function IncomeExpenseChart() {
                 type="monotone"
                 dataKey="income"
                 stroke="#22c55e"
-                strokeWidth={3}
-                dot={{ r: 4 }}
-              />
-
-              <Line
-                type="monotone"
-                dataKey="expenses"
-                stroke="#ef4444"
                 strokeWidth={3}
                 dot={{ r: 4 }}
               />
