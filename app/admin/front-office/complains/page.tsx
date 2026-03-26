@@ -382,7 +382,7 @@ const Page = () => {
             <Card
               key={s.label}
               className="relative overflow-hidden border-0 rounded-3xl
-                        bg-white/50 backdrop-blur-xl
+                        bg-card/50 backdrop-blur-xl
                         shadow-md hover:shadow-2xl
                         hover:-translate-y-2 hover:scale-[1.02]
                         transition-all duration-300"
@@ -417,7 +417,7 @@ const Page = () => {
 
         </div>
 
-        <Card className="relative border-0 rounded-3xl bg-white/50 backdrop-blur-xl
+        <Card className="relative border-0 rounded-3xl bg-card/50 backdrop-blur-xl
                         shadow-md hover:shadow-2xl
                         hover:-translate-y-1 hover:scale-[1.02]
                         transition-all duration-300">
@@ -484,7 +484,7 @@ const Page = () => {
         </Card>
 
         <Card className="relative border-0 shadow-lg rounded-3xl overflow-hidden
-                        bg-white/50 backdrop-blur-xl
+                        bg-card/50 backdrop-blur-xl
                         hover:shadow-2xl transition-all duration-300">
 
           {/* Soft Glow Background */}

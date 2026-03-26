@@ -172,13 +172,13 @@ const Page = () => {
 
                 {/* TABLE CARD */}
 
-                <div className="bg-white/80 backdrop-blur-md rounded-xl border shadow-lg overflow-hidden">
+                <div className="bg-card/80 backdrop-blur-md rounded-xl border border-border shadow-lg overflow-hidden">
 
                     <div className="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
                         {/* SEARCH */}
 
-                        <div className="p-4 border-b">
+                        <div className="p-4 border-b border-border">
 
                         <div className="relative w-72">
 
@@ -203,15 +203,15 @@ const Page = () => {
 
                                 <thead>
 
-                                    <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b">
+                                    <tr className="bg-secondary/50 dark:bg-secondary/30 border-b border-border">
 
-                                    <th className="text-left p-3 font-medium text-muted-foreground">#</th>
-                                    <th className="text-left p-3 font-medium text-muted-foreground">Exam Name</th>
-                                    <th className="text-left p-3 font-medium text-muted-foreground">Type</th>
-                                    <th className="text-left p-3 font-medium text-muted-foreground">Session</th>
-                                    <th className="text-left p-3 font-medium text-muted-foreground">Description</th>
-                                    <th className="text-left p-3 font-medium text-muted-foreground">Result</th>
-                                    <th className="text-left p-3 font-medium text-muted-foreground">Action</th>
+                                    <th className="text-left p-3 font-medium text-foreground">#</th>
+                                    <th className="text-left p-3 font-medium text-foreground">Exam Name</th>
+                                    <th className="text-left p-3 font-medium text-foreground">Type</th>
+                                    <th className="text-left p-3 font-medium text-foreground">Session</th>
+                                    <th className="text-left p-3 font-medium text-foreground">Description</th>
+                                    <th className="text-left p-3 font-medium text-foreground">Result</th>
+                                    <th className="text-left p-3 font-medium text-foreground">Action</th>
 
                                     </tr>
 
@@ -223,7 +223,7 @@ const Page = () => {
 
                             <tr
                             key={exam.id}
-                            className="border-b hover:bg-indigo-50/40 transition"
+                            className="border-b border-border hover:bg-secondary/30 transition"
                             >
 
                             <td className="p-3">{i + 1}</td>
@@ -237,10 +237,10 @@ const Page = () => {
                             <Badge
                             className={
                             exam.type === "Board"
-                            ? "bg-purple-100 text-purple-700 border-purple-200"
+                            ? "bg-secondary/70 text-foreground border-border"
                             : exam.type === "Practical"
-                            ? "bg-amber-100 text-amber-700 border-amber-200"
-                            : "bg-blue-100 text-blue-700 border-blue-200"
+                            ? "bg-secondary/70 text-foreground border-border"
+                            : "bg-secondary/70 text-foreground border-border"
                             }
                             >
                             {exam.type}
@@ -259,8 +259,8 @@ const Page = () => {
                             <Badge
                             className={
                             exam.publishResult
-                            ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                            : "bg-orange-100 text-orange-700 border-orange-200"
+                            ? "bg-secondary/70 text-foreground border-border"
+                            : "bg-secondary/70 text-foreground border-border"
                             }
                             >
                             {exam.publishResult ? "Published" : "Pending"}
@@ -275,7 +275,7 @@ const Page = () => {
                             <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-blue-100 text-blue-600"
+                            className="h-8 w-8 hover:bg-secondary/40 text-foreground"
                             >
                             <Edit className="h-4 w-4" />
                             </Button>
@@ -283,7 +283,7 @@ const Page = () => {
                             <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 hover:bg-red-100 text-red-600"
+                            className="h-8 w-8 hover:bg-secondary/40 text-foreground"
                             onClick={() => handleDelete(exam.id)}
                             >
                             <Trash2 className="h-4 w-4" />

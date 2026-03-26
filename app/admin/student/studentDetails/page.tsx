@@ -330,12 +330,12 @@ useEffect(() => {
     <AdminLayout>
       <div className="space-y-6 animate-fade-in">
         {/* ================= HEADER ================= */}
-        <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-5 rounded-2xl shadow-sm border border-slate-200">
+        <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-5 rounded-2xl shadow-sm border border-border">
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Student Information
             </h1>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Manage student records and admissions
             </p>
           </div>
@@ -385,9 +385,9 @@ useEffect(() => {
         />
 
         {/* ================= FILTERS ================= */}
-        <div className="rounded-2xl border border-slate-200 shadow-sm bg-white p-4">
+        <div className="rounded-2xl border border-border shadow-sm bg-card p-4">
           <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-slate-50 px-3 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-secondary/50 px-3 rounded-xl border border-border">
               <Search className="w-4 h-4 text-indigo-500" />
               <Input
                 placeholder="Search by name or admission number..."
@@ -470,10 +470,10 @@ useEffect(() => {
         </div>
 
         {/* ================= TABLE ================= */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
+        <div className="overflow-hidden rounded-2xl border border-border shadow-sm bg-card">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50">
+              <TableRow className="bg-secondary/50">
                 <TableHead>Admission No</TableHead>
                 <TableHead>Student Name</TableHead>
                 <TableHead>Class</TableHead>
@@ -521,7 +521,7 @@ useEffect(() => {
                   return (
                     <TableRow
                       key={student.id || student._id}
-                      className="hover:bg-indigo-50/60 transition"
+                      className="hover:bg-secondary/30 transition"
                     >
                       <TableCell className="font-mono text-indigo-600">
                         {student.admissionNumber}

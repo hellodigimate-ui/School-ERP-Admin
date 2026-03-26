@@ -87,32 +87,32 @@ export const sampleExams: OnlineExamData[] = [
 export const statusColors: Record<string, string> = {
 
   Draft:
-    "bg-gray-100 text-gray-700 border-gray-200",
+    "bg-secondary/50 text-foreground border-border",
 
   Active:
-    "bg-emerald-100 text-emerald-700 border-emerald-200",
+    "bg-secondary/50 text-foreground border-border",
 
   Completed:
-    "bg-indigo-100 text-indigo-700 border-indigo-200",
+    "bg-secondary/50 text-foreground border-border",
 
   Scheduled:
-    "bg-amber-100 text-amber-700 border-amber-200",
+    "bg-secondary/50 text-foreground border-border",
 
 };
 
 export const subjectColors: Record<string, string> = {
 
   Mathematics:
-    "bg-blue-100 text-blue-700",
+    "bg-secondary/50 text-foreground",
 
   Science:
-    "bg-green-100 text-green-700",
+    "bg-secondary/50 text-foreground",
 
   English:
-    "bg-purple-100 text-purple-700",
+    "bg-secondary/50 text-foreground",
 
   History:
-    "bg-orange-100 text-orange-700",
+    "bg-secondary/50 text-foreground",
 
 };
 
@@ -365,25 +365,25 @@ const Page = () => {
 
                         <div className="grid grid-cols-3 gap-3 mb-4 text-center">
 
-                        <div className="bg-blue-50 rounded-xl p-3">
-                            <p className="text-lg font-bold text-blue-600">
+                        <div className="bg-secondary/50 rounded-xl p-3">
+                            <p className="text-lg font-bold text-foreground">
                             {exam.questions}
                             </p>
-                            <p className="text-[10px] text-blue-500">Questions</p>
+                            <p className="text-[10px] text-muted-foreground">Questions</p>
                         </div>
 
-                        <div className="bg-orange-50 rounded-xl p-3">
-                            <p className="text-lg font-bold text-orange-600">
+                        <div className="bg-secondary/50 rounded-xl p-3">
+                            <p className="text-lg font-bold text-foreground">
                             {exam.duration}m
                             </p>
-                            <p className="text-[10px] text-orange-500">Duration</p>
+                            <p className="text-[10px] text-muted-foreground">Duration</p>
                         </div>
 
-                        <div className="bg-purple-50 rounded-xl p-3">
-                            <p className="text-lg font-bold text-purple-600">
+                        <div className="bg-secondary/50 rounded-xl p-3">
+                            <p className="text-lg font-bold text-foreground">
                             {exam.totalMarks}
                             </p>
-                            <p className="text-[10px] text-purple-500">Marks</p>
+                            <p className="text-[10px] text-muted-foreground">Marks</p>
                         </div>
 
                         </div>

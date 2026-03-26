@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -289,36 +290,36 @@ useEffect(() => {
             value: data.totalAttendance,
             icon: Scan,
             gradient: "from-indigo-500 to-purple-500",
-            bg: "bg-indigo-50",
+            bg: "bg-secondary/50",
             change: "",
-            changeColor: "text-indigo-600",
+            changeColor: "text-foreground",
           },
           {
             label: "Present",
             value: data.presentCount,
             icon: CheckCircle,
             gradient: "from-emerald-500 to-green-500",
-            bg: "bg-emerald-50",
+            bg: "bg-secondary/50",
             change: `${((data.presentCount / data.totalAttendance) * 100).toFixed(1)}%`,
-            changeColor: "text-emerald-600",
+            changeColor: "text-foreground",
           },
           {
             label: "Absent",
             value: data.absentCount,
             icon: XCircle,
             gradient: "from-pink-500 to-rose-500",
-            bg: "bg-pink-50",
+            bg: "bg-secondary/50",
             change: `${((data.absentCount / data.totalAttendance) * 100).toFixed(1)}%`,
-            changeColor: "text-rose-600",
+            changeColor: "text-foreground",
           },
           {
             label: "Late",
             value: data.lateCount,
             icon: Clock,
             gradient: "from-blue-500 to-cyan-500",
-            bg: "bg-blue-50",
+            bg: "bg-secondary/50",
             change: `${((data.lateCount / data.totalAttendance) * 100).toFixed(1)}%`,
-            changeColor: "text-blue-600",
+            changeColor: "text-foreground",
           },
         ]);
       }
@@ -360,7 +361,7 @@ useEffect(() => {
                 key={i}
                 className={`group relative overflow-hidden border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${s.bg}`}
               >
-                <div className="absolute -top-10 -right-10 w-28 h-28 bg-white/30 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition" />
+                <div className="absolute -top-10 -right-10 w-28 h-28 bg-foreground/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition" />
                 <CardContent className="p-0">
                   <div className="flex items-center gap-4 p-5">
                     <div
@@ -374,7 +375,7 @@ useEffect(() => {
                     </div>
                   </div>
                   {s.change && (
-                    <div className="px-5 py-2 bg-white/40 backdrop-blur-sm border-t">
+                    <div className="px-5 py-2 bg-background/40 backdrop-blur-sm border-t">
                       <p className={`text-xs font-medium flex items-center gap-1 ${s.changeColor}`}>
                         <TrendingUp className="w-3 h-3" />
                         {s.change}
@@ -390,7 +391,7 @@ useEffect(() => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* QR Generator */}
-          <Card className="border-0 shadow-xl overflow-hidden bg-white/70 backdrop-blur-xl hover:shadow-2xl transition-all duration-300">
+          <Card className="border-0 shadow-xl overflow-hidden bg-card backdrop-blur-xl hover:shadow-2xl transition-all duration-300">
 
             {/* Gradient Top Bar */}
             <div className="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
@@ -410,7 +411,7 @@ useEffect(() => {
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Select Branch</Label>
                 <Select onValueChange={setBranch}>
-                  <SelectTrigger className="border-indigo-200 focus:ring-indigo-400">
+                  <SelectTrigger className="border-border focus:ring-primary/40">
                     <SelectValue placeholder="Choose Branch" />
                   </SelectTrigger>
 
@@ -436,7 +437,7 @@ useEffect(() => {
                 }}
               >
 
-                <SelectTrigger className="border-indigo-200 focus:ring-indigo-400">
+                <SelectTrigger className="border-border focus:ring-primary/40">
                   <SelectValue placeholder="Choose Template" />
                 </SelectTrigger>
 
@@ -507,7 +508,7 @@ useEffect(() => {
 
                 <div
                   ref={qrRef}
-                  className="w-48 h-48 border rounded-xl flex items-center justify-center bg-white shadow-lg"
+                  className="w-48 h-48 border border-border rounded-xl flex items-center justify-center bg-card shadow-lg"
                 >
 
                 {qrImage ? (
@@ -525,7 +526,7 @@ useEffect(() => {
                   <div className="mt-6 flex justify-center">
 
                     <div
-                      className="border shadow-lg rounded-xl bg-white p-4"
+                      className="border border-border shadow-lg rounded-xl bg-card p-4"
                       dangerouslySetInnerHTML={{ __html: generatedCard }}
                     />
 
@@ -556,9 +557,9 @@ useEffect(() => {
               </div>
 
               {/* How it works */}
-              <div className="rounded-xl p-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border border-indigo-100 space-y-1">
+              <div className="rounded-xl p-4 bg-secondary/50 border border-border space-y-1">
 
-                <p className="text-xs font-semibold text-indigo-700">
+                <p className="text-xs font-semibold text-foreground">
                   How it works
                 </p>
 
@@ -586,7 +587,7 @@ useEffect(() => {
           {/* Recent Scans */}
           <div className="lg:col-span-2">
 
-            <Card className="border-0 shadow-xl overflow-hidden bg-white/70 backdrop-blur-xl hover:shadow-2xl transition-all">
+            <Card className="border-0 shadow-xl overflow-hidden bg-card backdrop-blur-xl hover:shadow-2xl transition-all">
 
               {/* Gradient Top Bar */}
               <div className="h-1 bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500" />
@@ -603,7 +604,7 @@ useEffect(() => {
 
                 </CardTitle>
 
-                <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200 px-3 py-1">
+                <Badge className="bg-emerald-500/20 text-emerald-600 border border-emerald-500/30 px-3 py-1">
 
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-2 inline-block" />
 
@@ -619,7 +620,7 @@ useEffect(() => {
 
                   <TableHeader>
 
-                    <TableRow className="bg-gradient-to-r from-emerald-50 to-green-50">
+                    <TableRow className="bg-secondary/50 dark:bg-secondary/30">
 
                       <TableHead>Name</TableHead>
                       <TableHead>Role</TableHead>
@@ -642,11 +643,11 @@ useEffect(() => {
                       </TableRow>
                     ) : recentScans.length > 0 ? (
                       recentScans.map((scan) => (
-                        <TableRow key={scan.id} className="hover:bg-emerald-50/40 transition-colors">
+                        <TableRow key={scan.id} className="hover:bg-secondary/30 transition-colors">
 
                           <TableCell className="font-medium text-foreground">{scan.user.name}</TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="bg-indigo-50 text-indigo-600 border-indigo-200">
+                            <Badge variant="outline" className="bg-secondary/50 text-foreground border-border">
                               {scan.user.role}
                             </Badge>
                           </TableCell>

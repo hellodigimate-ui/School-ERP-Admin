@@ -27,9 +27,9 @@ const tabMap: Record<string, string> = {
 };
 
 const statusColor: Record<string, string> = {
-  Paid: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  Partial: "bg-amber-100 text-amber-700 border-amber-200",
-  Unpaid: "bg-red-100 text-red-700 border-red-200",
+  Paid: "bg-secondary/70 text-foreground border-border",
+  Partial: "bg-secondary/70 text-foreground border-border",
+  Unpaid: "bg-secondary/70 text-foreground border-border",
 };
 
 export default function FeesCollectionPage() {
@@ -261,39 +261,39 @@ useEffect(() => {
                             <div className="p-6 space-y-6">
 
                             {/* Student Info */}
-                            <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
-                                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                            <div className="bg-secondary/50 p-4 rounded-xl shadow-sm border border-border">
+                                <h3 className="text-sm font-semibold text-foreground mb-3">
                                 Student Information
                                 </h3>
 
                                 <div className="grid grid-cols-2 gap-3 text-sm">
-                                <p><span className="font-medium">Student:</span> {student?.name || "-"}</p>
-                                <p><span className="font-medium">Parent:</span> {parentName}</p>
-                                <p><span className="font-medium">Class:</span> {className}</p>
-                                <p><span className="font-medium">Transaction ID:</span> {record.transactionId || "-"}</p>
+                                <p className="text-foreground"><span className="font-medium">Student:</span> {student?.name || "-"}</p>
+                                <p className="text-foreground"><span className="font-medium">Parent:</span> {parentName}</p>
+                                <p className="text-foreground"><span className="font-medium">Class:</span> {className}</p>
+                                <p className="text-foreground"><span className="font-medium">Transaction ID:</span> {record.transactionId || "-"}</p>
                                 </div>
                             </div>
 
                             {/* Fee Summary Cards */}
                             <div className="grid grid-cols-3 gap-3">
 
-                                <div className="bg-purple-50 border p-4 rounded-xl text-center">
-                                <p className="text-xs text-gray-500">Total Fee</p>
-                                <p className="text-lg font-semibold text-purple-600">
+                                <div className="bg-secondary/50 border border-border p-4 rounded-xl text-center">
+                                <p className="text-xs text-muted-foreground">Total Fee</p>
+                                <p className="text-lg font-semibold text-foreground">
                                     ₹{totalFee.toLocaleString()}
                                 </p>
                                 </div>
 
-                                <div className="bg-green-50 border p-4 rounded-xl text-center">
-                                <p className="text-xs text-gray-500">Paid</p>
-                                <p className="text-lg font-semibold text-emerald-600">
+                                <div className="bg-secondary/50 border border-border p-4 rounded-xl text-center">
+                                <p className="text-xs text-muted-foreground">Paid</p>
+                                <p className="text-lg font-semibold text-foreground">
                                     ₹{paid.toLocaleString()}
                                 </p>
                                 </div>
 
-                                <div className="bg-red-50 border p-4 rounded-xl text-center">
-                                <p className="text-xs text-gray-500">Due</p>
-                                <p className="text-lg font-semibold text-red-600">
+                                <div className="bg-secondary/50 border border-border p-4 rounded-xl text-center">
+                                <p className="text-xs text-muted-foreground">Due</p>
+                                <p className="text-lg font-semibold text-foreground">
                                     ₹{due.toLocaleString()}
                                 </p>
                                 </div>
@@ -303,13 +303,13 @@ useEffect(() => {
                             {/* Progress */}
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm">
-                                <span className="font-medium text-gray-700">Payment Progress</span>
-                                <span className="text-gray-500">{percentage.toFixed(0)}%</span>
+                                <span className="font-medium text-foreground">Payment Progress</span>
+                                <span className="text-muted-foreground">{percentage.toFixed(0)}%</span>
                                 </div>
 
-                                <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div className="w-full bg-secondary/50 rounded-full h-3">
                                 <div
-                                    className="bg-indigo-500 h-3 rounded-full transition-all"
+                                    className="bg-primary h-3 rounded-full transition-all"
                                     style={{ width: `${percentage}%` }}
                                 />
                                 </div>
@@ -318,15 +318,15 @@ useEffect(() => {
                             {/* Status */}
                             <div className="flex items-center justify-between">
 
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-muted-foreground">
                                 Payment Status
                                 </p>
 
                                 <Badge
                                 className={`border ${
                                     status === "Completed"
-                                    ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                                    : "bg-amber-100 text-amber-700 border-amber-200"
+                                    ? "bg-secondary/70 text-foreground border-border"
+                                    : "bg-secondary/70 text-foreground border-border"
                                 }`}
                                 >
                                 {status}

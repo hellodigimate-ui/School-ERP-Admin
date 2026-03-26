@@ -144,13 +144,13 @@ const Page = () => {
 
           {/* ATTENDANCE */}
           <TabsContent value="attendance">
-            <Card className="rounded-2xl shadow-md border-0 bg-gradient-to-br from-white to-indigo-50">
+            <Card className="rounded-2xl shadow-md border-0 bg-gradient-to-br   dark:bg-gray-900">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">
+                <CardTitle className="text-lg font-semibold dark:text-gray-400">
                   Monthly Attendance Rate (%)
                 </CardTitle>
               </CardHeader>
-              <CardContent className="h-80">
+              <CardContent className="h-80">  
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={attendanceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -223,7 +223,7 @@ const Page = () => {
 
           {/* FEES */}
           <TabsContent value="fees">
-            <Card className="rounded-2xl shadow-md border-0 bg-gradient-to-br from-white to-blue-50">
+            <Card className="rounded-2xl shadow-md border-0 bg-gradient-to-br dark:bg-gray-900">
               <CardHeader>
                 <CardTitle>Monthly Fee Collection</CardTitle>
               </CardHeader>

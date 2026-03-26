@@ -47,10 +47,12 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  Calendar
+  Calendar,
+  Download
 } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
+import jsPDF from "jspdf";
 import { toast } from "sonner";
 
 
@@ -81,13 +83,82 @@ export default function Page() {
   const [branchList, setBranchList] = useState<any[]>([]);
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [attendanceRoleFilter, setAttendanceRoleFilter] = useState("all");
   const [selectedStaff, setSelectedStaff] = useState<any>(null)
   const [viewOpen, setViewOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editData, setEditData] = useState<any>(null)
   const [staffData, setStaffData] = useState<any[]>([])
   const [addOpen, setAddOpen] = useState(false)
+  const [attendanceData, setAttendanceData] = useState<any[]>([]);
+  const [loadingAttendance, setLoadingAttendance] = useState(false);
+  const [selectedAttendanceRecord, setSelectedAttendanceRecord] = useState<any>(null);
+  const [attendanceDetailOpen, setAttendanceDetailOpen] = useState(false);
+  const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]);
 
+  const downloadAttendancePDF = () => {
+    if (!selectedAttendanceRecord) return;
+    
+    const empName = selectedAttendanceRecord.user?.name || "Unknown";
+    const empEmail = selectedAttendanceRecord.user?.email || "N/A";
+    const empCode = selectedAttendanceRecord.empCode || "N/A";
+    const empRole = selectedAttendanceRecord.user?.role || "Unknown";
+    
+    const empRecords = attendanceData.filter(
+      a => a.user?.email === empEmail
+    );
+    
+    const presentCount = empRecords.filter(a => a.status === "P").length;
+    const absentCount = empRecords.filter(a => a.status === "A").length;
+    const leaveCount = empRecords.filter(a => a.status === "L").length;
+    const lateCount = empRecords.filter(a => a.status === "LT").length;
+    const totalDays = empRecords.length;
+    const percentage = totalDays > 0 ? ((presentCount / totalDays) * 100).toFixed(1) : 0;
+    
+    const doc = new jsPDF();
+    let yPos = 10;
+    
+    // Header
+    doc.setFontSize(16);
+    doc.text("Staff Attendance Report", 10, yPos);
+    yPos += 10;
+    
+    // Employee Info
+    doc.setFontSize(11);
+    doc.text(`Employee Name: ${empName}`, 10, yPos);
+    yPos += 7;
+    doc.text(`Employee Code: ${empCode}`, 10, yPos);
+    yPos += 7;
+    doc.text(`Role: ${empRole}`, 10, yPos);
+    yPos += 7;
+    doc.text(`Email: ${empEmail}`, 10, yPos);
+    yPos += 10;
+    
+    // Statistics
+    doc.setFontSize(12);
+    doc.text("Attendance Summary:", 10, yPos);
+    yPos += 7;
+    
+    doc.setFontSize(10);
+    doc.text(`Total Present: ${presentCount}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Total Absent: ${absentCount}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Total Leave: ${leaveCount}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Total Late: ${lateCount}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Total Records: ${totalDays}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Attendance Percentage: ${percentage}%`, 10, yPos);
+    
+    // Add date
+    doc.setFontSize(9);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 10, 280);
+    
+    doc.save(`${empName}_Attendance_Report.pdf`);
+  };
 
   const [loadingStaff, setLoadingStaff] = useState(false)
 
@@ -249,6 +320,7 @@ const handleDeleteStaff = async (id: string) => {
 
 useEffect(()=>{
   fetchBranches();
+  fetchAttendance();
 }, [])
 
 useEffect(() => {
@@ -257,8 +329,53 @@ useEffect(() => {
 
 }, [selectedBranch, roleFilter, searchTerm])
 
-
-
+const fetchAttendance = async () => {
+  try {
+    setLoadingAttendance(true);
+    let url = "/api/v1/attendance/external";
+    const params = new URLSearchParams();
+    
+    // Convert date format from YYYY-MM-DD to DD/MM/YYYY
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return "";
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    };
+    
+    // Always append dates (even if empty, backend will handle)
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(toDate);
+    
+    if (formattedFromDate) params.append("fromDate", formattedFromDate);
+    if (formattedToDate) params.append("toDate", formattedToDate);
+    
+    // Build URL with params
+    if (Array.from(params).length > 0) {
+      url += "?" + params.toString();
+    }
+    
+    console.log("Request URL:", url);
+    console.log("From Date:", formattedFromDate);
+    console.log("To Date:", formattedToDate);
+    
+    const res = await axiosInstance.get(url);
+    if (res.data?.success && Array.isArray(res.data.data)) {
+      setAttendanceData(res.data.data);
+      console.log("Data fetched successfully:", res.data.data);
+    } else if (Array.isArray(res.data?.data)) {
+      setAttendanceData(res.data.data);
+      console.log("Data fetched successfully:", res.data.data);
+    } else {
+      setAttendanceData([]);
+      console.log("No data returned or error:", res.data);
+    }
+  } catch (error) {
+    console.error("Failed to fetch attendance:", error);
+    setAttendanceData([]);
+  } finally {
+    setLoadingAttendance(false);
+  }
+};
 
   return (
     <AdminLayout>
@@ -363,7 +480,7 @@ useEffect(() => {
                   <SelectContent>
                     <SelectItem value="all">All Roles</SelectItem>
                     <SelectItem value="ACCOUNTANT">Accountant</SelectItem>
-                    <SelectItem value="LIBRARIAN">Librarian</SelectItem>
+                    <SelectItem value="LIBRAIAN">Librarian</SelectItem>
                     <SelectItem value="SCANNER">Scanner</SelectItem>
                     <SelectItem value="RECEPTIONIST">Receptionist</SelectItem>
                   </SelectContent>
@@ -856,83 +973,240 @@ useEffect(() => {
           <div className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
               <h2 className="text-lg font-semibold text-foreground">Staff Attendance</h2>
-              <div className="flex items-center gap-2">
-                <Input type="date" className="w-44" defaultValue="2026-02-15" />
-                
+              <div className="flex items-center gap-2 flex-wrap">
+                <label>From</label>
+                <Input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  placeholder="From Date"
+                  className="w-40"
+                />
+                  <label>To</label>
+                <Input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  placeholder="To Date"
+                  className="w-40"
+                />
+                <Button onClick={fetchAttendance} disabled={loadingAttendance} size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  {loadingAttendance ? "Applying..." : "Apply Filter"}
+                </Button>
+                <Select value={attendanceRoleFilter} onValueChange={setAttendanceRoleFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Filter by Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Roles</SelectItem>
+                    <SelectItem value="TEACHER">Teacher</SelectItem>
+                    <SelectItem value="ACCOUNTANT">Accountant</SelectItem>
+                    <SelectItem value="LIBRAIAN">Librarian</SelectItem>
+                    <SelectItem value="SCANNER">Scanner</SelectItem>
+                    <SelectItem value="RECEPTIONIST">Receptionist</SelectItem>
+                    <SelectItem value="COACH">Coach</SelectItem>
+                    <SelectItem value="DRIVER">Driver</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button onClick={fetchAttendance} disabled={loadingAttendance} size="sm">
+                  {loadingAttendance ? "Loading..." : "Refresh"}
+                </Button>
               </div>
             </div>
 
-            {/* Summary Cards */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
-              {[
-                { label: "Present", count: staffAttendanceData.filter(a => a.status === "Present").length, icon: CheckCircle, color: "text-emerald-600 bg-emerald-50" },
-                { label: "Absent", count: staffAttendanceData.filter(a => a.status === "Absent").length, icon: XCircle, color: "text-red-600 bg-red-50" },
-                { label: "On Leave", count: staffAttendanceData.filter(a => a.status === "On Leave").length, icon: Calendar, color: "text-amber-600 bg-amber-50" },
-                { label: "Late", count: staffAttendanceData.filter(a => a.status === "Late").length, icon: Clock, color: "text-orange-600 bg-orange-50" },
-              ].map(s => (
-                <div key={s.label} className={`rounded-xl p-4 flex items-center gap-3 ${s.color}`}>
-                  <s.icon size={24} />
-                  <div>
-                    <p className="text-2xl font-bold">{s.count}</p>
-                    <p className="text-sm">{s.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  {/* <TableHead>Department</TableHead> */}
-                  <TableHead>Date</TableHead>
-                  <TableHead>Check In</TableHead>
-                  <TableHead>Check Out</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="flex justify-center">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {staffAttendanceData.map(a => (
-                  <TableRow key={a.id}>
-                    <TableCell className="font-medium text-foreground">{a.name}</TableCell>
-                    {/* <TableCell>{a.department}</TableCell> */}
-                    <TableCell>{a.date}</TableCell>
-                    <TableCell>{a.checkIn}</TableCell>
-                    <TableCell>{a.checkOut}</TableCell>
-                    <TableCell><Badge variant="outline" className={statusColor(a.status)}>{a.status}</Badge></TableCell>
-                    <TableCell>
-                      <div className="flex justify-center gap-1">
-                        
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                        >
-                          <Eye size={14} />
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                        >
-                          <Pencil size={14} />
-                        </Button>
-
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
-                          <Trash2 size={14} />
-                        </Button>
-
+            {/* Filtered Data */}
+            {(() => {
+              const filtered = attendanceData.filter(a => 
+                a.user?.role !== "STUDENT" && (attendanceRoleFilter === "all" ? true : a.user?.role === attendanceRoleFilter)
+              );
+              
+              return (
+                <>
+                  {/* Summary Cards */}
+                  <div className="grid grid-cols-4 gap-4 mb-6">
+                    {[
+                      { label: "Present", count: filtered.filter(a => a.status === "P").length, icon: CheckCircle, color: "text-emerald-600 bg-emerald-50" },
+                      { label: "Absent", count: filtered.filter(a => a.status === "A").length, icon: XCircle, color: "text-red-600 bg-red-50" },
+                      { label: "On Leave", count: filtered.filter(a => a.status === "L").length, icon: Calendar, color: "text-amber-600 bg-amber-50" },
+                      { label: "Late", count: filtered.filter(a => a.status === "LT").length, icon: Clock, color: "text-orange-600 bg-orange-50" },
+                    ].map(s => (
+                      <div key={s.label} className={`rounded-xl p-4 flex items-center gap-3 ${s.color}`}>
+                        <s.icon size={24} />
+                        <div>
+                          <p className="text-2xl font-bold">{s.count}</p>
+                          <p className="text-sm">{s.label}</p>
+                        </div>
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    ))}
+                  </div>
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Emp Code</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>In Time</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="flex justify-center">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filtered.length > 0 ? filtered.map((a, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-mono text-sm">{a.empCode || "-"}</TableCell>
+                          <TableCell className="font-medium text-foreground">{a.user?.name || "-"}</TableCell>
+                          <TableCell>{a.user?.role || "-"}</TableCell>
+                          <TableCell className="text-sm">{a.user?.email || "-"}</TableCell>
+                          <TableCell>{a.date || "-"}</TableCell>
+                          <TableCell className="font-mono">{a.inTime || "-"}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={
+                              a.status === "P" ? "bg-emerald-100 text-emerald-700 border-emerald-200" :
+                              a.status === "A" ? "bg-red-100 text-red-700 border-red-200" :
+                              a.status === "L" ? "bg-amber-100 text-amber-700 border-amber-200" :
+                              a.status === "LT" ? "bg-orange-100 text-orange-700 border-orange-200" :
+                              "bg-gray-100 text-gray-700"
+                            }>
+                              {a.status === "P" ? "Present" :
+                               a.status === "A" ? "Absent" :
+                               a.status === "L" ? "Leave" :
+                               a.status === "LT" ? "Late" : a.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex justify-center gap-1">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-7 w-7"
+                                onClick={() => {
+                                  setSelectedAttendanceRecord(a);
+                                  setAttendanceDetailOpen(true);
+                                }}
+                              >
+                                <Eye size={14} />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-7 w-7">
+                                <Pencil size={14} />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive">
+                                <Trash2 size={14} />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )) : (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+                            {loadingAttendance ? "Loading..." : "No attendance records found"}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </>
+              );
+            })()}
           </div>
         </TabsContent>
 
+        {/* Attendance Detail Modal */}
+        <Dialog open={attendanceDetailOpen} onOpenChange={setAttendanceDetailOpen}>
+          <DialogContent className="max-w-2xl max-h-96 overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Attendance Details</DialogTitle>
+            </DialogHeader>
+            {selectedAttendanceRecord && (() => {
+              const empName = selectedAttendanceRecord.user?.name || "Unknown";
+              const empRole = selectedAttendanceRecord.user?.role || "Unknown";
+              const empEmail = selectedAttendanceRecord.user?.email || "N/A";
+              const empCode = selectedAttendanceRecord.empCode || "N/A";
+              
+              // Get all records for this employee
+              const employeeRecords = attendanceData.filter(
+                a => a.user?.email === empEmail
+              );
+              
+              // Calculate statistics
+              const presentCount = employeeRecords.filter(a => a.status === "P").length;
+              const absentCount = employeeRecords.filter(a => a.status === "A").length;
+              const leaveCount = employeeRecords.filter(a => a.status === "L").length;
+              const lateCount = employeeRecords.filter(a => a.status === "LT").length;
+              const totalDays = employeeRecords.length;
+
+              return (
+                <div className="space-y-6">
+                  {/* Employee Info */}
+                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-4 border border-blue-300">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-blue-600 font-medium">Employee Name</p>
+                        <p className="text-lg font-bold text-blue-900">{empName}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 font-medium">Employee Code</p>
+                        <p className="text-lg font-bold text-blue-900">{empCode}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 font-medium">Role</p>
+                        <p className="text-lg font-bold text-blue-900">{empRole}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 font-medium">Email</p>
+                        <p className="text-sm font-bold text-blue-900">{empEmail}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Statistics Cards */}
+                  <div>
+                    <p className="text-sm font-semibold mb-3 text-foreground">Overall Statistics</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                        <p className="text-xs text-emerald-600 font-medium">Total Present</p>
+                        <p className="text-2xl font-bold text-emerald-700">{presentCount}</p>
+                      </div>
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <p className="text-xs text-red-600 font-medium">Total Absent</p>
+                        <p className="text-2xl font-bold text-red-700">{absentCount}</p>
+                      </div>
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <p className="text-xs text-amber-600 font-medium">Total Leave</p>
+                        <p className="text-2xl font-bold text-amber-700">{leaveCount}</p>
+                      </div>
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                        <p className="text-xs text-orange-600 font-medium">Total Late</p>
+                        <p className="text-2xl font-bold text-orange-700">{lateCount}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Summary */}
+                  <div className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                    <p className="text-sm font-bold mb-2 text-gray-900">Summary</p>
+                    <div className="space-y-1 text-sm text-gray-700">
+                      <p>Total Attendance Records: <span className="font-bold text-gray-900">{totalDays}</span></p>
+                      <p>Attendance Percentage: <span className="font-bold text-gray-900">{totalDays > 0 ? ((presentCount / totalDays) * 100).toFixed(1) : 0}%</span></p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={downloadAttendancePDF} className="gap-2">
+                <Download size={16} />
+                Download PDF
+              </Button>
+              <Button variant="outline" onClick={() => setAttendanceDetailOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* ===== Teacher Rating ===== */}
         <TabsContent value="teacher-rating">

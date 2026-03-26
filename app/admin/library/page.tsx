@@ -267,15 +267,15 @@ useEffect(() => {
                         </div>
 
                         {/* Scrollable Body */}
-                        <div className="overflow-y-auto px-6 py-5 space-y-5 bg-white">
+                        <div className="overflow-y-auto px-6 py-5 space-y-5 bg-card dark:bg-card">
 
-                        <div className="bg-gray-50 border rounded-xl p-4 space-y-4">
+                        <div className="bg-secondary/50 dark:bg-secondary/50 border border-border dark:border-border rounded-xl p-4 space-y-4">
 
                             {/* Title */}
                             <div className="space-y-1">
-                            <label className="text-sm font-medium text-gray-600">📘 Book Title</label>
+                            <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">📘 Book Title</label>
                             <Input
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="Enter book title"
                                 value={newBook.title}
                                 onChange={(e) =>
@@ -286,9 +286,9 @@ useEffect(() => {
 
                             {/* Author */}
                             <div className="space-y-1">
-                            <label className="text-sm font-medium text-gray-600">✍️ Author</label>
+                            <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">✍️ Author</label>
                             <Input
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="Author name"
                                 value={newBook.author}
                                 onChange={(e) =>
@@ -300,11 +300,11 @@ useEffect(() => {
                             {/* ISBN + Publisher */}
                             <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-sm font-medium text-gray-600">
+                                <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                 🔖 ISBN Code
                                 </label>
                                 <Input
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="978-XX-XXXX"
                                 value={newBook.code}
                                 onChange={(e) =>
@@ -314,11 +314,11 @@ useEffect(() => {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-sm font-medium text-gray-600">
+                                <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                 🏢 Publisher
                                 </label>
                                 <Input
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="Publisher name"
                                 value={newBook.publisher}
                                 onChange={(e) =>
@@ -331,12 +331,12 @@ useEffect(() => {
                             {/* Quantity + Price */}
                             <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-sm font-medium text-gray-600">
+                                <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                 📦 Quantity
                                 </label>
                                 <Input
                                 type="number"
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="0"
                                 value={newBook.quantity}
                                 onChange={(e) =>
@@ -349,12 +349,12 @@ useEffect(() => {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-sm font-medium text-gray-600">
+                                <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                 💰 Price (₹)
                                 </label>
                                 <Input
                                 type="number"
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="Price per copy"
                                 value={newBook.price}
                                 onChange={(e) =>
@@ -369,11 +369,11 @@ useEffect(() => {
 
                             {/* Rack */}
                             <div className="space-y-1">
-                            <label className="text-sm font-medium text-gray-600">
+                            <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                 🗂 Rack Location
                             </label>
                             <Input
-                                className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                 placeholder="Rack / Shelf"
                                 value={newBook.rack}
                                 onChange={(e) =>
@@ -385,10 +385,10 @@ useEffect(() => {
                         </div>
 
                         {/* Sticky Footer */}
-                        <DialogFooter className="px-6 py-4 bg-gray-50 flex justify-between border-t">
+                        <DialogFooter className="px-6 py-4 bg-secondary/50 dark:bg-secondary/50 flex justify-between border-t">
                         <Button
                             variant="outline"
-                            className="rounded-lg hover:bg-gray-100"
+                            className="rounded-lg hover:bg-secondary/60 dark:hover:bg-secondary/60"
                             onClick={() => setAddOpen(false)}
                         >
                             Cancel
@@ -505,16 +505,16 @@ useEffect(() => {
 
                                             {/* Body */}
                                             {editingBook && (
-                                            <div className="p-6 space-y-5 bg-white">
+                                            <div className="p-6 space-y-5 bg-card dark:bg-card">
 
                                                 {/* Book Info Card */}
-                                                <div className="bg-gray-50 border rounded-xl p-4 grid gap-4">
+                                                <div className="bg-secondary/50 dark:bg-secondary/50 border border-border dark:border-border rounded-xl p-4 grid gap-4">
 
                                                 {/* Title */}
                                                 <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">📘 Title</label>
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">📘 Title</label>
                                                     <Input
-                                                    className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                    className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                     placeholder="Enter book title"
                                                     value={editingBook.title}
                                                     onChange={(e) =>
@@ -525,9 +525,9 @@ useEffect(() => {
 
                                                 {/* Author */}
                                                 <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">✍️ Author</label>
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">✍️ Author</label>
                                                     <Input
-                                                    className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                    className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                     placeholder="Author name"
                                                     value={editingBook.author}
                                                     onChange={(e) =>
@@ -539,11 +539,11 @@ useEffect(() => {
                                                 {/* Code + Publisher */}
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                                                         🔖 ISBN / Code
                                                     </label>
                                                     <Input
-                                                        className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                        className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                         placeholder="Book code"
                                                         value={editingBook.code}
                                                         onChange={(e) =>
@@ -553,11 +553,11 @@ useEffect(() => {
                                                     </div>
 
                                                     <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                                                         🏢 Publisher
                                                     </label>
                                                     <Input
-                                                        className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                        className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                         placeholder="Publisher"
                                                         value={editingBook.publisher}
                                                         onChange={(e) =>
@@ -570,12 +570,12 @@ useEffect(() => {
                                                 {/* Quantity + Price */}
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                                                         📦 Quantity
                                                     </label>
                                                     <Input
                                                         type="number"
-                                                        className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                        className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                         placeholder="Quantity"
                                                         value={editingBook.quantity}
                                                         onChange={(e) =>
@@ -588,12 +588,12 @@ useEffect(() => {
                                                     </div>
 
                                                     <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                                                         💰 Price
                                                     </label>
                                                     <Input
                                                         type="number"
-                                                        className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                        className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                         placeholder="Price"
                                                         value={editingBook.price}
                                                         onChange={(e) =>
@@ -608,11 +608,11 @@ useEffect(() => {
 
                                                 {/* Rack */}
                                                 <div className="space-y-1">
-                                                    <label className="text-sm text-gray-600 font-medium">
+                                                    <label className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                                                     🗂 Rack Location
                                                     </label>
                                                     <Input
-                                                    className="rounded-lg border-gray-300 focus:ring-orange-400"
+                                                    className="rounded-lg border-border dark:border-border focus:ring-orange-400"
                                                     placeholder="Rack number / location"
                                                     value={editingBook.rack}
                                                     onChange={(e) =>
@@ -625,10 +625,10 @@ useEffect(() => {
                                             )}
 
                                             {/* Footer */}
-                                            <DialogFooter className="px-6 py-4 bg-gray-50 flex justify-between">
+                                            <DialogFooter className="px-6 py-4 bg-secondary/50 dark:bg-secondary/50 flex justify-between">
                                             <Button
                                                 variant="outline"
-                                                className="rounded-lg hover:bg-gray-100"
+                                                className="rounded-lg hover:bg-secondary/60 dark:hover:bg-secondary/60"
                                                 onClick={() => setEditOpen(false)}
                                             >
                                                 Cancel
@@ -699,11 +699,11 @@ useEffect(() => {
                                 </div>
 
                                 {/* Body */}
-                                <div className="p-6 space-y-5 bg-white">
+                                <div className="p-6 space-y-5 bg-card dark:bg-card">
 
                                 {/* Student Selection */}
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-600">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                     👤 Student
                                     </label>
 
@@ -711,7 +711,7 @@ useEffect(() => {
                                     <PopoverTrigger asChild>
                                         <Button
                                         variant="outline"
-                                        className="w-full justify-between rounded-lg border-gray-300 hover:border-indigo-400"
+                                        className="w-full justify-between rounded-lg border-border dark:border-border hover:border-indigo-400"
                                         >
                                         {issueForm.studentId
                                             ? students.find((s) => String(s.id) === issueForm.studentId)?.name
@@ -753,7 +753,7 @@ useEffect(() => {
                                                     }`}
                                                 />
                                                 <span className="font-medium">{student.name}</span>
-                                                <span className="ml-2 text-xs text-gray-500">
+                                                <span className="ml-2 text-xs text-muted-foreground dark:text-muted-foreground">
                                                     ({student.email})
                                                 </span>
                                                 </CommandItem>
@@ -766,7 +766,7 @@ useEffect(() => {
 
                                 {/* Book Selection */}
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-600">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                     📚 Book
                                     </label>
 
@@ -774,7 +774,7 @@ useEffect(() => {
                                     <PopoverTrigger asChild>
                                         <Button
                                         variant="outline"
-                                        className="w-full justify-between rounded-lg border-gray-300 hover:border-blue-400"
+                                        className="w-full justify-between rounded-lg border-border dark:border-border hover:border-blue-400"
                                         >
                                         {issueForm.bookId
                                             ? books.find((b) => String(b.id) === issueForm.bookId)?.title
@@ -828,12 +828,12 @@ useEffect(() => {
                                 <div className="grid grid-cols-2 gap-4">
 
                                     <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-600">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                         📅 Issue Date
                                     </label>
                                     <Input
                                         type="date"
-                                        className="rounded-lg border-gray-300 focus:ring-indigo-400"
+                                        className="rounded-lg border-border dark:border-border focus:ring-indigo-400"
                                         value={issueForm.issueDate}
                                         onChange={(e) =>
                                         setIssueForm({ ...issueForm, issueDate: e.target.value })
@@ -842,12 +842,12 @@ useEffect(() => {
                                     </div>
 
                                     <div className="space-y-1">
-                                    <label className="text-sm font-medium text-gray-600">
+                                    <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                         ⏳ Due Date
                                     </label>
                                     <Input
                                         type="date"
-                                        className="rounded-lg border-gray-300 focus:ring-blue-400"
+                                        className="rounded-lg border-border dark:border-border focus:ring-blue-400"
                                         value={issueForm.dueDate}
                                         onChange={(e) =>
                                         setIssueForm({ ...issueForm, dueDate: e.target.value })
@@ -859,10 +859,10 @@ useEffect(() => {
                                 </div>
 
                                 {/* Footer */}
-                                <DialogFooter className="px-6 py-4 bg-gray-50 flex justify-between">
+                                <DialogFooter className="px-6 py-4 bg-secondary/50 dark:bg-secondary/50 flex justify-between">
                                 <Button
                                     variant="outline"
-                                    className="rounded-lg hover:bg-gray-100"
+                                    className="rounded-lg hover:bg-secondary/60 dark:hover:bg-secondary/60"
                                     onClick={() => setIssueOpen(false)}
                                 >
                                     Cancel
@@ -1002,24 +1002,24 @@ useEffect(() => {
                                         </div>
 
                                         {/* Body */}
-                                        <div className="p-6 space-y-5 bg-white">
+                                        <div className="p-6 space-y-5 bg-card dark:bg-card">
 
                                         {/* Student Info */}
-                                        <div className="bg-gray-50 p-3 rounded-xl border">
-                                            <p className="text-sm text-gray-500">Student</p>
-                                            <p className="font-medium text-gray-800">{returnForm.studentName}</p>
+                                        <div className="bg-secondary/50 dark:bg-secondary/50 p-3 rounded-xl border border-border dark:border-border">
+                                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">Student</p>
+                                            <p className="font-medium text-foreground dark:text-foreground">{returnForm.studentName}</p>
                                         </div>
 
                                         {/* Status */}
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-gray-600">Status</label>
+                                            <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Status</label>
                                             <Select
                                             value={returnForm.status}
                                             onValueChange={(value) =>
                                                 setReturnForm({ ...returnForm, status: value })
                                             }
                                             >
-                                            <SelectTrigger className="rounded-lg border-gray-300 focus:ring-emerald-400">
+                                            <SelectTrigger className="rounded-lg border-border dark:border-border focus:ring-emerald-400">
                                                 <SelectValue placeholder="Select status" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -1031,12 +1031,12 @@ useEffect(() => {
 
                                         {/* Return Date */}
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-gray-600">
+                                            <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                             Return Date
                                             </label>
                                             <Input
                                             type="date"
-                                            className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                            className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                             value={returnForm.returnDate}
                                             onChange={(e) =>
                                                 setReturnForm({
@@ -1049,12 +1049,12 @@ useEffect(() => {
 
                                         {/* Fine */}
                                         <div className="space-y-1">
-                                            <label className="text-sm font-medium text-gray-600">
+                                            <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                                             Fine (₹)
                                             </label>
                                             <Input
                                             type="number"
-                                            className="rounded-lg border-gray-300 focus:ring-emerald-400"
+                                            className="rounded-lg border-border dark:border-border focus:ring-emerald-400"
                                             value={returnForm.fine}
                                             onChange={(e) =>
                                                 setReturnForm({
@@ -1067,10 +1067,10 @@ useEffect(() => {
                                         </div>
 
                                         {/* Footer */}
-                                        <DialogFooter className="px-6 py-4 bg-gray-50 flex justify-between">
+                                        <DialogFooter className="px-6 py-4 bg-secondary/50 dark:bg-secondary/50 flex justify-between">
                                         <Button
                                             variant="outline"
-                                            className="rounded-lg hover:bg-gray-100"
+                                            className="rounded-lg hover:bg-secondary/60 dark:hover:bg-secondary/60"
                                             onClick={() => setReturnOpen(false)}
                                         >
                                             Cancel

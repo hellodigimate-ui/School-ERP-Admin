@@ -375,8 +375,8 @@ useEffect(() => {
         {/* ================= HEADER ================= */}
         <div className="flex items-center justify-between
             rounded-2xl p-6
-            bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50
-            border border-white/30 shadow-lg backdrop-blur-xl
+            bg-gradient-to-r from-secondary/40 via-primary/10 to-pink-50
+            border border-border shadow-lg backdrop-blur-xl
             min-h-[120px] flex-shrink-0 transition-all duration-300">
 
             <div className="flex-1 min-w-0">
@@ -440,7 +440,7 @@ useEffect(() => {
             <Card
             key={s.label}
             className="relative overflow-hidden 
-            rounded-2xl border-none 
+            rounded-2xl border-0 
             shadow-xl hover:shadow-2xl 
             transition-all duration-300 hover:scale-[1.03]"
             >

@@ -247,12 +247,12 @@ const handleEditSave = async () => {
         <div className="space-y-6">
 
             {/* Header */}
-            <div className="flex items-center justify-between bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-white/40">
+            <div className="flex items-center justify-between bg-card/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-border/50">
                 <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
                     Visitor Book
                 </h1>
-                <p className="text-gray-500 text-sm mt-2">
+                <p className="text-muted-foreground text-sm mt-2">
                     Track all visitors entering the school premises
                 </p>
                 </div>
@@ -264,9 +264,9 @@ const handleEditSave = async () => {
                     </Button>
                 </DialogTrigger>
 
-                <DialogContent className="max-w-2xl rounded-3xl bg-white/90 backdrop-blur-xl shadow-2xl border border-white/40 p-6">
-                    <DialogHeader className="mb-4 border-b border-purple-200 pb-2">
-                    <DialogTitle className="font-display text-2xl font-bold text-purple-700">
+                <DialogContent className="max-w-2xl rounded-3xl bg-card/90 backdrop-blur-xl shadow-2xl border border-border/50 p-6">
+                    <DialogHeader className="mb-4 border-b border-border pb-2">
+                    <DialogTitle className="font-display text-2xl font-bold text-primary">
                         Register New Visitor
                     </DialogTitle>
                     </DialogHeader>
@@ -281,25 +281,25 @@ const handleEditSave = async () => {
                         { label: "Person to Meet", name: "visitingTo", placeholder: "Name of person" },
                     ].map((field) => (
                         <div className="space-y-2" key={field.name}>
-                        <Label className="text-purple-600 font-medium">{field.label}</Label>
+                        <Label className="text-foreground font-medium">{field.label}</Label>
                         <Input
                             name={field.name}
                             value={form[field.name]}
                             onChange={handleInputChange}
                             placeholder={field.placeholder}
-                            className="rounded-2xl bg-purple-50/50 focus:ring-2 focus:ring-purple-400 border border-purple-100 placeholder-purple-400"
+                            className="rounded-2xl bg-background/50 focus:ring-2 focus:ring-primary/40 border border-border placeholder-muted-foreground"
                         />
                         </div>
                     ))}
 
                     <div className="space-y-2">
-                        <Label className="text-purple-600 font-medium">ID Proof</Label>
+                        <Label className="text-foreground font-medium">ID Proof</Label>
                         <Select
                         name="idProof"
                         value={form.idProof}
                         onValueChange={(value) => setForm((prev) => ({ ...prev, idProof: value }))}
                         >
-                        <SelectTrigger className="rounded-2xl bg-purple-50/50 focus:ring-2 focus:ring-purple-400 border border-purple-100">
+                        <SelectTrigger className="rounded-2xl bg-background/50 focus:ring-2 focus:ring-primary/40 border border-border\">
                             <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
@@ -312,31 +312,31 @@ const handleEditSave = async () => {
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-purple-600 font-medium">Date</Label>
+                        <Label className="text-foreground font-medium">Date</Label>
                         <Input
                         type="date"
                         name="visitDate"
                         value={form.visitDate}
                         onChange={handleInputChange}
-                        className="rounded-2xl bg-purple-50/50 focus:ring-2 focus:ring-purple-400 border border-purple-100"
+                        className="rounded-2xl bg-background/50 focus:ring-2 focus:ring-primary/40 border border-border"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-purple-600 font-medium">In Time</Label>
+                        <Label className="text-foreground font-medium">In Time</Label>
                         <Input
                         type="time"
                         name="entryTime"
                         value={form.entryTime}
                         onChange={handleInputChange}
-                        className="rounded-2xl bg-purple-50/50 focus:ring-2 focus:ring-purple-400 border border-purple-100"
+                        className="rounded-2xl bg-background/50 focus:ring-2 focus:ring-primary/40 border border-border"
                         />
                     </div>
 
                     <div className="col-span-2 flex justify-end gap-4 mt-6">
                         <Button
                         variant="outline"
-                        className="rounded-2xl hover:bg-purple-100 transition-colors px-6 py-2 font-medium text-purple-700"
+                        className="rounded-2xl hover:bg-secondary transition-colors px-6 py-2 font-medium text-foreground"
                         onClick={() => setOpen(false)}
                         >
                         Cancel
@@ -363,10 +363,10 @@ const handleEditSave = async () => {
                     { label: "Checked Out", value: stats.checkOutVisitors, bg: "bg-emerald-100", text: "text-emerald-600" },
                     { label: "Total Visitors", value: stats.totalVisitors, bg: "bg-emerald-100", text: "text-emerald-600" },
                 ].map((s) => (
-                    <Card key={s.label} className="border-0 shadow-lg rounded-2xl bg-white/80 backdrop-blur-md hover:shadow-xl transition">
+                    <Card key={s.label} className="border-0 shadow-lg rounded-2xl bg-card/80 backdrop-blur-md hover:shadow-xl transition">
                     <CardContent className="p-6 flex items-center justify-between">
                         <div>
-                        <p className="text-sm text-gray-500">{s.label}</p>
+                        <p className="text-sm text-muted-foreground">{s.label}</p>
                         <p className={`text-3xl font-bold mt-2 ${s.text}`}>{s.value}</p>
                         </div>
                         <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center`}>
@@ -379,13 +379,13 @@ const handleEditSave = async () => {
 
 
             {/* Search */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl">
+            <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-xl rounded-2xl">
                 <CardContent className="p-6">
                 <div className="flex gap-4 items-end">
                     <div className="flex-1 min-w-[220px] relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                        className="pl-9 rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400"
+                        className="pl-9 rounded-xl bg-background/50 focus:ring-2 focus:ring-primary/40"
                         placeholder="Search visitors..."
                         value={search}
                         onChange={(e) => {
@@ -401,45 +401,45 @@ const handleEditSave = async () => {
 
 
             {/* Table */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl overflow-hidden">
+            <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-xl rounded-2xl overflow-hidden">
                 <CardContent className="p-0">
                 <Table>
                     <TableHeader>
-                    <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                        <TableHead className="font-semibold text-gray-700">Visitor</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Phone</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Purpose</TableHead>
-                        <TableHead className="font-semibold text-gray-700">To Meet</TableHead>
-                        <TableHead className="font-semibold text-gray-700">In Time</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Out Time</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                        <TableHead className="font-semibold text-right text-gray-700">Actions</TableHead>
+                    <TableRow className="bg-secondary/50">
+                        <TableHead className="font-semibold text-foreground">Visitor</TableHead>
+                        <TableHead className="font-semibold text-foreground">Phone</TableHead>
+                        <TableHead className="font-semibold text-foreground">Purpose</TableHead>
+                        <TableHead className="font-semibold text-foreground">To Meet</TableHead>
+                        <TableHead className="font-semibold text-foreground">In Time</TableHead>
+                        <TableHead className="font-semibold text-foreground">Out Time</TableHead>
+                        <TableHead className="font-semibold text-foreground">Status</TableHead>
+                        <TableHead className="font-semibold text-right text-foreground">Actions</TableHead>
                     </TableRow>
                     </TableHeader>
 
                     <TableBody>
                     {visitors.map(v => (
-                        <TableRow key={v.id} className="hover:bg-indigo-50/50 transition">
+                        <TableRow key={v.id} className="hover:bg-secondary/30 transition">
 
-                        <TableCell className="font-medium text-gray-800">
+                        <TableCell className="font-medium text-foreground">
                             {v.visitorName}
                         </TableCell>
 
-                        <TableCell className="text-gray-600">
+                        <TableCell className="text-foreground/70">
                             {v.phone}
                         </TableCell>
 
-                        <TableCell className="text-gray-600">
+                        <TableCell className="text-foreground/70">
                             {v.purpose}
                         </TableCell>
 
-                        <TableCell className="text-gray-600">
+                        <TableCell className="text-foreground/70">
                             {v.visitingTo}
                         </TableCell>
 
                         <TableCell>
                             {v.entryTime && v.entryTime !== "-" ? (
-                                <span className="flex items-center gap-1 text-green-600 font-medium">
+                                <span className="flex items-center gap-1 text-success font-medium">
                                 <LogIn className="w-3 h-3" />
                                 {new Date(v.entryTime).toLocaleTimeString([], {
                                     hour: "2-digit",
@@ -453,7 +453,7 @@ const handleEditSave = async () => {
 
                         <TableCell>
                             {v?.exitTime && v?.exitTime !== "-" ? (
-                                <span className="flex items-center gap-1 text-red-500 font-medium">
+                                <span className="flex items-center gap-1 text-destructive font-medium">
                                 <LogOut className="w-3 h-3" />
                                 {v?.exitTime?.slice(11,16)??"-"}
                                 </span>
@@ -466,8 +466,8 @@ const handleEditSave = async () => {
                             <Badge
                             className={
                                 !v.exitTime
-                                ? "bg-green-100 text-green-700 hover:bg-green-100 rounded-full px-3"
-                                : "bg-gray-100 text-gray-600 rounded-full px-3"
+                                ? "bg-success/20 text-success hover:bg-success/20 rounded-full px-3"
+                                : "bg-secondary/50 text-foreground rounded-full px-3"
                             }
                             >
                             {v.exitTime ?"Checked Out":"In Campus" }
@@ -480,24 +480,24 @@ const handleEditSave = async () => {
                                 <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 rounded-lg hover:bg-indigo-100 transition"
+                                className="h-8 w-8 rounded-lg hover:bg-secondary transition"
                                 onClick={() => handleView(v)}
                                 >
-                                    <Eye className="w-4 h-4 text-indigo-600" />
+                                    <Eye className="w-4 h-4 text-primary" />
                                 </Button>
 
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-indigo-100 transition"
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-secondary transition"
                                 onClick={() => handleEdit(v)}
                                 >
-                                    <Edit className="w-4 h-4 text-indigo-600" />
+                                    <Edit className="w-4 h-4 text-primary" />
                                 </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-red-100 transition"
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-destructive/10 transition"
                                 onClick={async () => {
                                     await deleteVisitor(v.id);
                                     fetchVisitors();
                                 }}
                                 >
-                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                    <Trash2 className="w-4 h-4 text-destructive" />
                                 </Button>
                             </div>
 

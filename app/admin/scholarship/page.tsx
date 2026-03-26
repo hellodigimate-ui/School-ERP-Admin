@@ -45,6 +45,8 @@ import {
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import ScholarshipTypes from "@/components/schoolership/schoolershiType";
+import EligibilityCriteria from "@/components/schoolership/eligiblityCretria";
 
 // Sample data
 const scholarshipTypes = [
@@ -147,45 +149,6 @@ const applications = [
   },
 ];
 
-const eligibilityCriteria = [
-  {
-    id: 1,
-    scholarship: "Government Merit Scholarship",
-    minPercentage: "80%",
-    category: "General/OBC/SC/ST",
-    incomeLimit: "₹5,00,000",
-    class: "8-12",
-    disability: "N/A",
-  },
-  {
-    id: 2,
-    scholarship: "Sports Excellence Award",
-    minPercentage: "60%",
-    category: "All",
-    incomeLimit: "No Limit",
-    class: "6-12",
-    disability: "N/A",
-  },
-  {
-    id: 3,
-    scholarship: "Disability Support Fund",
-    minPercentage: "40%",
-    category: "All",
-    incomeLimit: "₹8,00,000",
-    class: "1-12",
-    disability: "Required",
-  },
-  {
-    id: 4,
-    scholarship: "Academic Topper Reward",
-    minPercentage: "90%",
-    category: "All",
-    incomeLimit: "No Limit",
-    class: "6-12",
-    disability: "N/A",
-  },
-];
-
 const statusConfig: Record<
   string,
   { icon: React.ElementType; className: string }
@@ -215,13 +178,6 @@ export default function page() {
   // const [showAddType, setShowAddType] = useState(false);
   const [showAddApplication, setShowAddApplication] = useState(false);
 
-  // const filteredApplications = applications.filter((app) => {
-  //   const matchSearch =
-  //     app.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     app.scholarship.toLowerCase().includes(searchTerm.toLowerCase());
-  //   const matchStatus = statusFilter === "all" || app.status === statusFilter;
-  //   return matchSearch && matchStatus;
-  // });
 
   const stats = [
     {
@@ -246,39 +202,6 @@ export default function page() {
     },
   ];
 
-  const [scholarshipList, setScholarshipList] = useState(scholarshipTypes);
-  const [typeSearch, setTypeSearch] = useState("");
-
-  const [isTypeAddOpen, setIsTypeAddOpen] = useState(false);
-  const [isTypeEditOpen, setIsTypeEditOpen] = useState(false);
-
-  const [selectedType, setSelectedType] = useState<any>(null);
-
-  const [typeForm, setTypeForm] = useState({
-    id: "",
-    name: "",
-    amount: "",
-    status: "Active",
-  });
-
-  const [eligibilityList, setEligibilityList] = useState(eligibilityCriteria);
-  const [eligibilitySearch, setEligibilitySearch] = useState("");
-
-  const [isEligibilityAddOpen, setIsEligibilityAddOpen] = useState(false);
-  const [isEligibilityEditOpen, setIsEligibilityEditOpen] = useState(false);
-
-  const [selectedEligibility, setSelectedEligibility] = useState<any>(null);
-
-  const [eligibilityForm, setEligibilityForm] = useState({
-    id: "",
-    scholarship: "",
-    minPercentage: "",
-    category: "",
-    incomeLimit: "",
-    class: "",
-    disability: "N/A",
-  });
-
   const [applicationList, setApplicationList] = useState(applications);
 
   const [isAppAddOpen, setIsAppAddOpen] = useState(false);
@@ -295,87 +218,6 @@ export default function page() {
     amount: "",
     status: "Pending",
   });
-
-  const resetTypeForm = () => {
-    setTypeForm({
-      id: "",
-      name: "",
-      amount: "",
-      status: "Active",
-    });
-  };
-
-  const handleTypeAdd = () => {
-    setScholarshipList((prev) => [
-      ...prev,
-      { ...typeForm, id: Date.now(), category: "", beneficiaries: 0 },
-    ]);
-    setIsTypeAddOpen(false);
-    resetTypeForm();
-  };
-
-  const handleTypeEditClick = (s: any) => {
-    setSelectedType(s);
-    setTypeForm(s);
-    setIsTypeEditOpen(true);
-  };
-
-  const handleTypeUpdate = () => {
-    setScholarshipList((prev) =>
-      prev.map((s) =>
-        s.id === selectedType.id ? { ...selectedType, ...typeForm } : s,
-      ),
-    );
-    setIsTypeEditOpen(false);
-    resetTypeForm();
-  };
-
-  const handleTypeDelete = (id: number) => {
-    setScholarshipList((prev) => prev.filter((s) => s.id !== id));
-  };
-
-  const resetEligibilityForm = () => {
-    setEligibilityForm({
-      id: "",
-      scholarship: "",
-      minPercentage: "",
-      category: "",
-      incomeLimit: "",
-      class: "",
-      disability: "N/A",
-    });
-  };
-
-  const handleEligibilityAdd = () => {
-    setEligibilityList((prev) => [
-      ...prev,
-      { ...eligibilityForm, id: Date.now() },
-    ]);
-    setIsEligibilityAddOpen(false);
-    resetEligibilityForm();
-  };
-
-  const handleEligibilityEditClick = (e: any) => {
-    setSelectedEligibility(e);
-    setEligibilityForm(e);
-    setIsEligibilityEditOpen(true);
-  };
-
-  const handleEligibilityUpdate = () => {
-    setEligibilityList((prev) =>
-      prev.map((item) =>
-        item.id === selectedEligibility.id
-          ? { ...selectedEligibility, ...eligibilityForm }
-          : item,
-      ),
-    );
-    setIsEligibilityEditOpen(false);
-    resetEligibilityForm();
-  };
-
-  const handleEligibilityDelete = (id: number) => {
-    setEligibilityList((prev) => prev.filter((e) => e.id !== id));
-  };
 
   const resetAppForm = () => {
     setAppForm({
@@ -476,297 +318,12 @@ export default function page() {
 
         {/* Scholarship Types Tab */}
         <TabsContent value="types" className="space-y-5">
-          {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
-            <div className="relative w-full max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search scholarships..."
-                className="pl-9 bg-white shadow-sm"
-                value={typeSearch}
-                onChange={(e) => setTypeSearch(e.target.value)}
-              />
-            </div>
-
-            <Button
-              onClick={() => setIsTypeAddOpen(true)}
-              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md"
-            >
-              <Plus className="h-4 w-4 mr-2" /> Add Scholarship
-            </Button>
-          </div>
-
-          {/* Table */}
-          <div className="bg-card rounded-xl border border-border shadow-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                  <TableHead>#</TableHead>
-                  <TableHead>Scholarship Name</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {scholarshipList
-                  .filter((s) =>
-                    s.name.toLowerCase().includes(typeSearch.toLowerCase()),
-                  )
-                  .map((s, i) => (
-                    <TableRow
-                      key={s.id}
-                      className="hover:bg-muted/30 transition"
-                    >
-                      <TableCell>{i + 1}</TableCell>
-
-                      <TableCell className="font-medium text-indigo-600">
-                        {s.name}
-                      </TableCell>
-
-                      <TableCell>{s.amount}</TableCell>
-
-                      <TableCell>
-                        <Badge className="bg-emerald-100 text-emerald-700 border text-xs">
-                          {s.status}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Pencil
-                            onClick={() => handleTypeEditClick(s)}
-                            className="w-4 h-4 text-blue-500 cursor-pointer hover:scale-110"
-                          />
-
-                          <Trash2
-                            onClick={() => handleTypeDelete(s.id)}
-                            className="w-4 h-4 text-red-500 cursor-pointer hover:scale-110"
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-
-            <Dialog open={isTypeAddOpen} onOpenChange={setIsTypeAddOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add Scholarship</DialogTitle>
-                </DialogHeader>
-
-                <div className="space-y-3">
-                  <Input
-                    placeholder="Scholarship Name"
-                    value={typeForm.name}
-                    onChange={(e) =>
-                      setTypeForm({ ...typeForm, name: e.target.value })
-                    }
-                  />
-
-                  <Input
-                    placeholder="Amount (₹)"
-                    value={typeForm.amount}
-                    onChange={(e) =>
-                      setTypeForm({ ...typeForm, amount: e.target.value })
-                    }
-                  />
-
-                  <Button onClick={handleTypeAdd} className="w-full">
-                    Add Scholarship
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog open={isTypeEditOpen} onOpenChange={setIsTypeEditOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Edit Scholarship</DialogTitle>
-                </DialogHeader>
-
-                <div className="space-y-3">
-                  <Input
-                    value={typeForm.name}
-                    onChange={(e) =>
-                      setTypeForm({ ...typeForm, name: e.target.value })
-                    }
-                  />
-
-                  <Input
-                    value={typeForm.amount}
-                    onChange={(e) =>
-                      setTypeForm({ ...typeForm, amount: e.target.value })
-                    }
-                  />
-
-                  <Button onClick={handleTypeUpdate} className="w-full">
-                    Update Scholarship
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <ScholarshipTypes />
         </TabsContent>
 
         {/* Eligibility Criteria Tab */}
         <TabsContent value="eligibility" className="space-y-5">
-          {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
-            <Input
-              placeholder="🔍 Search eligibility..."
-              className="max-w-sm bg-white shadow-sm"
-              value={eligibilitySearch}
-              onChange={(e) => setEligibilitySearch(e.target.value)}
-            />
-
-            <Button
-              onClick={() => setIsEligibilityAddOpen(true)}
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
-            >
-              <Plus className="h-4 w-4 mr-2" /> Add Criteria
-            </Button>
-          </div>
-
-          {/* Table */}
-          <div className="bg-card rounded-xl border shadow-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gradient-to-r from-blue-50 to-indigo-50">
-                  <TableHead>Scholarship</TableHead>
-                  <TableHead>Min %</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Income</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Disability</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {eligibilityList
-                  .filter((e) =>
-                    e.scholarship
-                      .toLowerCase()
-                      .includes(eligibilitySearch.toLowerCase()),
-                  )
-                  .map((e) => (
-                    <TableRow
-                      key={e.id}
-                      className="hover:bg-muted/30 transition"
-                    >
-                      <TableCell className="font-medium text-indigo-600">
-                        {e.scholarship}
-                      </TableCell>
-
-                      <TableCell>
-                        <Badge className="bg-blue-100 text-blue-700">
-                          {e.minPercentage}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell>{e.category}</TableCell>
-
-                      <TableCell>{e.incomeLimit}</TableCell>
-
-                      <TableCell>{e.class}</TableCell>
-
-                      <TableCell>
-                        <Badge
-                          className={
-                            e.disability === "Required"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-gray-100 text-gray-700"
-                          }
-                        >
-                          {e.disability}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Pencil
-                            onClick={() => handleEligibilityEditClick(e)}
-                            className="w-4 h-4 text-blue-500 cursor-pointer hover:scale-110"
-                          />
-
-                          <Trash2
-                            onClick={() => handleEligibilityDelete(e.id)}
-                            className="w-4 h-4 text-red-500 cursor-pointer hover:scale-110"
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-
-            <Dialog
-              open={isEligibilityAddOpen}
-              onOpenChange={setIsEligibilityAddOpen}
-            >
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add Eligibility</DialogTitle>
-                </DialogHeader>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.keys(eligibilityForm).map((key) => (
-                    <Input
-                      key={key}
-                      placeholder={key}
-                      value={(eligibilityForm as any)[key]}
-                      onChange={(e) =>
-                        setEligibilityForm({
-                          ...eligibilityForm,
-                          [key]: e.target.value,
-                        })
-                      }
-                    />
-                  ))}
-                </div>
-
-                <Button onClick={handleEligibilityAdd} className="w-full mt-3">
-                  Add Criteria
-                </Button>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog
-              open={isEligibilityEditOpen}
-              onOpenChange={setIsEligibilityEditOpen}
-            >
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Edit Eligibility</DialogTitle>
-                </DialogHeader>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.keys(eligibilityForm).map((key) => (
-                    <Input
-                      key={key}
-                      value={(eligibilityForm as any)[key]}
-                      onChange={(e) =>
-                        setEligibilityForm({
-                          ...eligibilityForm,
-                          [key]: e.target.value,
-                        })
-                      }
-                    />
-                  ))}
-                </div>
-
-                <Button
-                  onClick={handleEligibilityUpdate}
-                  className="w-full mt-3"
-                >
-                  Update Criteria
-                </Button>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <EligibilityCriteria />
         </TabsContent>
 
         {/* Applications Tab */}

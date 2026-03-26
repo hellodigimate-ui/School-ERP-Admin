@@ -555,7 +555,7 @@ const Page: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
               <Input
                 placeholder="🔍 Search vehicles..."
-                className="max-w-sm bg-white shadow-sm"
+                className="max-w-sm bg-input dark:bg-input shadow-sm"
                 value={vehicleSearch}
                 onChange={(e) => setVehicleSearch(e.target.value)}
               />
@@ -569,10 +569,10 @@ const Page: React.FC = () => {
             </div>
 
             {/* Table */}
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-lg border-0 ">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gradient-to-r from-emerald-50 to-teal-50">
+                  <TableRow className="  dark:bg-gray-700">
                     <TableHead>Vehicle No</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Capacity</TableHead>
@@ -594,7 +594,7 @@ const Page: React.FC = () => {
                     .map((v) => (
                       <TableRow
                         key={v.id}
-                        className="hover:bg-gray-50 transition"
+                        className="hover:bg-secondary/50 dark:hover:bg-secondary/50 transition"
                       >
                         <TableCell className="font-mono font-semibold text-emerald-600">
                           {v.vehicle_no || v.id}
@@ -653,10 +653,10 @@ const Page: React.FC = () => {
               </Table>
 
               <Dialog open={isVehicleAddOpen} onOpenChange={setIsVehicleAddOpen}>
-                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-white shadow-xl">
+                <DialogContent className="max-w-3xl p-6 rounded-2xl bg-card dark:bg-card shadow-xl">
                   
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-semibold text-gray-800 text-center">
+                    <DialogTitle className="text-2xl font-semibold text-foreground dark:text-foreground text-center">
                       🚗 Add Vehicle
                     </DialogTitle>
                   </DialogHeader>
@@ -665,33 +665,33 @@ const Page: React.FC = () => {
 
                     {/* Vehicle Number */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Vehicle Number</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Vehicle Number</label>
                       <Input
                         placeholder="Enter vehicle number"
                         value={vehicleForm.id}
                         onChange={(e) =>
                           setVehicleForm({ ...vehicleForm, id: e.target.value })
                         }
-                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                        className="focus:ring-2 focus:ring-blue-400 border-border dark:border-border"
                       />
                     </div>
 
                     {/* Vehicle Type */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Vehicle Type</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Vehicle Type</label>
                       <Input
                         placeholder="e.g. Bus, Van"
                         value={vehicleForm.type}
                         onChange={(e) =>
                           setVehicleForm({ ...vehicleForm, type: e.target.value })
                         }
-                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                        className="focus:ring-2 focus:ring-blue-400 border-border dark:border-border"
                       />
                     </div>
 
                     {/* Capacity */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Student Capacity</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Student Capacity</label>
                       <Input
                         type="number"
                         placeholder="Capacity"
@@ -699,13 +699,13 @@ const Page: React.FC = () => {
                         onChange={(e) =>
                           setVehicleForm({ ...vehicleForm, capacity: e.target.value })
                         }
-                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                        className="focus:ring-2 focus:ring-blue-400 border-border dark:border-border"
                       />
                     </div>
 
                     {/* Year */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Assign Year</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Assign Year</label>
                       <Input
                         type="number"
                         placeholder="Year"
@@ -713,13 +713,13 @@ const Page: React.FC = () => {
                         onChange={(e) =>
                           setVehicleForm({ ...vehicleForm, year: e.target.value })
                         }
-                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                        className="focus:ring-2 focus:ring-blue-400 border-border dark:border-border"
                       />
                     </div>
 
                     {/* Insurance */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Insurance Date</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Insurance Date</label>
                       <Input
                         type="date"
                         value={vehicleForm.insurance}
@@ -729,13 +729,13 @@ const Page: React.FC = () => {
                             insurance: e.target.value,
                           })
                         }
-                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                        className="focus:ring-2 focus:ring-blue-400 border-border dark:border-border"
                       />
                     </div>
 
                     {/* Fitness */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Last Checked</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Last Checked</label>
                       <Input
                         type="date"
                         value={vehicleForm.fitness}
@@ -745,13 +745,13 @@ const Page: React.FC = () => {
                             fitness: e.target.value,
                           })
                         }
-                        className="focus:ring-2 focus:ring-blue-400 border-gray-300"
+                        className="focus:ring-2 focus:ring-blue-400 border-border dark:border-border"
                       />
                     </div>
 
                     {/* Status */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-medium text-gray-600">Status</label>
+                      <label className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Status</label>
                       <select
                         value={vehicleForm.status}
                         onChange={(e) =>
@@ -760,7 +760,7 @@ const Page: React.FC = () => {
                             status: e.target.value,
                           })
                         }
-                        className="border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
+                        className="border border-border dark:border-border p-2 rounded-lg focus:ring-2 focus:ring-blue-400 bg-input dark:bg-input text-foreground dark:text-foreground"
                       >
                         <option value="Active">🟢 Active</option>
                         <option value="Maintenance">🟡 Maintenance</option>

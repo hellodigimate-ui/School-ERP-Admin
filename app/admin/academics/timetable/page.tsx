@@ -122,14 +122,14 @@ const ScheduleModal = ({ open, onClose, onSave, schedule, periods, teachers, day
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-80 shadow-lg">
+      <div className="bg-card rounded-lg p-6 w-80 shadow-lg border border-border">
 
-        <h2 className="text-lg font-bold mb-4">{schedule ? "Edit Schedule" : "Add Schedule"}</h2>
+        <h2 className="text-lg font-bold mb-4 text-foreground">{schedule ? "Edit Schedule" : "Add Schedule"}</h2>
 
         <input
           type="text"
           placeholder="Subject"
-          className="w-full mb-2 border rounded px-2 py-1"
+          className="w-full mb-2 border border-border rounded px-2 py-1 bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
           value={subject}
           onChange={(e)=>setSubject(e.target.value)}
         />
@@ -449,7 +449,7 @@ useEffect(()=>{
 
   <AdminLayout>
 
-    <div className="p-6 space-y-6 bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen">
+    <div className="p-6 space-y-6 bg-gradient-to-br from-secondary/30 to-background min-h-screen">
 
       {/* HEADER */}
 
@@ -460,8 +460,8 @@ useEffect(()=>{
         </div>
 
         <div>
-        <h1 className="text-2xl font-bold text-slate-800">Academics</h1>
-        <p className="text-sm text-slate-500">Manage timetable and teachers schedule</p>
+        <h1 className="text-2xl font-bold text-foreground">Academics</h1>
+        <p className="text-sm text-foreground/70">Manage timetable and teachers schedule</p>
         </div>
 
       </div>
@@ -545,7 +545,7 @@ useEffect(()=>{
 
                 <table className="w-full text-sm border rounded-lg overflow-hidden">
 
-                  <thead className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+                  <thead className="bg-primary text-primary-foreground dark:bg-primary/90">
 
                     <tr>
 
@@ -563,7 +563,7 @@ useEffect(()=>{
 
                     {periods.map((period,i)=>(
 
-                      <tr key={period.id} className={i%2?"bg-slate-50":""}>
+<tr key={period.id} className={i%2?"bg-secondary/30 dark:bg-secondary/20":""}>
 
                         <td className="p-3 font-medium text-slate-600">
 

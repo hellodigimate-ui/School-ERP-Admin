@@ -32,13 +32,13 @@ const Page = () => {
 
         {/* Page Header */}
         <div className="flex items-center justify-between mb-8 p-6 rounded-2xl 
-                        bg-white/70 backdrop-blur-lg shadow-md border border-white/40">
+                        bg-card/70 dark:bg-card/70 backdrop-blur-lg shadow-md border border-border dark:border-border">
 
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
               Website Setting
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-muted-foreground dark:text-muted-foreground mt-2">
               Customize your school landing page beautifully
             </p>
           </div>
@@ -69,8 +69,8 @@ const Page = () => {
 
           {/* Left Panel */}
           <div className="col-span-1 h-full rounded-2xl p-5 
-                          bg-white/70 backdrop-blur-lg shadow-lg 
-                          border border-white/40 overflow-auto 
+                          bg-card/70 dark:bg-card/70 backdrop-blur-lg shadow-lg 
+                          border border-border dark:border-border overflow-auto 
                           hover:shadow-xl transition">
 
             <h2 className="text-lg font-semibold mb-4 text-purple-600">
@@ -81,8 +81,8 @@ const Page = () => {
 
           {/* Right Panel */}
           <div className="col-span-3 h-full rounded-2xl p-6 
-                          bg-white/80 backdrop-blur-lg shadow-lg 
-                          border border-white/40 overflow-auto 
+                          bg-card/80 dark:bg-card/80 backdrop-blur-lg shadow-lg 
+                          border border-border dark:border-border overflow-auto 
                           hover:shadow-xl transition">
 
             <h2 className="text-lg font-semibold mb-4 text-blue-600">
@@ -98,8 +98,8 @@ const Page = () => {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col">
 
           {/* Top Bar */}
-          <div className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
-            <h2 className="text-lg font-semibold text-gray-700">
+          <div className="flex items-center justify-between px-6 py-4 bg-card dark:bg-card shadow-md">
+            <h2 className="text-lg font-semibold text-foreground dark:text-foreground">
               Website Preview
             </h2>
 
@@ -114,7 +114,7 @@ const Page = () => {
           </div>
 
           {/* Iframe */}
-          <div className="flex-1 bg-white">
+          <div className="flex-1 bg-card dark:bg-card">
             <iframe
               src="http://localhost:3000" // 👈 Change this to your website URL
               className="w-full h-full border-none"

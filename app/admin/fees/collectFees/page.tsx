@@ -114,14 +114,14 @@ const filteredFees = fees.filter(
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-                  <TableHead className="text-black">Admission Number</TableHead>
-                  <TableHead className="text-black">Student</TableHead>
-                  <TableHead className="text-black">Class</TableHead>
-                  <TableHead className="text-right text-black">Total</TableHead>
-                  <TableHead className="text-right text-black">Paid</TableHead>
-                  <TableHead className="text-right text-black">Balance</TableHead>
-                  <TableHead className="text-black">Status</TableHead>
+                <TableRow className="bg-secondary/50 dark:bg-secondary/30">
+                  <TableHead className="text-foreground">Admission Number</TableHead>
+                  <TableHead className="text-foreground">Student</TableHead>
+                  <TableHead className="text-foreground">Class</TableHead>
+                  <TableHead className="text-right text-foreground">Total</TableHead>
+                  <TableHead className="text-right text-foreground">Paid</TableHead>
+                  <TableHead className="text-right text-foreground">Balance</TableHead>
+                  <TableHead className="text-foreground">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -150,14 +150,14 @@ const filteredFees = fees.filter(
                     else if (paid > 0) status = "Partial";
 
                     return (
-                      <TableRow key={fee.id} className="hover:bg-muted/40 transition">
-                        <TableCell>{student?.admissionNumber || "-"}</TableCell>
+                      <TableRow key={fee.id} className="border-b border-border hover:bg-secondary/30 transition">
+                        <TableCell className="text-foreground">{student?.admissionNumber || "-"}</TableCell>
 
-                        <TableCell className="font-medium">
+                        <TableCell className="font-medium text-foreground">
                           {student?.name || "-"}
                         </TableCell>
 
-                        <TableCell>-</TableCell>
+                        <TableCell className="text-foreground">-</TableCell>
 
                         <TableCell className="text-right">
                           ₹{totalFee.toLocaleString()}
@@ -175,10 +175,10 @@ const filteredFees = fees.filter(
                           <Badge
                             className={
                               status === "Paid"
-                                ? "bg-green-100 text-green-700"
+                                ? "bg-secondary/70 text-foreground border-border"
                                 : status === "Partial"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-red-100 text-red-700"
+                                ? "bg-secondary/70 text-foreground border-border"
+                                : "bg-secondary/70 text-foreground border-border"
                             }
                           >
                             {status}

@@ -233,17 +233,17 @@ const Page = () => {
           {stats.map((s) => (
             <Card
               key={s.label}
-              className="rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 border bg-white"
+              className="rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 border bg-white dark:bg-gray-900"
             >
               <CardContent className="p-4 flex items-center gap-4">
                 <div
-                  className={`h-12 w-12 rounded-xl flex items-center justify-center text-white shadow ${s.color}`}
+                  className={`h-12 w-12 rounded-xl flex items-center justify-center text-white shadow dark:shadow-lg ${s.color}`}
                 >
                   <s.icon className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-800">{s.value}</p>
-                  <p className="text-xs text-gray-500">{s.label}</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{s.value}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{s.label}</p>
                 </div>
               </CardContent>
             </Card>
@@ -251,18 +251,18 @@ const Page = () => {
         </div>
 
         {/* Table Card */}
-        <Card className="rounded-2xl shadow-md border bg-white">
+        <Card className="rounded-2xl shadow-md border bg-white dark:bg-gray-900">
           
           {/* Header */}
-          <CardHeader className="pb-3 border-b">
+          <CardHeader className="pb-3 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-gray-800">
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 📋 Homework List
               </CardTitle>
 
               {/* Search */}
               <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                 <Input
                   placeholder="Search homework..."
                   value={search}
@@ -270,7 +270,7 @@ const Page = () => {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="pl-9 rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                  className="pl-9 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             </div>
@@ -280,17 +280,17 @@ const Page = () => {
           <CardContent>
             {error && <p className="text-red-500 mb-2">{error}</p>}
 
-            <div className="rounded-xl overflow-hidden border">
+            <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
               <Table>
-                <TableHeader className="bg-gray-50">
+                <TableHeader className="bg-gray-50 dark:bg-gray-800">
                   <TableRow>
-                    <TableHead>Class</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Teacher</TableHead>
-                    <TableHead>Assign Date</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Class</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Title</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Teacher</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Assign Date</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Due Date</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300">Status</TableHead>
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
 
@@ -311,21 +311,21 @@ const Page = () => {
                     homeworkData.map((hw, index) => (
                       <TableRow
                         key={hw.id}
-                        className={`hover:bg-indigo-50 transition ${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        className={`hover:bg-indigo-50 dark:hover:bg-gray-700 transition ${
+                          index % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"
                         }`}
                       >
-                        <TableCell className="font-medium text-gray-800">
+                        <TableCell className="font-medium text-gray-800 dark:text-gray-200">
                           {hw.className}-{hw.subject}
                         </TableCell>
 
-                        <TableCell className="max-w-[200px] truncate">
+                        <TableCell className="max-w-[200px] truncate text-gray-800 dark:text-gray-200">
                           {hw.title}
                         </TableCell>
 
-                        <TableCell>{hw.teacher}</TableCell>
-                        <TableCell>{hw.assignDate}</TableCell>
-                        <TableCell>{hw.dueDate}</TableCell>
+                        <TableCell className="text-gray-800 dark:text-gray-200">{hw.teacher}</TableCell>
+                        <TableCell className="text-gray-800 dark:text-gray-200">{hw.assignDate}</TableCell>
+                        <TableCell className="text-gray-800 dark:text-gray-200">{hw.dueDate}</TableCell>
 
                         {/* Status */}
                         <TableCell>
@@ -367,8 +367,8 @@ const Page = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between px-2 py-4">
-              <div className="text-sm text-gray-500">
+            <div className="flex items-center justify-between px-2 py-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 Page {page} of {totalPages}
               </div>
 
@@ -395,10 +395,10 @@ const Page = () => {
         </Card>
 
         <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
-          <DialogContent className="sm:max-w-[600px] p-6 rounded-2xl bg-gradient-to-br from-white to-indigo-50 shadow-xl">
+          <DialogContent className="sm:max-w-[600px] p-6 rounded-2xl bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-gray-800 shadow-xl">
 
             <DialogHeader>
-              <DialogTitle className="text-2xl font-semibold text-center text-gray-800">
+              <DialogTitle className="text-2xl font-semibold text-center text-gray-800 dark:text-gray-100">
                 📘 Homework Details
               </DialogTitle>
             </DialogHeader>
@@ -406,32 +406,32 @@ const Page = () => {
             <div className="space-y-5 mt-4">
 
               {/* Top Info Card */}
-              <div className="grid grid-cols-2 gap-4 bg-white rounded-xl p-4 shadow-sm border">
+              <div className="grid grid-cols-2 gap-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                 
                 <div>
-                  <p className="text-xs text-gray-500">Title</p>
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Title</p>
+                  <p className="font-semibold text-gray-800 dark:text-gray-100">
                     {viewHomework?.title ?? "-"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Class</p>
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Class</p>
+                  <p className="font-semibold text-gray-800 dark:text-gray-100">
                     {viewHomework?.className ?? "-"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Subject</p>
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Subject</p>
+                  <p className="font-semibold text-gray-800 dark:text-gray-100">
                     {viewHomework?.subject ?? "-"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Teacher</p>
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Teacher</p>
+                  <p className="font-semibold text-gray-800 dark:text-gray-100">
                     {viewHomework?.teacher ?? "-"}
                   </p>
                 </div>
@@ -439,12 +439,12 @@ const Page = () => {
 
               {/* Document Section */}
               {viewHomework?.homeworkUrl && (
-                <div className="rounded-xl border bg-blue-50 p-4 flex items-center justify-between">
+                <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 p-4 flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-blue-600 uppercase font-medium">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 uppercase font-medium">
                       📎 Homework Document
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Click below to view full assignment
                     </p>
                   </div>
@@ -461,39 +461,39 @@ const Page = () => {
               )}
 
               {/* Dates & Status */}
-              <div className="grid grid-cols-2 gap-4 bg-white rounded-xl p-4 shadow-sm border">
+              <div className="grid grid-cols-2 gap-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
 
                 <div>
-                  <p className="text-xs text-gray-500">Assign Date</p>
-                  <p className="font-medium text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Assign Date</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-100">
                     {viewHomework?.assignDate ?? "-"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Due Date</p>
-                  <p className="font-medium text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Due Date</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-100">
                     {viewHomework?.dueDate ?? "-"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Submissions</p>
-                  <p className="font-medium text-gray-800">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Submissions</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-100">
                     {viewHomework?.submissions ?? 0} / {viewHomework?.total ?? 0}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Status</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
                   <span className={`
                     inline-block px-3 py-1 text-xs font-semibold rounded-full
                     ${
                       viewHomework?.status === "Completed"
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400"
                         : viewHomework?.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
                     }
                   `}>
                     {viewHomework?.status ?? "-"}
@@ -507,7 +507,7 @@ const Page = () => {
             <DialogFooter className="mt-6">
               <Button
                 variant="outline"
-                className="w-full rounded-xl border-gray-300 hover:bg-gray-100"
+                className="w-full rounded-xl border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => setIsViewOpen(false)}
               >
                 Close

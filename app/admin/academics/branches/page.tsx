@@ -241,7 +241,7 @@ const Branches = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Branches
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Manage school branches
           </p>
         </div>
@@ -254,7 +254,7 @@ const Branches = () => {
             </Button>
           </DialogTrigger>
 
-          <DialogContent className="sm:max-w-[650px] h-[90vh] p-0 rounded-2xl overflow-hidden border border-gray-200 shadow-2xl flex flex-col">
+          <DialogContent className="sm:max-w-[650px] h-[90vh] p-0 rounded-2xl overflow-hidden border border-border shadow-2xl flex flex-col">
 
             {/* Header */}
             <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-6 py-4 flex items-center justify-between shadow-md">
@@ -269,10 +269,10 @@ const Branches = () => {
             </div>
 
             {/* Scrollable Form Area */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 bg-gradient-to-br from-white via-indigo-50/40 to-purple-50/40 backdrop-blur-sm">
+            <div className="flex-1 overflow-y-auto px-6 py-5 bg-gradient-to-br from-card via-indigo-50/40 to-purple-50/40 backdrop-blur-sm">
 
               {/* Optional top glow card */}
-              <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+              <div className="bg-card rounded-xl shadow-md p-4 border border-border">
                 <BranchForm
                   form={branchForm}
                   setForm={setBranchForm}
@@ -283,12 +283,12 @@ const Branches = () => {
             </div>
 
             {/* Footer */}
-            <DialogFooter className="flex justify-between items-center px-6 py-4 border-t bg-white">
+            <DialogFooter className="flex justify-between items-center px-6 py-4 border-t bg-card">
 
               <Button
                 variant="ghost"
                 onClick={() => setIsCreateOpen(false)}
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                className="text-foreground/70 hover:text-foreground hover:bg-secondary/50 rounded-lg"
               >
                 Cancel
               </Button>
@@ -306,23 +306,23 @@ const Branches = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="flex flex-col lg:flex-row gap-4 mb-6 bg-white/60 backdrop-blur-md border border-gray-200 shadow-sm rounded-2xl p-4">
+      <div className="flex flex-col lg:flex-row gap-4 mb-6 bg-card/60 backdrop-blur-md border border-border shadow-sm rounded-2xl p-4">
 
         {/* Search */}
         <div className="relative flex-1 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-indigo-500 transition" />
 
           <Input
             placeholder="Search branches..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 rounded-xl border-gray-200 bg-white/80 focus:bg-white focus:ring-2 focus:ring-indigo-400 shadow-sm"
+            className="pl-11 rounded-xl border-border bg-card/80 focus:bg-card focus:ring-2 focus:ring-indigo-400 shadow-sm"
           />
         </div>
 
         {/* School Filter */}
         <Select value={schoolFilter} onValueChange={setSchoolFilter}>
-          <SelectTrigger className="w-full lg:w-[220px] rounded-xl border-gray-200 bg-white/80 shadow-sm hover:border-indigo-400 focus:ring-2 focus:ring-indigo-400">
+          <SelectTrigger className="w-full lg:w-[220px] rounded-xl border-border bg-card/80 shadow-sm hover:border-indigo-400 focus:ring-2 focus:ring-indigo-400">
             <SelectValue placeholder="School" />
           </SelectTrigger>
 
@@ -344,7 +344,7 @@ const Branches = () => {
             setCurrentPage(1);
           }}
         >
-          <SelectTrigger className="w-full lg:w-[140px] rounded-xl border-gray-200 bg-white/80 shadow-sm hover:border-indigo-400 focus:ring-2 focus:ring-indigo-400">
+          <SelectTrigger className="w-full lg:w-[140px] rounded-xl border-border bg-card/80 shadow-sm hover:border-indigo-400 focus:ring-2 focus:ring-indigo-400">
             <SelectValue />
           </SelectTrigger>
 
@@ -359,16 +359,16 @@ const Branches = () => {
 
       </div>
 
-      <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-md shadow-md overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md shadow-md overflow-hidden">
 
         <Table>
           {/* Header */}
           <TableHeader>
-            <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
-              <TableHead className="text-gray-700 font-semibold">Branch</TableHead>
-              <TableHead className="text-gray-700 font-semibold">School</TableHead>
-              <TableHead className="text-gray-700 font-semibold">City</TableHead>
-              <TableHead className="text-gray-700 font-semibold text-end">Action</TableHead>
+            <TableRow className="bg-secondary/50 dark:bg-secondary/30">
+              <TableHead className="text-foreground font-semibold">Branch</TableHead>
+              <TableHead className="text-foreground font-semibold">School</TableHead>
+              <TableHead className="text-foreground font-semibold">City</TableHead>
+              <TableHead className="text-foreground font-semibold text-end">Action</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
@@ -378,25 +378,25 @@ const Branches = () => {
             {branches.map((branch) => (
               <TableRow
                 key={branch.id}
-                className="group hover:bg-gradient-to-r hover:from-indigo-50/40 hover:to-purple-50/40 transition-all duration-200"
+                className="group hover:bg-secondary/30 transition-all duration-200"
               >
                 {/* Branch */}
                 <TableCell>
-                  <p className="font-semibold text-gray-800 group-hover:text-indigo-600 transition">
+                  <p className="font-semibold text-foreground group-hover:text-indigo-600 transition">
                     {branch.name}
                   </p>
                 </TableCell>
 
                 {/* School */}
                 <TableCell>
-                  <span className="text-gray-600 font-medium">
+                  <span className="text-foreground/70 font-medium">
                     {branch.school?.name}
                   </span>
                 </TableCell>
 
                 {/* City */}
                 <TableCell>
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-foreground/70">
                     <MapPin className="w-4 h-4 text-indigo-500" />
                     <span className="text-sm">{branch.city}</span>
                   </div>
@@ -411,13 +411,13 @@ const Branches = () => {
                         variant="ghost"
                         className="rounded-full hover:bg-indigo-100 transition"
                       >
-                        <MoreHorizontal className="w-4 h-4 text-gray-600" />
+                        <MoreHorizontal className="w-4 h-4 text-foreground/70" />
                       </Button>
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent
                       align="end"
-                      className="rounded-xl shadow-lg border border-gray-100"
+                      className="rounded-xl shadow-lg border border-border"
                     >
                       <DropdownMenuItem
                         className="hover:bg-indigo-50 cursor-pointer"
@@ -442,16 +442,16 @@ const Branches = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 px-4 py-3 rounded-2xl border border-gray-200 bg-gradient-to-r from-indigo-50/60 to-purple-50/60 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 px-4 py-3 rounded-2xl border border-border bg-gradient-to-r from-indigo-50/60 to-purple-50/60 shadow-sm">
 
         {/* Left Text */}
-        <p className="text-sm text-gray-600 font-medium">
+        <p className="text-sm text-foreground/70 font-medium">
           Showing{" "}
-          <span className="font-semibold text-gray-800">
+          <span className="font-semibold text-foreground">
             {(currentPage - 1) * itemsPerPage + 1}
           </span>{" "}
           to{" "}
-          <span className="font-semibold text-gray-800">
+          <span className="font-semibold text-foreground">
             {Math.min(currentPage * itemsPerPage, totalBranches)}
           </span>{" "}
           of{" "}
@@ -472,7 +472,7 @@ const Branches = () => {
                 className={`rounded-lg transition ${
                   currentPage === 1
                     ? "pointer-events-none opacity-40"
-                    : "cursor-pointer hover:bg-indigo-100"
+                    : "cursor-pointer hover:bg-secondary/50"
                 }`}
               />
             </PaginationItem>
@@ -486,7 +486,7 @@ const Branches = () => {
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
                     currentPage === page
                       ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md"
-                      : "hover:bg-indigo-100 text-gray-700 cursor-pointer"
+                      : "hover:bg-secondary/50 text-foreground cursor-pointer"
                   }`}
                 >
                   {page}
@@ -503,7 +503,7 @@ const Branches = () => {
                 className={`rounded-lg transition ${
                   currentPage === totalPages
                     ? "pointer-events-none opacity-40"
-                    : "cursor-pointer hover:bg-indigo-100"
+                    : "cursor-pointer hover:bg-secondary/50"
                 }`}
               />
             </PaginationItem>

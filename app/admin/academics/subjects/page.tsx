@@ -254,21 +254,21 @@ const Subjects = () => {
             </div>
 
             {/* Body */}
-            <div className="px-6 py-5 bg-gradient-to-br from-white via-indigo-50/40 to-purple-50/40 space-y-4">
+            <div className="px-6 py-5 bg-gradient-to-br from-card via-indigo-50/40 to-purple-50/40 space-y-4">
 
               {/* Name */}
               <div className="space-y-2">
                 <Label>Name *</Label>
                 <div className="relative">
-                  <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    value={newSubject.name || ""}
-                    onChange={(e) =>
-                      setNewSubject({ ...newSubject, name: e.target.value })
-                    }
-                    className="pl-10 rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-400"
-                    placeholder="Subject name"
-                  />
+                <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  value={newSubject.name || ""}
+                  onChange={(e) =>
+                    setNewSubject({ ...newSubject, name: e.target.value })
+                  }
+                  placeholder="Subject name"
+                  className="pl-10 rounded-xl border-border focus:ring-2 focus:ring-primary/40"
+                />
                 </div>
               </div>
 
@@ -276,13 +276,13 @@ const Subjects = () => {
               <div className="space-y-2">
                 <Label>Code *</Label>
                 <div className="relative">
-                  <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     value={newSubject.code || ""}
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, code: e.target.value })
                     }
-                    className="pl-10 rounded-xl border-gray-200 focus:ring-2 focus:ring-purple-400"
+                    className="pl-10 rounded-xl border-border focus:ring-2 focus:ring-purple-400"
                     placeholder="e.g. MATH101"
                   />
                 </div>
@@ -292,13 +292,13 @@ const Subjects = () => {
               <div className="space-y-2">
                 <Label>Description</Label>
                 <div className="relative">
-                  <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <FileText className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input
                     value={newSubject.description || ""}
                     onChange={(e) =>
                       setNewSubject({ ...newSubject, description: e.target.value })
                     }
-                    className="pl-10 rounded-xl border-gray-200 focus:ring-2 focus:ring-pink-400"
+                    className="pl-10 rounded-xl border-border focus:ring-2 focus:ring-pink-400"
                     placeholder="Short description"
                   />
                 </div>
@@ -307,11 +307,11 @@ const Subjects = () => {
             </div>
 
             {/* Footer */}
-            <DialogFooter className="flex justify-between px-6 py-4 border-t bg-white">
+            <DialogFooter className="flex justify-between px-6 py-4 border-t bg-card">
               <Button
                 variant="ghost"
                 onClick={() => setIsAddDialogOpen(false)}
-                className="hover:bg-gray-100"
+                className="hover:bg-secondary/50"
               >
                 Cancel
               </Button>
@@ -331,17 +331,17 @@ const Subjects = () => {
 
         {/* Search */}
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search by name or code..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10 rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-400"
+            className="pl-10 rounded-xl border-border focus:ring-2 focus:ring-indigo-400"
           />
         </div>
 
         {/* Per Page */}
-        <div className="flex items-center gap-2 bg-white shadow-sm border rounded-xl px-3 py-2">
+        <div className="flex items-center gap-2 bg-card shadow-sm border border-border rounded-xl px-3 py-2">
           <List className="w-4 h-4 text-indigo-500" />
           <span className="text-sm text-muted-foreground">Per Page</span>
 
@@ -365,16 +365,16 @@ const Subjects = () => {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border bg-gradient-to-br from-white via-indigo-50/30 to-purple-50/30 shadow-md overflow-hidden">
+      <div className="rounded-xl border bg-gradient-to-br from-card via-indigo-50/30 to-purple-50/30 shadow-md overflow-hidden">
 
         <Table>
           {/* Header */}
           <TableHeader>
-            <TableRow className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
-              <TableHead className="font-semibold text-gray-700">Name</TableHead>
-              <TableHead className="font-semibold text-gray-700">Code</TableHead>
-              <TableHead className="font-semibold text-gray-700">Description</TableHead>
-              <TableHead className="w-[160px] text-right font-semibold text-gray-700">
+            <TableRow className="bg-secondary/50 dark:bg-secondary/30">
+              <TableHead className="font-semibold text-foreground">Name</TableHead>
+              <TableHead className="font-semibold text-foreground">Code</TableHead>
+              <TableHead className="font-semibold text-foreground">Description</TableHead>
+              <TableHead className="w-[160px] text-right font-semibold text-foreground">
                 Actions
               </TableHead>
             </TableRow>
@@ -385,10 +385,10 @@ const Subjects = () => {
               subjects.map((subject) => (
                 <TableRow
                   key={subject.id}
-                  className="hover:bg-indigo-50/40 transition-colors"
+                  className="hover:bg-secondary/30 transition-colors"
                 >
                   {/* Name */}
-                  <TableCell className="font-medium text-gray-800">
+                  <TableCell className="font-medium text-foreground">
                     {subject.name}
                   </TableCell>
 
@@ -400,9 +400,9 @@ const Subjects = () => {
                   </TableCell>
 
                   {/* Description */}
-                  <TableCell className="text-gray-600 max-w-[250px] truncate">
+                  <TableCell className="text-foreground/70 max-w-[250px] truncate">
                     {subject.description || (
-                      <span className="italic text-gray-400">No description</span>
+                      <span className="italic text-muted-foreground">No description</span>
                     )}
                   </TableCell>
 
@@ -460,10 +460,10 @@ const Subjects = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 p-4 rounded-xl border bg-gradient-to-r from-white via-indigo-50/40 to-purple-50/40 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 p-4 rounded-xl border bg-gradient-to-r from-card via-indigo-50/40 to-purple-50/40 shadow-sm">
 
         {/* Info */}
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-foreground/70">
           Showing{" "}
           <span className="font-semibold text-indigo-600">
             {subjects.length
@@ -488,7 +488,7 @@ const Subjects = () => {
           <Button
             onClick={() => goToPage(pagination.currentPage - 1)}
             disabled={pagination.currentPage === 1}
-            className="flex items-center gap-1 rounded-full px-4 bg-white border shadow-sm hover:bg-indigo-50 disabled:opacity-50"
+            className="flex items-center gap-1 rounded-full px-4 bg-card border shadow-sm hover:bg-secondary/50 disabled:opacity-50"
           >
             <ChevronLeft className="w-4 h-4" />
             Prev

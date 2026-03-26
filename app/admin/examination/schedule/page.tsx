@@ -200,8 +200,8 @@ useEffect(() => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Exam Schedule</h1>
-            <p className="text-sm text-slate-500">Plan and manage examination timetables</p>
+            <h1 className="text-3xl font-bold text-foreground">Exam Schedule</h1>
+            <p className="text-sm text-muted-foreground">Plan and manage examination timetables</p>
           </div>
 
           {/* Add Schedule Button */}
@@ -214,7 +214,7 @@ useEffect(() => {
 
             <DialogContent className="max-h-[80vh] overflow-y-auto rounded-xl shadow-xl p-6 w-full sm:w-96">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-slate-900">Add Exam Schedule</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-foreground">Add Exam Schedule</DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4 mt-2">
@@ -392,31 +392,31 @@ useEffect(() => {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto shadow-md mt-4">
+        <div className="bg-card rounded-xl border border-border overflow-x-auto shadow-md mt-4">
           <table className="w-full text-sm">
-            <thead className="bg-indigo-50">
+            <thead className="bg-secondary/50 dark:bg-secondary/30">
               <tr>
-                <th className="p-3 text-left font-semibold text-gray-600">#</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Exam</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Class</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Subject</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Subject Code</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Date</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Time</th>
-                <th className="p-3 text-left font-semibold text-gray-600">Room</th>
-                <th className="p-3 text-center font-semibold text-gray-600">Action</th>
+                <th className="p-3 text-left font-semibold text-foreground">#</th>
+                <th className="p-3 text-left font-semibold text-foreground">Exam</th>
+                <th className="p-3 text-left font-semibold text-muted-foreground dark:text-muted-foreground">Class</th>
+                <th className="p-3 text-left font-semibold text-muted-foreground dark:text-muted-foreground">Subject</th>
+                <th className="p-3 text-left font-semibold text-muted-foreground dark:text-muted-foreground">Subject Code</th>
+                <th className="p-3 text-left font-semibold text-muted-foreground dark:text-muted-foreground">Date</th>
+                <th className="p-3 text-left font-semibold text-muted-foreground dark:text-muted-foreground">Time</th>
+                <th className="p-3 text-left font-semibold text-muted-foreground dark:text-muted-foreground">Room</th>
+                <th className="p-3 text-center font-semibold text-muted-foreground dark:text-muted-foreground">Action</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((s, i) => (
-                <tr key={s.id} className="border-b border-gray-200 hover:bg-indigo-50 transition-colors">
+                <tr key={s.id} className="border-b border-border dark:border-border hover:bg-secondary/50 dark:hover:bg-secondary/50 transition-colors">
                   <td className="p-3">{i + 1}</td>
                   <td className="p-3 font-medium">{s.name}</td>
                   <td className="p-3"><Badge variant="outline">{s.class}</Badge></td>
                   <td className="p-3">{s.subject}</td>
                   <td className="p-3 text-center">{s.code}</td>
                   <td className="p-3">{new Date(s.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
-                  <td className="p-3 text-gray-500">{s.startTime} - {s.endTime}</td>
+                  <td className="p-3 text-muted-foreground dark:text-muted-foreground">{s.startTime} - {s.endTime}</td>
                   <td className="p-3"><Badge variant="secondary">{s.room}</Badge></td>
                   <td className="p-3 flex justify-center gap-2">
                     <Button size="sm" variant="outline" onClick={() => { setEditingItem(s); setEditDialogOpen(true); }}>

@@ -77,7 +77,7 @@ const Page = () => {
 
                         <Button
                         variant="outline"
-                        className="hover:bg-indigo-50 hover:text-indigo-600"
+                        className="hover:bg-secondary/40"
                         >
                             <Printer className="h-4 w-4 mr-2" />
                             Print
@@ -171,7 +171,7 @@ const Page = () => {
 
                 {/* RESULTS TABLE */}
 
-                <div className="bg-white/80 backdrop-blur-md rounded-xl border shadow-lg overflow-x-auto">
+                <div className="bg-card/80 backdrop-blur-md rounded-xl border border-border shadow-lg overflow-x-auto">
 
                     <div className="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
@@ -179,7 +179,7 @@ const Page = () => {
 
                             <thead>
 
-                                <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b">
+                                <tr className="bg-secondary/50 dark:bg-secondary/30 border-b border-border">
 
                                     <th className="text-left p-3">Rank</th>
                                     <th className="text-left p-3">Student</th>

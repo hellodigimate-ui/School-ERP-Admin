@@ -717,7 +717,7 @@ useEffect(() => {
   return (
     <AdminLayout>
         <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 p-6 rounded-xl border shadow-sm">
+            <div className="flex items-center justify-between bg-secondary/50 dark:bg-secondary/50 p-6 rounded-xl border border-border dark:border-border shadow-sm">
             
             <div className="flex items-center gap-4">
                 
@@ -732,7 +732,7 @@ useEffect(() => {
                     Communicate
                 </h1>
 
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                     Manage notices, emails, SMS, and WhatsApp communications
                 </p>
                 </div>
@@ -802,9 +802,9 @@ useEffect(() => {
 
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5 ">
                 
-                <TabsList className="flex flex-wrap gap-2 p-2 bg-gradient-to-r from-slate-50 via-blue-50 to-purple-50 rounded-xl shadow-sm border">
+                <TabsList className="flex flex-wrap gap-2 p-2 bg-secondary/50 dark:bg-secondary/50 rounded-xl shadow-sm border border-border dark:border-border h-50 ">
 
                     <TabsTrigger
                         value="notices"
@@ -866,12 +866,12 @@ useEffect(() => {
 
                 {/* Notice Board */}
                 <TabsContent value="notices">
-                    <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
+                    <div className="rounded-xl border border-border dark:border-border shadow-sm bg-card dark:bg-card overflow-hidden">
 
                         {/* Header */}
-                        <div className="p-4 border-b bg-gradient-to-r from-blue-50 via-purple-50 to-indigo-50 flex justify-between items-center">
+                        <div className="p-4 border-b border-border dark:border-border bg-secondary/50 dark:bg-secondary/50 flex justify-between items-center">
 
-                            <div className="flex items-center gap-2 bg-white border rounded-lg px-3 h-9 w-full max-w-sm shadow-sm">
+                            <div className="flex items-center gap-2 bg-input dark:bg-input border border-border dark:border-border rounded-lg px-3 h-9 w-full max-w-sm shadow-sm">
                                 <Search className="w-4 h-4 text-muted-foreground" />
                                 <Input
                                 placeholder="Search notices..."
@@ -1101,10 +1101,10 @@ useEffect(() => {
 
                 {/* Email Templates */}
                 <TabsContent value="email-template">
-                    <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
+                    <div className="rounded-xl border border-border dark:border-border shadow-sm bg-card dark:bg-card overflow-hidden">
 
                         {/* Header */}
-                        <div className="p-4 border-b bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 flex justify-between items-center">
+                        <div className="p-4 border-b border-border dark:border-border bg-secondary/50 dark:bg-secondary/50 flex justify-between items-center">
 
                             <div className="flex items-center gap-2 text-sm font-medium text-purple-700">
                                 ✉️ Email Templates
@@ -1336,10 +1336,10 @@ useEffect(() => {
 
                 {/* SMS Templates */}
                 <TabsContent value="sms-template">
-                    <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
+                    <div className="rounded-xl border border-border dark:border-border shadow-sm bg-card dark:bg-card overflow-hidden">
 
                         {/* Header */}
-                        <div className="p-4 border-b bg-gradient-to-r from-green-50 via-teal-50 to-emerald-50 flex justify-between items-center">
+                        <div className="p-4 border-b border-border dark:border-border bg-secondary/50 dark:bg-secondary/50 flex justify-between items-center">
 
                             <div className="flex items-center gap-2 text-sm font-medium text-green-700">
                                 📱 SMS Templates
@@ -1563,10 +1563,10 @@ useEffect(() => {
 
                 {/* WhatsApp Templates */}
                 <TabsContent value="whatsapp-template">
-                    <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
+                    <div className="rounded-xl border border-border dark:border-border shadow-sm bg-card dark:bg-card overflow-hidden">
 
                         {/* Header */}
-                        <div className="p-4 border-b bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 flex justify-between items-center">
+                        <div className="p-4 border-b border-border dark:border-border bg-secondary/50 dark:bg-secondary/50 flex justify-between items-center">
 
                             <div className="flex items-center gap-2 text-sm font-medium text-emerald-700">
                                 💬 WhatsApp Templates
@@ -1793,9 +1793,9 @@ useEffect(() => {
 
                 {/* Send Email */}
                 <TabsContent value="send-email">
-                    <Card className="rounded-xl border shadow-md bg-white overflow-hidden">
+                    <Card className="rounded-xl border border-border dark:border-border shadow-md bg-card dark:bg-card overflow-hidden">
 
-                        <CardHeader className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border-b p-4">
+                        <CardHeader className="bg-secondary/50 dark:bg-secondary/50 border-b border-border dark:border-border p-4">
                             <CardTitle className="text-lg font-heading flex items-center gap-2 text-blue-700">
                                 <Mail className="w-5 h-5 text-blue-500" />
                                 Send Email
@@ -1876,10 +1876,10 @@ useEffect(() => {
 
                 {/* Send SMS */}
                 <TabsContent value="send-sms">
-                    <Card className="rounded-xl border shadow-md bg-white overflow-hidden">
+                    <Card className="rounded-xl border border-border dark:border-border shadow-md bg-card dark:bg-card overflow-hidden">
 
                         {/* Header */}
-                        <CardHeader className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-b p-4">
+                        <CardHeader className="bg-secondary/50 dark:bg-secondary/50 border-b border-border dark:border-border p-4">
                             <CardTitle className="text-lg font-heading flex items-center gap-2 text-green-700">
                                 <Phone className="w-5 h-5 text-green-500" />
                                 Send SMS
@@ -1954,9 +1954,9 @@ useEffect(() => {
 
                 {/* Send WhatsApp */}
                 <TabsContent value="send-whatsapp">
-                    <Card className="rounded-xl border shadow-md bg-white overflow-hidden">
+                    <Card className="rounded-xl border border-border dark:border-border shadow-md bg-card dark:bg-card overflow-hidden">
 
-                        <CardHeader className="bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 border-b p-4">
+                        <CardHeader className="bg-secondary/50 dark:bg-secondary/50 border-b border-border dark:border-border p-4">
                             <CardTitle className="text-lg font-heading flex items-center gap-2 text-emerald-700">
                                 <MessageSquare className="w-5 h-5 text-emerald-500" />
                                 Send WhatsApp
@@ -2029,10 +2029,10 @@ useEffect(() => {
 
                 {/* Message Logs */}
                 <TabsContent value="logs">
-                    <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
+                    <div className="rounded-xl border border-border dark:border-border shadow-sm bg-card dark:bg-card overflow-hidden">
 
                         {/* Header */}
-                        <div className="p-4 border-b bg-gradient-to-r from-slate-50 via-blue-50 to-purple-50 flex justify-between items-center">
+                        <div className="p-4 border-b border-border dark:border-border bg-secondary/50 dark:bg-secondary/50 flex justify-between items-center">
                             <p className="text-sm font-medium text-slate-700">Email / SMS / WhatsApp Logs</p>
                             <div className="flex items-center gap-2">
                                 <Select value={logType} onValueChange={setLogType}>

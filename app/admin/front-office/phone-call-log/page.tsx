@@ -191,44 +191,44 @@ const Page = () => {
         <div className="space-y-6">
 
             {/* Header */}
-            <div className="flex items-center justify-between bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-white/40">
+            <div className="flex items-center justify-between bg-card/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-border/50 dark:bg-gray-900">
                 <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent dark:bg-gray-900 ">
                     Phone Call Log
                 </h1>
-                <p className="text-gray-500 text-sm mt-2">
+                <p className="text-muted-foreground text-sm mt-2">
                     Record and track all incoming & outgoing phone calls
                 </p>
                 </div>
 
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg hover:scale-105 transition-all duration-300 gap-2 rounded-xl px-5 py-2">
+                        <Button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg hover:scale-105 transition-all duration-300 gap-2 rounded-xl px-5 py-2 dark:bg-gray-900">
                         <Plus className="w-4 h-4" /> Add Call
                         </Button>
                     </DialogTrigger>
 
-                    <DialogContent className="max-w-lg rounded-2xl bg-white/90 backdrop-blur-xl shadow-2xl border border-white/40">
+                    <DialogContent className="max-w-lg rounded-2xl bg-card/90 backdrop-blur-xl shadow-2xl border border-border/50 dark:bg-gray-900">
                         <DialogHeader>
-                        <DialogTitle className="font-display text-xl font-semibold text-gray-800">
+                        <DialogTitle className="font-display text-xl font-semibold text-foreground">
                             Log Phone Call
                         </DialogTitle>
                         </DialogHeader>
 
-                        <div className="grid grid-cols-2 gap-5 pt-6">
+                        <div className="grid grid-cols-2 gap-5 pt-6 dark:bg-gray-900">
 
-                            <div className="space-y-2">
-                                <Label className="text-gray-600">Name *</Label>
-                                <Input className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400" name="callerName" value={formData.callerName} onChange={handleInputChange} placeholder="Caller/Receiver name" />
+                            <div className="space-y-2 dark:bg-gray-900">
+                                <Label className="text-foreground/70">Name *</Label>
+                                <Input className="rounded-xl bg-background/50 focus:ring-2 focus:ring-primary/40 dark:bg-gray-900   " name="callerName" value={formData.callerName} onChange={handleInputChange} placeholder="Caller/Receiver name" />
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-gray-600">Phone *</Label>
-                                <Input className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange}  placeholder="Phone number" />
+                                <Label className="text-foreground/70">Phone *</Label>
+                                <Input className="rounded-xl bg-background/50 focus:ring-2 focus:ring-primary/40" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange}  placeholder="Phone number" />
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-gray-600">Call Type *</Label>
+                                <Label className="text-foreground/70">Call Type *</Label>
                                 <Select
                                 name="callType"
                                 value={formData.callType}
@@ -239,7 +239,7 @@ const Page = () => {
                                     }))
                                 }
                                 >
-                                <SelectTrigger className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400">
+                                <SelectTrigger className="rounded-xl bg-background/50 focus:ring-2 focus:ring-primary/40">
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -250,7 +250,7 @@ const Page = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-gray-600">Purpose</Label>
+                                <Label className="text-foreground/70">Purpose</Label>
                                 <Input className="rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400" name="purpose" value={formData.purpose} onChange={handleInputChange} placeholder="Call purpose" />
                             </div>
 
@@ -286,13 +286,13 @@ const Page = () => {
 
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
                 {[
-                    { label: "Total Calls", value: stats.totalCalls, icon: Phone, bg: "bg-indigo-100", text: "text-indigo-600" },
+                    { label: "Total Calls", value: stats.totalCalls, icon: Phone, bg: "bg-indigo-100 ", text: "text-indigo-600" },
                     { label: "Incoming", value: stats.incomingCalls, icon: PhoneIncoming, bg: "bg-blue-100", text: "text-blue-600" },
                     { label: "Outgoing", value: stats.outgoingCalls, icon: PhoneOutgoing, bg: "bg-emerald-100", text: "text-emerald-600" },
                     ].map(s => (
-                <Card key={s.label} className="border-0 shadow-lg rounded-2xl bg-white/80 backdrop-blur-md hover:shadow-xl transition">
+                <Card key={s.label} className="border-0 shadow-lg rounded-2xl bg-white/80 backdrop-blur-md hover:shadow-xl transition dark:bg-gray-900">
                     <CardContent className="p-6 flex items-center justify-between">
                     <div>
                         <p className="text-sm text-gray-500">{s.label}</p>
@@ -309,14 +309,14 @@ const Page = () => {
 
 
             {/* Search */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl dark:bg-gray-900">
                 <CardContent className="p-6">
                 <div className="flex gap-4 items-end">
 
-                    <div className="flex-1 relative">
+                    <div className="flex-1 relative dark:bg-gray-900">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
-                        className="pl-9 rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400"
+                        className="pl-9 rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 dark:bg-gray-900"
                         placeholder="Search calls..."
                         value={search}
                         onChange={(e) => {
@@ -333,7 +333,7 @@ const Page = () => {
                         setFilterType(value === "all" ? "" : value);
                     }}
                     >
-                    <SelectTrigger className="w-[160px] rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400">
+                    <SelectTrigger className="w-[160px] rounded-xl bg-gray-50 focus:ring-2 focus:ring-indigo-400 dark:bg-gray-900">
                         <SelectValue placeholder="All Types" />
                     </SelectTrigger>
                     <SelectContent>
@@ -349,30 +349,30 @@ const Page = () => {
 
 
             {/* Table */}
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl overflow-hidden">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl rounded-2xl overflow-hidden dark:bg-gray-900">
                 <CardContent className="p-0">
                 <Table>
                     <TableHeader>
-                    <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                        <TableHead className="font-semibold text-gray-700">Name</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Phone</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Type</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Purpose</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Date</TableHead>
+                    <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-gray-900 dark:to-gray-900">
+                        <TableHead className="font-semibold text-gray-600 dark:text-gray-400">Name</TableHead>
+                        <TableHead className="font-semibold text-gray-700 dark:text-gray-400">Phone</TableHead>
+                        <TableHead className="font-semibold text-gray-700  dark:text-gray-400">Type</TableHead>
+                        <TableHead className="font-semibold text-gray-700 dark:text-gray-400">Purpose</TableHead>
+                        <TableHead className="font-semibold text-gray-700 dark:text-gray-400">Date</TableHead>
                         
-                        <TableHead className="font-semibold text-right text-gray-700">Actions</TableHead>
+                        <TableHead className="font-semibold text-right text-gray-700 dark:text-gray-400 dark:text-gray-400">Actions</TableHead>
                     </TableRow>
                     </TableHeader>
 
                     <TableBody>
                     {calls.map(c => (
-                        <TableRow key={c.id} className="hover:bg-indigo-50/50 transition">
+                        <TableRow key={c.id} className="hover:bg-indigo-50/50 transition dark:text-gray-400">
 
-                            <TableCell className="font-medium text-gray-800">
+                            <TableCell className="font-medium text-gray-800 dark:text-gray-400">
                                 {c.callerName}
                             </TableCell>
 
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-gray-600 dark:text-gray-400">
                                 {c.phoneNumber}
                             </TableCell>
 
@@ -392,11 +392,11 @@ const Page = () => {
                                 </Badge>
                             </TableCell>
 
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-gray-600 dark:text-gray-400">
                                 {c.purpose}
                             </TableCell>
 
-                            <TableCell className="text-gray-600">
+                            <TableCell className="text-gray-600 dark:text-gray-400">
                                 {new Date(c.callTime).toLocaleDateString()} 
                             </TableCell>
 

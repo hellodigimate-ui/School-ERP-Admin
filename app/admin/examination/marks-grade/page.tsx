@@ -204,7 +204,7 @@ const Page = () => {
                 📊 Grade Scale Summary
                 </CardTitle>
 
-                <Badge className="bg-indigo-50 text-indigo-600 border-indigo-200">
+                <Badge className="bg-secondary/50 text-foreground border-border">
                 {grades.length} Grades
                 </Badge>
 
@@ -218,12 +218,12 @@ const Page = () => {
 
                     <thead>
 
-                    <tr className="bg-muted/40 text-muted-foreground">
+                    <tr className="bg-secondary/50 dark:bg-secondary/30 border-b border-border">
 
-                        <th className="text-left p-3 font-medium">Grade</th>
-                        <th className="text-left p-3 font-medium">Range</th>
-                        <th className="text-left p-3 font-medium">Grade Point</th>
-                        <th className="text-left p-3 font-medium">Description</th>
+                        <th className="text-left p-3 font-medium text-foreground">Grade</th>
+                        <th className="text-left p-3 font-medium text-foreground">Range</th>
+                        <th className="text-left p-3 font-medium text-foreground">Grade Point</th>
+                        <th className="text-left p-3 font-medium text-foreground">Description</th>
 
                     </tr>
 
@@ -235,7 +235,7 @@ const Page = () => {
 
                         <tr
                         key={g.id}
-                        className="border-b border-border hover:bg-muted/30 transition"
+                        className="border-b border-border hover:bg-secondary/30 transition"
                         >
 
                         <td className="p-3">
@@ -258,7 +258,7 @@ const Page = () => {
 
                             <Badge
                             variant="outline"
-                            className="bg-indigo-50 text-indigo-600 border-indigo-200"
+                            className="bg-secondary/50 text-foreground border-border"
                             >
                             {g.gradePoint} GP
                             </Badge>

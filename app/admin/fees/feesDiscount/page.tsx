@@ -165,17 +165,17 @@ const Page = () => {
 
     <AdminLayout>
 
-      <div className="min-h-screen p-8 space-y-8 bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen p-8 space-y-8 bg-background">
 
         {/* HEADER */}
 
-        <div className="flex justify-between items-center bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border">
+        <div className="flex justify-between items-center bg-card/80 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-border">
           
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Fee Discounts
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Manage all student fee discounts
             </p>
           </div>
@@ -264,20 +264,20 @@ const Page = () => {
 
         {/* TABLE */}
 
-        <Card className="rounded-2xl shadow-lg border bg-white/80 backdrop-blur-md">
+        <Card className="rounded-2xl shadow-lg border border-border bg-card/80 backdrop-blur-md">
 
           <CardContent className="p-6">
 
             <Table>
 
             <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="font-semibold">#</TableHead>
-                <TableHead className="font-semibold">Name</TableHead>
-                <TableHead className="font-semibold">Type</TableHead>
-                <TableHead className="font-semibold">Value</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Actions</TableHead>
+              <TableRow className="bg-secondary/50 dark:bg-secondary/30">
+                <TableHead className="font-semibold text-foreground">#</TableHead>
+                <TableHead className="font-semibold text-foreground">Name</TableHead>
+                <TableHead className="font-semibold text-foreground">Type</TableHead>
+                <TableHead className="font-semibold text-foreground">Value</TableHead>
+                <TableHead className="font-semibold text-foreground">Status</TableHead>
+                <TableHead className="font-semibold text-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -302,8 +302,8 @@ const Page = () => {
                       <Badge
                         className={
                           d.isActive
-                            ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                            : "bg-red-100 text-red-700 border border-red-200"
+                            ? "bg-secondary/70 text-foreground border border-border"
+                            : "bg-secondary/70 text-foreground border border-border"
                         }
                       >
                         {d.isActive ? "Active" : "Inactive"}
@@ -316,7 +316,7 @@ const Page = () => {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="hover:bg-indigo-100 text-indigo-600"
+                      className="hover:bg-secondary/40"
                       onClick={() => openEdit(d)}
                     >
                       <Edit size={16} />
@@ -325,7 +325,7 @@ const Page = () => {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="hover:bg-red-100 text-red-600"
+                      className="hover:bg-secondary/40"
                       onClick={() => deleteDiscount(d.id)}
                     >
                       <Trash2 size={16} />

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
@@ -20,46 +21,64 @@ import {
   AlertTriangle,
   TrendingUp,
   RefreshCw,
+  Eye,
+  Download,
 } from "lucide-react"
 
 import { AdminLayout } from "@/components/layout/AdminLayout"
 import { useEffect, useState } from "react"
 import { axiosInstance } from "@/apiHome/axiosInstanc"
+import { Input } from "@/components/ui/input"
+import jsPDF from "jspdf"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
-const stats = [
-  {
-    label: "Faces Enrolled",
-    value: "1,240",
-    icon: ScanFace,
-    gradient: "from-indigo-500 to-purple-500",
-    bg: "bg-indigo-50",
-    change: "+15 this week",
-  },
-  {
-    label: "Recognized Today",
-    value: "398",
-    icon: CheckCircle,
-    gradient: "from-emerald-500 to-green-500",
-    bg: "bg-emerald-50",
-    change: "96.1% accuracy",
-  },
-  {
-    label: "Unrecognized",
-    value: "14",
-    icon: AlertTriangle,
-    gradient: "from-orange-500 to-amber-500",
-    bg: "bg-orange-50",
-    change: "Needs review",
-  },
-  {
-    label: "Active Cameras",
-    value: "8",
-    icon: Camera,
-    gradient: "from-blue-500 to-cyan-500",
-    bg: "bg-blue-50",
-    change: "All online",
-  },
-]
+const getStats = (data: any[]) => {
+  const studentData = data.filter(a => a.user?.role === "STUDENT");
+  const uniqueStudents = new Set(studentData.map(a => a.user?.email)).size;
+  const presentToday = studentData.filter(a => a.status === "P").length;
+  const absentToday = studentData.filter(a => a.status === "A").length;
+  const accuracy = uniqueStudents > 0 ? ((presentToday / uniqueStudents) * 100).toFixed(1) : 0;
+  
+  return [
+    {
+      label: "Faces Enrolled",
+      value: uniqueStudents.toString(),
+      icon: ScanFace,
+      gradient: "from-indigo-500 to-purple-500",
+      bg: "bg-secondary/50",
+      change: "Total students",
+    },
+    {
+      label: "Recognized Today",
+      value: presentToday.toString(),
+      icon: CheckCircle,
+      gradient: "from-emerald-500 to-green-500",
+      bg: "bg-secondary/50",
+      change: `${accuracy}% present`,
+    },
+    {
+      label: "Unrecognized",
+      value: absentToday.toString(),
+      icon: AlertTriangle,
+      gradient: "from-orange-500 to-amber-500",
+      bg: "bg-secondary/50",
+      change: "Absent today",
+    },
+    {
+      label: "Facial Data",
+      value: (uniqueStudents > 0 ? (presentToday + absentToday).toString() : "0"),
+      icon: Camera,
+      gradient: "from-blue-500 to-cyan-500",
+      bg: "bg-secondary/50",
+      change: "Records today",
+    },
+  ];
+};
 
 
 
@@ -67,12 +86,92 @@ const Page = () => {
 
   const [externalAttendance, setExternalAttendance] = useState<any[]>([]);
   const [loadingExternal, setLoadingExternal] = useState(false);
+  const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [studentDetailOpen, setStudentDetailOpen] = useState(false);
+
+  const downloadPDF = () => {
+    if (!selectedStudent) return;
+    
+    const studentName = selectedStudent.user?.name || "Unknown";
+    const studentEmail = selectedStudent.user?.email || "N/A";
+    const empCode = selectedStudent.empCode || "N/A";
+    const studentRole = selectedStudent.user?.role || "Student";
+    
+    const studentRecords = externalAttendance.filter(
+      a => a.user?.email === studentEmail
+    );
+    
+    const presentCount = studentRecords.filter(a => a.status === "P").length;
+    const absentCount = studentRecords.filter(a => a.status === "A").length;
+    const totalDays = studentRecords.length;
+    const percentage = totalDays > 0 ? ((presentCount / totalDays) * 100).toFixed(1) : 0;
+    
+    const doc = new jsPDF();
+    let yPos = 10;
+    
+    // Header
+    doc.setFontSize(16);
+    doc.text("Student Attendance Report", 10, yPos);
+    yPos += 10;
+    
+    // Student Info
+    doc.setFontSize(11);
+    doc.text(`Student Name: ${studentName}`, 10, yPos);
+    yPos += 7;
+    doc.text(`Roll Number: ${empCode}`, 10, yPos);
+    yPos += 7;
+    doc.text(`Email: ${studentEmail}`, 10, yPos);
+    yPos += 7;
+    doc.text(`Role: ${studentRole}`, 10, yPos);
+    yPos += 10;
+    
+    // Statistics
+    doc.setFontSize(12);
+    doc.text("Attendance Summary:", 10, yPos);
+    yPos += 7;
+    
+    doc.setFontSize(10);
+    doc.text(`Total Present: ${presentCount}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Total Absent: ${absentCount}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Total Records: ${totalDays}`, 10, yPos);
+    yPos += 6;
+    doc.text(`Attendance Percentage: ${percentage}%`, 10, yPos);
+    
+    // Add date
+    doc.setFontSize(9);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 10, 280);
+    
+    doc.save(`${studentName}_Attendance_Report.pdf`);
+  };
 
   const fetchExternalAttendance = async () => {
   try {
     setLoadingExternal(true);
+    let url = "/api/v1/attendance/external";
+    const params = new URLSearchParams();
+    
+    // Convert date format from YYYY-MM-DD to DD/MM/YYYY
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return "";
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    };
+    
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(toDate);
+    
+    if (formattedFromDate) params.append("fromDate", formattedFromDate);
+    if (formattedToDate) params.append("toDate", formattedToDate);
+    
+    if (Array.from(params).length > 0) {
+      url += "?" + params.toString();
+    }
 
-    const res = await axiosInstance.get("/api/v1/attendance/external");
+    const res = await axiosInstance.get(url);
 
     if (res.data.success) {
       setExternalAttendance(res.data.data);
@@ -118,7 +217,7 @@ useEffect(() => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-          {stats.map((s, i) => (
+          {getStats(externalAttendance).map((s, i) => (
             <Card key={i} className={`border-0 shadow-md hover:shadow-xl transition ${s.bg}`}>
 
               <CardContent className="p-5">
@@ -151,13 +250,36 @@ useEffect(() => {
         {/* Recognition Log */}
 <Card className="border-0 shadow-xl mt-6">
 
-  <CardHeader className="flex-row justify-between items-center">
+  <CardHeader className="flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <CardTitle>External Attendance</CardTitle>
 
-    <Button variant="outline" size="sm" onClick={fetchExternalAttendance}>
-      <RefreshCw className="w-3 h-3 mr-1" />
-      Refresh
-    </Button>
+    <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+      <label>From</label>
+      <Input 
+        type="date"
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+        placeholder="From Date"
+        className="w-40"
+      />
+
+      <label>To</label>
+      <Input
+        type="date"
+        
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+        placeholder="To Date"
+        className="w-40"
+      />
+      <Button onClick={fetchExternalAttendance} disabled={loadingExternal} size="sm" className="bg-blue-600 hover:bg-blue-700">
+        {loadingExternal ? "Applying..." : "Apply Filter"}
+      </Button>
+      <Button variant="outline" size="sm" onClick={fetchExternalAttendance}>
+        <RefreshCw className="w-3 h-3 mr-1" />
+        Refresh
+      </Button>
+    </div>
   </CardHeader>
 
   <CardContent>
@@ -165,7 +287,7 @@ useEffect(() => {
     <Table>
 
       <TableHeader>
-        <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
+        <TableRow className="bg-secondary/50 dark:bg-secondary/30">
           <TableHead>Emp Code</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Role</TableHead>
@@ -173,6 +295,7 @@ useEffect(() => {
           <TableHead>Date</TableHead>
           <TableHead>In Time</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead className="flex justify-center">Action</TableHead>
         </TableRow>
       </TableHeader>
 
@@ -184,9 +307,9 @@ useEffect(() => {
               Loading...
             </TableCell>
           </TableRow>
-        ) : externalAttendance.length > 0 ? (
-          externalAttendance.map((item, index) => (
-            <TableRow key={index} className="hover:bg-indigo-50/40">
+        ) : externalAttendance.filter(item => item.user?.role === "STUDENT").length > 0 ? (
+          externalAttendance.filter(item => item.user?.role === "STUDENT").map((item, index) => (
+            <TableRow key={index} className="hover:bg-secondary/30">
 
               <TableCell>{item.empCode}</TableCell>
 
@@ -216,6 +339,20 @@ useEffect(() => {
                 </Badge>
               </TableCell>
 
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => {
+                    setSelectedStudent(item);
+                    setStudentDetailOpen(true);
+                  }}
+                >
+                  <Eye size={14} />
+                </Button>
+              </TableCell>
+
             </TableRow>
           ))
         ) : (
@@ -234,7 +371,92 @@ useEffect(() => {
 
 </Card>
 
-      </div>
+    </div>
+
+    {/* Student Detail Modal */}
+    <Dialog open={studentDetailOpen} onOpenChange={setStudentDetailOpen}>
+      <DialogContent className="max-w-2xl max-h-96 overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Student Attendance Details</DialogTitle>
+        </DialogHeader>
+        {selectedStudent && (() => {
+          const studentName = selectedStudent.user?.name || "Unknown";
+          const studentRole = selectedStudent.user?.role || "Student";
+          const studentEmail = selectedStudent.user?.email || "N/A";
+          const empCode = selectedStudent.empCode || "N/A";
+          
+          // Get all records for this student
+          const studentRecords = externalAttendance.filter(
+            a => a.user?.email === studentEmail
+          );
+          
+          // Calculate statistics
+          const presentCount = studentRecords.filter(a => a.status === "P").length;
+          const absentCount = studentRecords.filter(a => a.status === "A").length;
+          const totalDays = studentRecords.length;
+
+          return (
+            <div className="space-y-6">
+              {/* Student Info */}
+              <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-4 border border-blue-300">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-blue-600 font-medium">Student Name</p>
+                    <p className="text-lg font-bold text-blue-900">{studentName}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-600 font-medium">Roll Number</p>
+                    <p className="text-lg font-bold text-blue-900">{empCode}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-600 font-medium">Role</p>
+                    <p className="text-lg font-bold text-blue-900">{studentRole}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-600 font-medium">Email</p>
+                    <p className="text-sm font-bold text-blue-900">{studentEmail}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistics Cards */}
+              <div>
+                <p className="text-sm font-semibold mb-3 text-foreground">Attendance Summary</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                    <p className="text-xs text-emerald-600 font-medium">Total Present</p>
+                    <p className="text-2xl font-bold text-emerald-700">{presentCount}</p>
+                  </div>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-xs text-red-600 font-medium">Total Absent</p>
+                    <p className="text-2xl font-bold text-red-700">{absentCount}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Summary */}
+              <div className="bg-gray-100 rounded-lg p-4 border border-gray-300">
+                <p className="text-sm font-bold mb-2 text-gray-900">Summary</p>
+                <div className="space-y-1 text-sm text-gray-700">
+                  <p>Total Attendance Records: <span className="font-bold text-gray-900">{totalDays}</span></p>
+                  <p>Attendance Percentage: <span className="font-bold text-gray-900">{totalDays > 0 ? ((presentCount / totalDays) * 100).toFixed(1) : 0}%</span></p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="outline" onClick={downloadPDF} className="gap-2">
+            <Download size={16} />
+            Download PDF
+          </Button>
+          <Button variant="outline" onClick={() => setStudentDetailOpen(false)}>
+            Close
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+
     </AdminLayout>
   )
 }

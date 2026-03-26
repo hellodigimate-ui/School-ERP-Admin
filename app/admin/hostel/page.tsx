@@ -715,7 +715,7 @@ const Page = () => {
               <div className="relative w-full sm:max-w-sm">
                 <Input
                   placeholder="Search hostel..."
-                  className="pl-10 bg-white shadow-sm"
+                  className="pl-10 bg-input dark:bg-input shadow-sm"
                 />
                 <DoorOpen className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               </div>
@@ -731,7 +731,7 @@ const Page = () => {
             </div>
 
             {/* Table Card */}
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur">
+            <Card className="border-0 shadow-xl bg-card dark:bg-card/80 backdrop-blur">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/40">
@@ -818,7 +818,7 @@ const Page = () => {
 
           {showHostelModal && (
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-              <div className="bg-white rounded-2xl p-6 w-[480px] space-y-5 shadow-2xl border">
+              <div className="bg-card dark:bg-card rounded-2xl p-6 w-[480px] space-y-5 shadow-2xl border border-border dark:border-border">
                 {/* Header */}
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
@@ -1019,7 +1019,7 @@ const Page = () => {
               {/* Filters */}
               <div className="flex gap-2">
                 <Select value={roomFilter} onValueChange={setRoomFilter}>
-                  <SelectTrigger className="w-36 bg-white shadow-sm">
+                  <SelectTrigger className="w-36 bg-input dark:bg-input shadow-sm">
                     <SelectValue placeholder="🏢 Rooms" />
                   </SelectTrigger>
                   <SelectContent>

@@ -252,7 +252,7 @@ const Schools = () => {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Schools
           </h1>
-          <p className="text-gray-500 mt-1 text-sm">
+          <p className="text-muted-foreground mt-1 text-sm">
             Manage all schools in the network
           </p>
         </div>
@@ -267,12 +267,12 @@ const Schools = () => {
           </DialogTrigger>
 
           {/* Dialog */}
-          <DialogContent className="sm:max-w-[650px] rounded-2xl shadow-2xl border border-gray-200">
+          <DialogContent className="sm:max-w-[650px] rounded-2xl shadow-2xl border border-border dark:border-border bg-card dark:bg-card">
             <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-gray-800">
+              <DialogTitle className="text-xl font-semibold text-foreground dark:text-foreground">
                 Add New School
               </DialogTitle>
-              <DialogDescription className="text-gray-500">
+              <DialogDescription className="text-muted-foreground dark:text-muted-foreground">
                 Enter the details of the new school.
               </DialogDescription>
             </DialogHeader>
@@ -399,7 +399,7 @@ const Schools = () => {
               <Button
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
-                className="rounded-lg border-gray-300 hover:bg-gray-100"
+                className="rounded-lg border-border hover:bg-secondary/50"
               >
                 Cancel
               </Button>
@@ -428,8 +428,8 @@ const Schools = () => {
           </div>
 
           <div>
-            <p className="text-3xl font-bold text-gray-800">{stats.totalSchools}</p>
-            <p className="text-sm text-gray-500">Total Schools</p>
+            <p className="text-3xl font-bold text-foreground">{stats.totalSchools}</p>
+            <p className="text-sm text-muted-foreground">Total Schools</p>
           </div>
         </div>
 
@@ -443,8 +443,8 @@ const Schools = () => {
           </div>
 
           <div>
-            <p className="text-3xl font-bold text-gray-800">{stats.activeSchools}</p>
-            <p className="text-sm text-gray-500">Active Schools</p>
+            <p className="text-3xl font-bold text-foreground">{stats.activeSchools}</p>
+            <p className="text-sm text-muted-foreground">Active Schools</p>
           </div>
         </div>
 
@@ -458,8 +458,8 @@ const Schools = () => {
           </div>
 
           <div>
-            <p className="text-3xl font-bold text-gray-800">{stats.totalStudents}</p>
-            <p className="text-sm text-gray-500">Total Students</p>
+            <p className="text-3xl font-bold text-foreground">{stats.totalStudents}</p>
+            <p className="text-sm text-muted-foreground">Total Students</p>
           </div>
         </div>
 
@@ -473,38 +473,38 @@ const Schools = () => {
           </div>
 
           <div>
-            <p className="text-3xl font-bold text-gray-800">{stats.totalTeachers}</p>
-            <p className="text-sm text-gray-500">Total Teachers</p>
+            <p className="text-3xl font-bold text-foreground">{stats.totalTeachers}</p>
+            <p className="text-sm text-muted-foreground">Total Teachers</p>
           </div>
         </div>
 
       </div>
 
       {/* Filters + Items per page */}
-      <div className="flex flex-col lg:flex-row gap-5 mb-8 justify-between items-center bg-white/60 backdrop-blur-md border border-gray-200 shadow-sm rounded-2xl p-4">
+      <div className="flex flex-col lg:flex-row gap-5 mb-8 justify-between items-center bg-card/60 backdrop-blur-md border border-border shadow-sm rounded-2xl p-4">
 
         {/* Left Section */}
         <div className="flex-1 flex flex-col sm:flex-row gap-4 w-full">
 
           {/* Search */}
           <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition" />
 
             <Input
               placeholder="Search schools by name, pincode, or city..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 pr-4 py-2.5 rounded-xl border-gray-200 bg-white/80 focus:bg-white focus:ring-2 focus:ring-indigo-400 shadow-sm transition-all"
+              className="pl-11 pr-4 py-2.5 rounded-xl border-border bg-card/80 focus:bg-card focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
             />
           </div>
 
           {/* Status Filter */}
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[160px] rounded-xl border-gray-200 bg-white/80 shadow-sm hover:border-indigo-400 focus:ring-2 focus:ring-indigo-400 transition">
+            <SelectTrigger className="w-full sm:w-[160px] rounded-xl border-border bg-card/80 shadow-sm hover:border-primary focus:ring-2 focus:ring-primary/40 transition">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
 
-            <SelectContent className="rounded-xl shadow-lg border border-gray-100">
+            <SelectContent className="rounded-xl shadow-lg border border-border dark:border-border bg-card dark:bg-card">
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
@@ -515,7 +515,7 @@ const Schools = () => {
         {/* Right Section - Pagination Control */}
         <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-purple-50 px-4 py-2 rounded-xl border border-indigo-100 shadow-sm">
 
-          <span className="text-sm text-gray-600 font-medium">Show</span>
+          <span className="text-sm text-foreground/100 font-medium text-black">Show</span>
 
           <Select
             value={itemsPerPage.toString()}
@@ -524,7 +524,7 @@ const Schools = () => {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[90px] rounded-lg bg-white shadow-sm border border-gray-200 focus:ring-2 focus:ring-indigo-400">
+            <SelectTrigger className="w-[90px] rounded-lg bg-card shadow-sm border border-border focus:ring-2 focus:ring-primary/40">
               <SelectValue />
             </SelectTrigger>
 
@@ -537,23 +537,23 @@ const Schools = () => {
             </SelectContent>
           </Select>
 
-          <span className="text-sm text-gray-600 font-medium">per page</span>
+          <span className="text-sm text-foreground/70 font-medium">per page</span>
         </div>
 
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-md shadow-md overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md shadow-md overflow-hidden">
 
         <Table>
           {/* Header */}
           <TableHeader>
-            <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
-              <TableHead className="text-gray-700 font-semibold">School</TableHead>
-              <TableHead className="text-gray-700 font-semibold">Location</TableHead>
-              <TableHead className="text-gray-700 font-semibold">Principal</TableHead>
-              <TableHead className="text-gray-700 font-semibold">Status</TableHead>
-              <TableHead className="text-gray-700 font-semibold">Action</TableHead>
+            <TableRow className="bg-secondary/50 dark:bg-secondary/30">
+              <TableHead className="text-foreground font-semibold">School</TableHead>
+              <TableHead className="text-foreground font-semibold">Location</TableHead>
+              <TableHead className="text-foreground font-semibold">Principal</TableHead>
+              <TableHead className="text-foreground font-semibold">Status</TableHead>
+              <TableHead className="text-foreground font-semibold">Action</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
@@ -563,12 +563,12 @@ const Schools = () => {
             {paginatedSchools.map((school) => (
               <TableRow
                 key={school.id}
-                className="group hover:bg-gradient-to-r hover:from-indigo-50/40 hover:to-purple-50/40 transition-all duration-200"
+                className="group hover:bg-secondary/30 transition-all duration-200"
               >
                 {/* School */}
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-11 w-11 border border-gray-200 shadow-sm">
+                    <Avatar className="h-11 w-11 border border-border dark:border-border shadow-sm">
                       <AvatarImage src={school.logo} />
                       <AvatarFallback className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 text-indigo-600 text-sm font-semibold">
                         {school.name
@@ -580,17 +580,17 @@ const Schools = () => {
                     </Avatar>
 
                     <div>
-                      <p className="font-semibold text-gray-800 group-hover:text-indigo-600 transition">
+                      <p className="font-semibold text-foreground group-hover:text-primary transition">
                         {school.name}
                       </p>
-                      <p className="text-xs text-gray-500">{school.pincode}</p>
+                      <p className="text-xs text-muted-foreground">{school.pincode}</p>
                     </div>
                   </div>
                 </TableCell>
 
                 {/* Location */}
                 <TableCell>
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-foreground/70">
                     <MapPin className="w-4 h-4 text-indigo-500" />
                     <span className="text-sm">
                       {school.city}, {school.state}
@@ -600,7 +600,7 @@ const Schools = () => {
 
                 {/* Principal */}
                 <TableCell>
-                  <span className="text-gray-700 font-medium">
+                  <span className="text-foreground font-medium">
                     {school.principalName || "-"}
                   </span>
                 </TableCell>
@@ -620,13 +620,13 @@ const Schools = () => {
                         variant="ghost"
                         className="h-9 w-9 p-0 rounded-full hover:bg-indigo-100 transition"
                       >
-                        <MoreHorizontal className="w-4 h-4 text-gray-600" />
+                        <MoreHorizontal className="w-4 h-4 text-foreground/70" />
                       </Button>
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent
                       align="end"
-                      className="rounded-xl shadow-lg border border-gray-100"
+                      className="rounded-xl shadow-lg border border-border dark:border-border bg-card dark:bg-card"
                     >
                       <DropdownMenuItem
                         className="hover:bg-indigo-50 cursor-pointer"
@@ -655,7 +655,7 @@ const Schools = () => {
       </div>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[650px] rounded-2xl shadow-2xl border border-gray-200 p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[650px] rounded-2xl shadow-2xl border border-border dark:border-border p-0 overflow-hidden bg-card dark:bg-card">
 
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
@@ -667,7 +667,7 @@ const Schools = () => {
           </div>
 
           {/* Scrollable Body */}
-          <div className="max-h-[70vh] overflow-y-auto px-6 py-5 space-y-5 bg-white/70 backdrop-blur-sm">
+          <div className="max-h-[70vh] overflow-y-auto px-6 py-5 space-y-5 bg-card/70 backdrop-blur-sm">
 
             {/* Row 1 */}
             <div className="grid grid-cols-2 gap-4">
@@ -809,11 +809,11 @@ const Schools = () => {
           </div>
 
           {/* Footer (Sticky) */}
-          <DialogFooter className="flex justify-end gap-3 px-6 py-4 border-t bg-white sticky bottom-0">
+          <DialogFooter className="flex justify-end gap-3 px-6 py-4 border-t bg-card sticky bottom-0">
             <Button
               variant="outline"
               onClick={() => setIsEditOpen(false)}
-              className="rounded-lg hover:bg-gray-100"
+              className="rounded-lg hover:bg-secondary/50"
             >
               Cancel
             </Button>
@@ -875,7 +875,7 @@ const Schools = () => {
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
                     currentPage === page
                       ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md"
-                      : "hover:bg-indigo-100 text-gray-700 cursor-pointer"
+                      : "hover:bg-secondary/50 text-foreground cursor-pointer"
                   }`}
                 >
                   {page}
