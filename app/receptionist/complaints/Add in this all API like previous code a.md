@@ -1,0 +1,1 @@
+Add in this all API like previous code and also make it more attractive and classic and colorful and make its all modal scrollable and show its all data in table as like previous table and give me full fixed updated code in good formation

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -87,34 +88,82 @@ export default function ReceptionistDashboardPage() {
     <ReceptionistLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">
-            Receptionist Dashboard
-          </h2>
-          <p className="text-muted-foreground">
-            Welcome back! Here`s your front office overview.
-          </p>
+        <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-xl border 
+            bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+            dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700
+            text-white dark:text-gray-100 transition-colors duration-300">
+
+          {/* Decorative Blur Circles */}
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 dark:bg-white/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 dark:bg-white/20 rounded-full blur-3xl"></div>
+
+          {/* Content */}
+          <div className="relative z-10">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight
+                text-white dark:text-gray-100 transition-colors duration-300">
+              Receptionist Dashboard
+            </h2>
+
+            <p className="mt-2 text-white/90 dark:text-gray-200 text-sm md:text-base transition-colors duration-300">
+              Welcome back! Here’s your front office overview.
+            </p>
+
+            {/* Optional Badge / Tagline */}
+            <div className="mt-4 inline-block px-4 py-1 text-xs font-medium 
+                bg-white/20 dark:bg-white/10 rounded-full backdrop-blur
+                text-white dark:text-gray-200 transition-colors duration-300">
+              Front Office Control Panel
+            </div>
+          </div>
+
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((s) => {
             const Icon = s.icon;
+
             return (
-              <Card key={s.label} className="hover:shadow-md transition-shadow">
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className={`p-3 rounded-lg bg-muted ${s.color}`}>
+              <Card
+                key={s.label}
+                className="group relative overflow-hidden rounded-2xl border-0 shadow-md 
+                          hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 
+                          bg-white dark:bg-gray-800"
+              >
+                {/* Gradient Glow Background on Hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300
+                                bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20
+                                dark:from-indigo-700/30 dark:via-purple-700/30 dark:to-pink-700/30" />
+
+                <CardContent className="relative flex items-center gap-4 p-6">
+                  
+                  {/* Icon Box */}
+                  <div
+                    className={`p-4 rounded-xl shadow-md bg-gradient-to-br 
+                                from-indigo-500 via-purple-500 to-pink-500
+                                dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700
+                                text-white transition-colors duration-300`}
+                  >
                     <Icon className="h-6 w-6" />
                   </div>
+
+                  {/* Text */}
                   <div>
-                    <p className="text-2xl font-bold text-foreground">
+                    <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight transition-colors duration-300">
                       {s.count}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+
+                    <p className="text-sm text-gray-500 dark:text-gray-300 font-medium transition-colors duration-300">
                       {s.label}
                     </p>
                   </div>
                 </CardContent>
+
+                {/* Bottom Accent Line */}
+                <div className="h-1 w-full bg-gradient-to-r 
+                                from-indigo-500 via-purple-500 to-pink-500
+                                dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700
+                                transition-colors duration-300" />
               </Card>
             );
           })}
@@ -122,26 +171,62 @@ export default function ReceptionistDashboardPage() {
 
         {/* Recent Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="p-5">
-              <h3 className="font-display font-semibold text-lg mb-4">Recent Activity</h3>
+
+          {/* ================= Recent Activity ================= */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="relative overflow-hidden rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800 p-6">
+
+              {/* Gradient Accent */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+                              dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 transition-colors duration-300" />
+
+              <h3 className="font-semibold text-lg mb-5 bg-gradient-to-r from-indigo-600 to-pink-500 
+                            bg-clip-text text-transparent dark:from-indigo-400 dark:to-pink-400 transition-colors duration-300">
+                Recent Activity
+              </h3>
+
               <div className="space-y-3">
                 {recentActivities.map((activity, i) => (
-                  <div key={i} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div
+                    key={i}
+                    className="group flex items-center justify-between p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
+                  >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground shrink-0">
+
+                      {/* Icon */}
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl 
+                                      bg-gradient-to-br from-indigo-500 to-pink-500 dark:from-indigo-700 dark:to-pink-700 text-white shadow-md transition-colors duration-300">
                         <Clock className="h-4 w-4" />
                       </div>
+
+                      {/* Text */}
                       <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{activity.name}</p>
-                        <p className="text-xs text-muted-foreground">{activity.purpose}</p>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate transition-colors duration-300">
+                          {activity.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-300 transition-colors duration-300">
+                          {activity.purpose}
+                        </p>
                       </div>
                     </div>
+
                     <div className="flex items-center gap-2 shrink-0">
-                      <Badge variant="outline" className={statusColors[activity.status]}>
+                      {/* Status */}
+                      <Badge
+                        variant="outline"
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[activity.status]} transition-colors duration-300`}
+                      >
                         {activity.status}
                       </Badge>
-                      <span className="text-xs text-muted-foreground">{activity.time}</span>
+
+                      {/* Time */}
+                      <span className="text-xs text-gray-500 dark:text-gray-300 transition-colors duration-300">
+                        {activity.time}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -149,30 +234,59 @@ export default function ReceptionistDashboardPage() {
             </Card>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="p-5">
-              <h3 className="font-display font-semibold text-lg mb-4">Quick Actions</h3>
-              <div className="grid grid-cols-2 gap-3">
+          {/* ================= Quick Actions ================= */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="relative overflow-hidden rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800 p-6">
+
+              {/* Gradient Accent */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400
+                              dark:from-purple-700 dark:via-pink-700 dark:to-orange-600 transition-colors duration-300" />
+
+              <h3 className="font-semibold text-lg mb-5 bg-gradient-to-r from-purple-600 to-pink-500 
+                            bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400 transition-colors duration-300">
+                Quick Actions
+              </h3>
+
+              <div className="grid grid-cols-2 gap-4">
                 {[
-                  { label: "New Enquiry", icon: UserPlus, href: "/admission-enquiry" },
-                  { label: "Log Visitor", icon: BookOpen, href: "/visitor-book" },
-                  { label: "Log Call", icon: Phone, href: "/phone-call-log" },
-                  { label: "New Complaint", icon: MessageSquareWarning, href: "/complaints" },
-                ].map((action) => (
+                  { label: "New Enquiry", icon: UserPlus, href: "/receptionist/addmissionEnquiry" },
+                  { label: "Log Visitor", icon: BookOpen, href: "/receptionist/visitorBook" },
+                  { label: "Log Call", icon: Phone, href: "/receptionist/phoneCall" },
+                  { label: "New Complaint", icon: MessageSquareWarning, href: "/receptionist/complaints" },
+                ].map((action, i) => (
                   <a
                     key={action.label}
                     href={action.href}
-                    className="flex flex-col items-center gap-2 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors text-center group"
+                    className="group relative flex flex-col items-center gap-2 p-4 rounded-xl bg-white dark:bg-gray-700 
+                              border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center overflow-hidden"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    {/* Hover Glow */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-gradient-to-r 
+                                    from-indigo-500/20 via-purple-500/20 to-pink-500/20 
+                                    dark:from-indigo-700/30 dark:via-purple-700/30 dark:to-pink-700/30" />
+
+                    {/* Icon */}
+                    <div className="relative flex h-11 w-11 items-center justify-center rounded-xl 
+                                    bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 
+                                    dark:from-indigo-700 dark:via-purple-700 dark:to-pink-700 
+                                    text-white shadow-md group-hover:scale-110 transition-transform duration-300">
                       <action.icon className="h-5 w-5" />
                     </div>
-                    <span className="text-sm font-medium">{action.label}</span>
+
+                    {/* Label */}
+                    <span className="relative text-sm font-semibold text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                      {action.label}
+                    </span>
                   </a>
                 ))}
               </div>
             </Card>
           </motion.div>
+
         </div>
       </div>
     </ReceptionistLayout>

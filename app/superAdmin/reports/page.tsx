@@ -21,7 +21,7 @@ export default function SuperAdminReportsPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="p-6 bg-white rounded-2xl shadow-sm">
+        <div className="p-6 bg-card dark:bg-card rounded-2xl shadow-sm">
           <h1 className="text-3xl font-bold">Super Admin Reports</h1>
           <p className="text-muted-foreground mt-1">Summary dashboards for top-level reports.</p>
         </div>

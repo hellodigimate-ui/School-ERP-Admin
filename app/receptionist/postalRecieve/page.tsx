@@ -1,15 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/set-state-in-effect */
-// /* eslint-disable @typescript-eslint/no-explicit-any */
+// /* eslint-disable react-hooks/set-state-in-effect */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { toast } from "sonner";
+
+import { ReceptionistLayout } from "@/components/receptionist/receptionistLayout";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+
 import {
   Dialog,
   DialogContent,
@@ -17,25 +25,29 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { DataTable } from "@/components/receptionist/DataTable";
-
 import {
-  getItems,
-  addItem,
-  updateItem,
-  deleteItem,
-  generateId,
-} from "@/lib/storage";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-import type { PostalRecord } from "@/components/receptionist/types/frontOffice";
-import { Plus } from "lucide-react";
-import { toast } from "sonner";
-import { ReceptionistLayout } from "@/components/receptionist/receptionistLayout";
+interface PostalRecord {
+  id: string;
+  fromTitle: string;
+  referenceNo: string;
+  address: string;
+  date: string;
+  toTitle: string;
+  note: string;
+  confidential: boolean;
+}
 
-const KEY = "postal_records";
+const API_URL = "/api/v1/postal";
 
 const empty: Omit<PostalRecord, "id"> = {
-  type: "Receive",
   fromTitle: "",
   referenceNo: "",
   address: "",
@@ -50,219 +62,367 @@ export default function PostalReceivePage() {
   const [modal, setModal] = useState<"add" | "edit" | "view" | null>(null);
   const [form, setForm] = useState<Omit<PostalRecord, "id">>(empty);
   const [editId, setEditId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
-  const reload = () =>
-    setData(
-      getItems<PostalRecord>(KEY).filter(
-        (p) => p.type === "Receive"
-      )
-    );
+  /* ================= Fetch Data ================= */
+
+  const fetchData = async () => {
+    try {
+      const res = await axiosInstance.get(API_URL, {
+        params: {
+          type: "RECEIVE",
+          search,
+        },
+      });
+
+      const formatted = res?.data?.data?.map((item: any) => ({
+        id: item._id || item.id,
+        fromTitle: item.senderName || "",
+        referenceNo: item.refrenceNo || "",
+        address: item.address || "",
+        date: item.receivedDate?.slice(0, 10) || "",
+        toTitle: item.receiverName || "",
+        note: item.note || "",
+        confidential: item.confidential || false,
+      }));
+
+      setData(formatted || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    reload();
-  }, []);
+    fetchData();
+  }, [search]);
 
-  const handleSave = () => {
+  /* ================= Save ================= */
+
+  const handleSave = async () => {
     if (!form.fromTitle) {
-      toast.error("From/Title is required");
+      toast.error("From/Title required");
       return;
     }
 
-    if (modal === "add") {
-      addItem(KEY, {
-        ...form,
-        type: "Receive",
-        id: generateId(),
-      });
-      toast.success("Record added");
-    } else if (modal === "edit" && editId) {
-      updateItem(KEY, { ...form, id: editId });
-      toast.success("Record updated");
-    }
+    const payload = {
+      senderName: form.fromTitle,
+      receiverName: form.toTitle,
+      refrenceNo: form.referenceNo,
+      address: form.address,
+      receivedDate: form.date,
+      note: form.note,
+      confidential: form.confidential,
+      type: "RECEIVE",
+    };
 
-    setModal(null);
-    setForm(empty);
-    setEditId(null);
-    reload();
+    try {
+      if (modal === "add") {
+        await axiosInstance.post(API_URL, payload);
+        toast.success("Added successfully");
+      }
+
+      if (modal === "edit" && editId) {
+        await axiosInstance.put(`${API_URL}/${editId}`, payload);
+        toast.success("Updated successfully");
+      }
+
+      setModal(null);
+      setForm(empty);
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const columns = [
-    { key: "fromTitle", label: "From/Title" },
-    { key: "referenceNo", label: "Ref No." },
-    { key: "toTitle", label: "To" },
-    { key: "date", label: "Date" },
-    {
-      key: "confidential",
-      label: "Confidential",
-      render: (i: PostalRecord) =>
-        i.confidential ? "Yes" : "No",
-    },
-  ];
+  /* ================= Edit ================= */
+
+  const handleEdit = (item: PostalRecord) => {
+    const { id, ...rest } = item;
+    setForm(rest);
+    setEditId(id);
+    setModal("edit");
+  };
+
+  /* ================= View ================= */
+
+  const handleView = (item: PostalRecord) => {
+    const { id, ...rest } = item;
+    setForm(rest);
+    setModal("view");
+  };
+
+  /* ================= Delete ================= */
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete record?")) return;
+
+    try {
+      await axiosInstance.delete(`${API_URL}/${id}`);
+      toast.success("Deleted");
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const isView = modal === "view";
 
   return (
     <ReceptionistLayout>
       <div className="space-y-6">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">
-            Postal Receive
-          </h2>
-          <p className="text-muted-foreground">
-            Track received postal items
-          </p>
-        </div>
 
-        <Button
-          onClick={() => {
-            setForm(empty);
-            setModal("add");
-          }}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Record
-        </Button>
-      </div>
+        {/* Header */}
+        <div className="flex justify-between items-center 
+                        p-6 rounded-3xl shadow-xl 
+                        bg-gradient-to-r 
+                        from-primary/10 via-background to-pink-500/10">
 
-      {/* Table */}
-      <DataTable
-        data={data}
-        columns={columns}
-        searchKey="fromTitle"
-        onView={(i) => {
-          const { id, ...rest } = i;
-          setForm(rest);
-          setModal("view");
-        }}
-        onEdit={(i) => {
-          const { id, ...rest } = i;
-          setForm(rest);
-          setEditId(id);
-          setModal("edit");
-        }}
-        onDelete={(i) => {
-          deleteItem(KEY, i.id);
-          toast.success("Deleted");
-          reload();
-        }}
-      />
+          <div>
+            <h1 className="text-2xl font-bold 
+                           bg-gradient-to-r 
+                           from-primary to-pink-500 
+                           text-transparent bg-clip-text">
+              Postal Receive
+            </h1>
 
-      {/* Dialog */}
-      <Dialog
-        open={modal !== null}
-        onOpenChange={() => {
-          setModal(null);
-          setEditId(null);
-        }}
-      >
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {modal === "add"
-                ? "Add Postal Receive"
-                : modal === "edit"
-                ? "Edit Record"
-                : "View Record"}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="grid grid-cols-2 gap-4">
-            
-            <div className="space-y-2">
-              <Label>From/Title *</Label>
-              <Input
-                value={form.fromTitle}
-                onChange={(e) =>
-                  setForm({ ...form, fromTitle: e.target.value })
-                }
-                disabled={isView}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Reference No.</Label>
-              <Input
-                value={form.referenceNo}
-                onChange={(e) =>
-                  setForm({ ...form, referenceNo: e.target.value })
-                }
-                disabled={isView}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>To</Label>
-              <Input
-                value={form.toTitle}
-                onChange={(e) =>
-                  setForm({ ...form, toTitle: e.target.value })
-                }
-                disabled={isView}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Date</Label>
-              <Input
-                type="date"
-                value={form.date}
-                onChange={(e) =>
-                  setForm({ ...form, date: e.target.value })
-                }
-                disabled={isView}
-              />
-            </div>
-
-            <div className="col-span-2 space-y-2">
-              <Label>Address</Label>
-              <Input
-                value={form.address}
-                onChange={(e) =>
-                  setForm({ ...form, address: e.target.value })
-                }
-                disabled={isView}
-              />
-            </div>
-
-            <div className="col-span-2 space-y-2">
-              <Label>Note</Label>
-              <Textarea
-                value={form.note}
-                onChange={(e) =>
-                  setForm({ ...form, note: e.target.value })
-                }
-                disabled={isView}
-              />
-            </div>
-
-            <div className="col-span-2 flex items-center gap-2">
-              <Checkbox
-                checked={form.confidential}
-                onCheckedChange={(c) =>
-                  setForm({ ...form, confidential: !!c })
-                }
-                disabled={isView}
-              />
-              <Label>Confidential</Label>
-            </div>
-
+            <p className="text-muted-foreground">
+              Manage received postal records
+            </p>
           </div>
 
-          {!isView && (
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setModal(null)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave}>
-                {modal === "add" ? "Add" : "Update"}
-              </Button>
+          <Button
+            className="gap-2 bg-gradient-to-r 
+                       from-primary to-pink-500 text-white"
+            onClick={() => {
+              setForm(empty);
+              setModal("add");
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Record
+          </Button>
+        </div>
+
+        {/* Search */}
+        <div className="flex gap-4">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-3 w-4 h-4" />
+
+            <Input
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="rounded-3xl border shadow-xl overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-primary/5">
+                <TableHead>#</TableHead>
+                <TableHead>From</TableHead>
+                <TableHead>Reference</TableHead>
+                <TableHead>To</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Confidential</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {data.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell>{index + 1}</TableCell>
+
+                  <TableCell>{item.fromTitle}</TableCell>
+
+                  <TableCell>{item.referenceNo}</TableCell>
+
+                  <TableCell>{item.toTitle}</TableCell>
+
+                  <TableCell>{item.date}</TableCell>
+
+                  <TableCell>
+                    {item.confidential ? "Yes" : "No"}
+                  </TableCell>
+
+                  <TableCell className="flex gap-2">
+
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleView(item)}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleEdit(item)}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
+
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Modal */}
+
+        <Dialog open={modal !== null} onOpenChange={() => setModal(null)}>
+
+          <DialogContent className="max-w-2xl 
+                                   max-h-[85vh] 
+                                   overflow-y-auto 
+                                   rounded-3xl">
+
+            <DialogHeader>
+              <DialogTitle>
+                {modal === "add"
+                  ? "Add Postal"
+                  : modal === "edit"
+                  ? "Edit Postal"
+                  : "View Postal"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="grid grid-cols-2 gap-4">
+
+              <div>
+                <Label>From Title</Label>
+                <Input
+                  value={form.fromTitle}
+                  disabled={isView}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      fromTitle: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label>Reference No</Label>
+                <Input
+                  value={form.referenceNo}
+                  disabled={isView}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      referenceNo: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label>To</Label>
+                <Input
+                  value={form.toTitle}
+                  disabled={isView}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      toTitle: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label>Date</Label>
+                <Input
+                  type="date"
+                  value={form.date}
+                  disabled={isView}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      date: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label>Address</Label>
+                <Input
+                  value={form.address}
+                  disabled={isView}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      address: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label>Note</Label>
+                <Textarea
+                  value={form.note}
+                  disabled={isView}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      note: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="col-span-2 flex gap-2">
+                <Checkbox
+                  checked={form.confidential}
+                  disabled={isView}
+                  onCheckedChange={(c) =>
+                    setForm({
+                      ...form,
+                      confidential: !!c,
+                    })
+                  }
+                />
+
+                <Label>Confidential</Label>
+              </div>
+
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+
+            {!isView && (
+              <div className="flex justify-end gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setModal(null)}
+                >
+                  Cancel
+                </Button>
+
+                <Button onClick={handleSave}>
+                  Save
+                </Button>
+              </div>
+            )}
+
+          </DialogContent>
+        </Dialog>
+
       </div>
     </ReceptionistLayout>
   );

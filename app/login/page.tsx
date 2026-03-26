@@ -149,13 +149,13 @@ const handleDemoFill = (account: any) => {
 };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gradient-to-br from-blue-50 via-white to-blue-100">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gradient-to-br from-blue-50 via-card dark:via-slate-900 to-blue-100 dark:to-slate-900">
       
       {/* LEFT */}
       <div className="flex flex-col justify-center px-6 sm:px-16 backdrop-blur-lg">
         
         {/* Card Container */}
-        <div className="bg-white/80 shadow-2xl rounded-3xl p-8 border border-white/40">
+        <div className="bg-card/80 dark:bg-card/80 shadow-2xl rounded-3xl p-8 border border-border dark:border-border">
           
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-center text-slate-900">
@@ -210,7 +210,7 @@ const handleDemoFill = (account: any) => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
                 >
                   <Eye size={18} />
                 </button>
@@ -253,7 +253,7 @@ const handleDemoFill = (account: any) => {
                     onClick={() => handleDemoFill(acc)}
                     className={`relative overflow-hidden rounded-xl p-[2px] bg-gradient-to-r ${acc.color} group`}
                   >
-                    <div className="bg-white rounded-xl py-2 text-sm font-semibold text-gray-700 group-hover:bg-transparent group-hover:text-white transition">
+                    <div className="bg-card/80 dark:bg-card/80 rounded-xl py-2 text-sm font-semibold text-foreground dark:text-foreground group-hover:bg-transparent group-hover:text-white transition">
                       {acc.role}
                     </div>
                   </button>
