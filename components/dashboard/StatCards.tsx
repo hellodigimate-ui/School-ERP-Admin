@@ -15,23 +15,25 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Stat {
   label: string;
   value: string;
+  path: string;
   change: string;
 }
 
 /* ✅ Dummy Fallback Data */
 const dummyStats: Stat[] = [
-  { label: "Total Students", value: "totalStudents", change: "+12%" },
-  { label: "Revenue", value: "revenue", change: "+8%" },
-  { label: "Total Classes", value: "totalClasses", change: "+2.1%" },
-  { label: "Staff Members", value: "totalTeachers", change: "+3" },
-  { label: "New Admissions", value: "newAdmissions", change: "+18%" },
-  { label: "Transport", value: "totalBuses", change: "Active" },
-  { label: "Library Books", value: "totalBooks", change: "+45" },
-  { label: "Complaints", value: "complaints", change: "-5%" },
+  { label: "Total Students", value: "totalStudents", path: "/admin/student/studentDetails", change: "+12%" },
+  { label: "Revenue", value: "revenue", path: "/admin/fees/collectFees", change: "+8%" },
+  { label: "Total Classes", value: "totalClasses", path: "/admin/academics/class", change: "+2.1%" },
+  { label: "Staff Members", value: "totalTeachers", path: "/admin/academics/teachers", change: "+3" },
+  { label: "New Admissions", value: "newAdmissions", path: "/admin/student/studentDetails", change: "+18%" },
+  { label: "Transport", value: "totalBuses", path: "/admin/transport", change: "Active" },
+  { label: "Library Books", value: "totalBooks", path: "/admin/library", change: "+45" },
+  { label: "Complaints", value: "complaints", path: "/admin/front-office/complains", change: "-5%" },
 ];
 
 /* ✅ Icon Mapping */
@@ -68,6 +70,8 @@ const gradientMap: Record<string, string> = {
 
 const StatCards = () => {
   const [stats, setStats] = useState();
+      const router = useRouter();
+      const pathname = usePathname();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -102,6 +106,7 @@ const StatCards = () => {
         return (
           <div
             key={stat.label}
+            onClick={() => router.push(stat.path)}
             className={`${gradient} relative cursor-pointer overflow-hidden rounded-2xl p-6 text-white shadow-lg
             transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:brightness-110`}
             style={{ animationDelay: `${i * 100}ms` }}
