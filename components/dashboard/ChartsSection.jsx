@@ -11,11 +11,11 @@ export default function ChartsSection() {
   const [loading, setLoading] = useState(true);
 
   // 🎨 Colors mapping
-  const genderColors = {
-    MALE: "hsl(210, 100%, 55%)",
-    FEMALE: "hsl(330, 75%, 55%)",
-    OTHER: "hsl(260, 60%, 55%)",
-  };
+const genderColors = {
+  Male: "#3b82f6",     // bright blue
+  Female: "#ec4899",   // vibrant pink
+  Other: "#dc2626",    // rich purple
+};
 
   // 🚀 Fetch Gender Count API
   const fetchGenderData = async () => {
