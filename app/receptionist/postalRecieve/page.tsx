@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// /* eslint-disable react-hooks/set-state-in-effect */
 
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ReceptionistLayout } from "@/components/receptionist/receptionistLayout";
@@ -16,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   Dialog,
@@ -38,11 +35,9 @@ interface PostalRecord {
   id: string;
   fromTitle: string;
   referenceNo: string;
-  address: string;
-  date: string;
+  date: string; // ISO string
   toTitle: string;
   note: string;
-  confidential: boolean;
 }
 
 const API_URL = "/api/v1/postal";
@@ -50,11 +45,9 @@ const API_URL = "/api/v1/postal";
 const empty: Omit<PostalRecord, "id"> = {
   fromTitle: "",
   referenceNo: "",
-  address: "",
-  date: new Date().toISOString().split("T")[0],
+  date: new Date().toISOString(), // full ISO string
   toTitle: "",
   note: "",
-  confidential: false,
 };
 
 export default function PostalReceivePage() {
@@ -63,41 +56,47 @@ export default function PostalReceivePage() {
   const [form, setForm] = useState<Omit<PostalRecord, "id">>(empty);
   const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  
 
   /* ================= Fetch Data ================= */
+const fetchData = async () => {
+  try {
+    const res = await axiosInstance.get(API_URL, {
+      params: {
+        type: "RECEIVE",
+        search: debouncedSearch,
+      },
+    });
 
-  const fetchData = async () => {
-    try {
-      const res = await axiosInstance.get(API_URL, {
-        params: {
-          type: "RECEIVE",
-          search,
-        },
-      });
+    const formatted = res?.data?.data?.map((item: any) => ({
+      id: item._id || item.id,
+      fromTitle: item.senderName || "",
+      referenceNo: item.refrenceNo || "",
+      date: item.receivedDate || new Date().toISOString(),
+      toTitle: item.receiverName || "",
+      note: item.note || "",
+    }));
 
-      const formatted = res?.data?.data?.map((item: any) => ({
-        id: item._id || item.id,
-        fromTitle: item.senderName || "",
-        referenceNo: item.refrenceNo || "",
-        address: item.address || "",
-        date: item.receivedDate?.slice(0, 10) || "",
-        toTitle: item.receiverName || "",
-        note: item.note || "",
-        confidential: item.confidential || false,
-      }));
+    setData(formatted || []);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-      setData(formatted || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+useEffect(() => {
+  fetchData();
+}, [debouncedSearch]);
 
   useEffect(() => {
-    fetchData();
-  }, [search]);
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [search]);
 
   /* ================= Save ================= */
-
   const handleSave = async () => {
     if (!form.fromTitle) {
       toast.error("From/Title required");
@@ -108,10 +107,8 @@ export default function PostalReceivePage() {
       senderName: form.fromTitle,
       receiverName: form.toTitle,
       refrenceNo: form.referenceNo,
-      address: form.address,
-      receivedDate: form.date,
+      receivedDate: form.date, // ISO string
       note: form.note,
-      confidential: form.confidential,
       type: "RECEIVE",
     };
 
@@ -135,7 +132,6 @@ export default function PostalReceivePage() {
   };
 
   /* ================= Edit ================= */
-
   const handleEdit = (item: PostalRecord) => {
     const { id, ...rest } = item;
     setForm(rest);
@@ -143,16 +139,7 @@ export default function PostalReceivePage() {
     setModal("edit");
   };
 
-  /* ================= View ================= */
-
-  const handleView = (item: PostalRecord) => {
-    const { id, ...rest } = item;
-    setForm(rest);
-    setModal("view");
-  };
-
   /* ================= Delete ================= */
-
   const handleDelete = async (id: string) => {
     if (!confirm("Delete record?")) return;
 
@@ -184,7 +171,6 @@ export default function PostalReceivePage() {
                            text-transparent bg-clip-text">
               Postal Receive
             </h1>
-
             <p className="text-muted-foreground">
               Manage received postal records
             </p>
@@ -207,7 +193,6 @@ export default function PostalReceivePage() {
         <div className="flex gap-4">
           <div className="relative w-full">
             <Search className="absolute left-3 top-3 w-4 h-4" />
-
             <Input
               placeholder="Search..."
               value={search}
@@ -227,7 +212,7 @@ export default function PostalReceivePage() {
                 <TableHead>Reference</TableHead>
                 <TableHead>To</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Confidential</TableHead>
+                <TableHead>Note</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -236,45 +221,18 @@ export default function PostalReceivePage() {
               {data.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell>{index + 1}</TableCell>
-
                   <TableCell>{item.fromTitle}</TableCell>
-
                   <TableCell>{item.referenceNo}</TableCell>
-
                   <TableCell>{item.toTitle}</TableCell>
-
-                  <TableCell>{item.date}</TableCell>
-
-                  <TableCell>
-                    {item.confidential ? "Yes" : "No"}
-                  </TableCell>
-
+                  <TableCell>{item.date.split("T")[0]}</TableCell> {/* show YYYY-MM-DD */}
+                  <TableCell>{item.note}</TableCell>
                   <TableCell className="flex gap-2">
-
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => handleView(item)}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => handleEdit(item)}
-                    >
+                    <Button size="icon" variant="ghost" onClick={() => handleEdit(item)}>
                       <Edit className="w-4 h-4" />
                     </Button>
-
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => handleDelete(item.id)}
-                    >
+                    <Button size="icon" variant="ghost" onClick={() => handleDelete(item.id)}>
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
-
                   </TableCell>
                 </TableRow>
               ))}
@@ -283,37 +241,21 @@ export default function PostalReceivePage() {
         </div>
 
         {/* Modal */}
-
         <Dialog open={modal !== null} onOpenChange={() => setModal(null)}>
-
-          <DialogContent className="max-w-2xl 
-                                   max-h-[85vh] 
-                                   overflow-y-auto 
-                                   rounded-3xl">
-
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl">
             <DialogHeader>
               <DialogTitle>
-                {modal === "add"
-                  ? "Add Postal"
-                  : modal === "edit"
-                  ? "Edit Postal"
-                  : "View Postal"}
+                {modal === "add" ? "Add Postal" : modal === "edit" ? "Edit Postal" : "View Postal"}
               </DialogTitle>
             </DialogHeader>
 
             <div className="grid grid-cols-2 gap-4">
-
               <div>
                 <Label>From Title</Label>
                 <Input
                   value={form.fromTitle}
                   disabled={isView}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      fromTitle: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setForm({ ...form, fromTitle: e.target.value })}
                 />
               </div>
 
@@ -322,12 +264,7 @@ export default function PostalReceivePage() {
                 <Input
                   value={form.referenceNo}
                   disabled={isView}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      referenceNo: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setForm({ ...form, referenceNo: e.target.value })}
                 />
               </div>
 
@@ -336,12 +273,7 @@ export default function PostalReceivePage() {
                 <Input
                   value={form.toTitle}
                   disabled={isView}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      toTitle: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setForm({ ...form, toTitle: e.target.value })}
                 />
               </div>
 
@@ -349,27 +281,10 @@ export default function PostalReceivePage() {
                 <Label>Date</Label>
                 <Input
                   type="date"
-                  value={form.date}
+                  value={form.date.split("T")[0]} // display YYYY-MM-DD
                   disabled={isView}
                   onChange={(e) =>
-                    setForm({
-                      ...form,
-                      date: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="col-span-2">
-                <Label>Address</Label>
-                <Input
-                  value={form.address}
-                  disabled={isView}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      address: e.target.value,
-                    })
+                    setForm({ ...form, date: new Date(e.target.value).toISOString() }) // store full ISO
                   }
                 />
               </div>
@@ -379,50 +294,21 @@ export default function PostalReceivePage() {
                 <Textarea
                   value={form.note}
                   disabled={isView}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      note: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setForm({ ...form, note: e.target.value })}
                 />
               </div>
-
-              <div className="col-span-2 flex gap-2">
-                <Checkbox
-                  checked={form.confidential}
-                  disabled={isView}
-                  onCheckedChange={(c) =>
-                    setForm({
-                      ...form,
-                      confidential: !!c,
-                    })
-                  }
-                />
-
-                <Label>Confidential</Label>
-              </div>
-
             </div>
 
             {!isView && (
               <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setModal(null)}
-                >
+                <Button variant="outline" onClick={() => setModal(null)}>
                   Cancel
                 </Button>
-
-                <Button onClick={handleSave}>
-                  Save
-                </Button>
+                <Button onClick={handleSave}>Save</Button>
               </div>
             )}
-
           </DialogContent>
         </Dialog>
-
       </div>
     </ReceptionistLayout>
   );

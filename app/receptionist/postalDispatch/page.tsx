@@ -1,14 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// /* eslint-disable react-hooks/set-state-in-effect */
+
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -16,11 +16,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { DataTable } from "@/components/receptionist/DataTable";
+import { Card, CardContent } from "@/components/ui/card";
 
+import { DataTable } from "@/components/receptionist/DataTable";
 import type { PostalRecord } from "@/components/receptionist/types/frontOffice";
-import { Plus } from "lucide-react";
+
+import { Plus, Download } from "lucide-react";
 import { toast } from "sonner";
+
 import { ReceptionistLayout } from "@/components/receptionist/receptionistLayout";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 
@@ -30,11 +33,9 @@ const empty: Omit<PostalRecord, "id"> = {
   type: "Dispatch",
   fromTitle: "",
   referenceNo: "",
-  address: "",
   date: new Date().toISOString().split("T")[0],
   toTitle: "",
   note: "",
-  confidential: false,
 };
 
 export default function PostalDispatchPage() {
@@ -43,6 +44,12 @@ export default function PostalDispatchPage() {
   const [form, setForm] = useState<Omit<PostalRecord, "id">>(empty);
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+
+  const perPage = 10;
 
   /* ================= FETCH ================= */
 
@@ -53,55 +60,27 @@ export default function PostalDispatchPage() {
       const res = await axiosInstance.get(API, {
         params: {
           type: "DISPATCH",
+          page,
+          perPage,
+          name: search,
         },
       });
-
-      console.log("API Response:", res.data);
 
       const formatted =
         res?.data?.data?.map((i: any) => ({
           id: i._id || i.id,
-
-          toTitle:
-            i.toTitle ||
-            i.to ||
-            i.receiverName ||
-            "",
-
-          referenceNo:
-            i.referenceNo ||
-            i.reference_no ||
-            i.refrenceNo ||
-            "",
-
-          fromTitle:
-            i.fromTitle ||
-            i.from ||
-            i.senderName ||
-            "",
-
-          date: i.date
-            ? i.date.slice(0, 10)
-            : i.receivedDate
-            ? i.receivedDate.slice(0, 10)
+          toTitle: i.receiverName || i.toTitle || "",
+          referenceNo: i.refrenceNo || i.referenceNo || "",
+          fromTitle: i.senderName || i.fromTitle || "",
+          date: i.receivedDate
+            ? new Date(i.receivedDate).toISOString().slice(0, 10)
             : new Date().toISOString().slice(0, 10),
-
-          address: i.address || "",
-
-          note:
-            i.note ||
-            i.description ||
-            "",
-
-          confidential:
-            i.confidential ||
-            i.isConfidential ||
-            false,
-
+          note: i.note || "",
           type: "Dispatch",
         })) || [];
 
       setData(formatted);
+      setTotalPages(res?.data?.pagination?.totalPages || 1);
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -111,37 +90,39 @@ export default function PostalDispatchPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page, search]);
 
   /* ================= SAVE ================= */
 
   const handleSave = async () => {
     if (!form.toTitle) {
-      toast.error("To / Title required");
+      toast.error("To Title Required");
       return;
     }
 
     try {
       const payload = {
-        ...form,
+        senderName: form.fromTitle,
+        receiverName: form.toTitle,
+        refrenceNo: form.referenceNo,
+        receivedDate: new Date(form.date).toISOString(), // ✅ ISO STRING
+        note: form.note,
         type: "DISPATCH",
       };
 
       if (modal === "add") {
         await axiosInstance.post(API, payload);
-        toast.success("Record added");
+        toast.success("Added Successfully");
       }
 
       if (modal === "edit" && editId) {
         await axiosInstance.put(`${API}/${editId}`, payload);
-        toast.success("Record updated");
+        toast.success("Updated Successfully");
       }
 
       setModal(null);
-      setForm(empty);
-      setEditId(null);
-
       fetchData();
+
     } catch (err) {
       console.log(err);
     }
@@ -152,26 +133,45 @@ export default function PostalDispatchPage() {
   const handleDelete = async (id: string) => {
     try {
       await axiosInstance.delete(`${API}/${id}`);
-      toast.success("Deleted successfully");
+      toast.success("Deleted");
       fetchData();
     } catch (err) {
       console.log(err);
     }
   };
 
+  /* ================= EXPORT ================= */
+
+  const handleExport = async () => {
+    try {
+      const res = await axiosInstance.get(`${API}/report`, {
+        params: { type: "DISPATCH" },
+        responseType: "blob",
+      });
+
+      const blob = new Blob([res.data]);
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "dispatch.xlsx";
+      link.click();
+    } catch (err) {
+      toast.error("Export failed");
+    }
+  };
+
   /* ================= COLUMNS ================= */
 
   const columns = [
-    { key: "toTitle", label: "To / Title" },
-    { key: "referenceNo", label: "Reference No" },
+    { key: "toTitle", label: "To" },
+    { key: "referenceNo", label: "Reference" },
     { key: "fromTitle", label: "From" },
     { key: "date", label: "Date" },
-    {
-      key: "confidential",
-      label: "Confidential",
-      render: (i: PostalRecord) =>
-        i.confidential ? "Yes" : "No",
-    },
+    { key: "type", label: "Type" },
+    { key: "note", label: "Note" },
   ];
 
   const isView = modal === "view";
@@ -181,27 +181,60 @@ export default function PostalDispatchPage() {
       <div className="space-y-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between p-6 rounded-2xl shadow-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+
+        <div className="flex justify-between items-center p-6 rounded-3xl shadow-xl 
+        bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-gradient-to-r 
+            from-blue-600 to-purple-600 
+            bg-clip-text text-transparent">
               Postal Dispatch
             </h2>
+
             <p className="text-muted-foreground">
-              Track dispatched postal items
+              Manage postal dispatch records
             </p>
           </div>
 
-          <Button
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-            onClick={() => {
-              setForm(empty);
-              setModal("add");
-            }}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Dispatch
-          </Button>
+          <div className="flex gap-3">
+
+            <Button
+              onClick={handleExport}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+
+            <Button
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+              onClick={() => {
+                setForm(empty);
+                setModal("add");
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Dispatch
+            </Button>
+
+          </div>
         </div>
+
+        {/* Search */}
+
+        <Card>
+          <CardContent className="p-4">
+            <Input
+              placeholder="Search dispatch..."
+              value={search}
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+            />
+          </CardContent>
+        </Card>
 
         {/* Table */}
 
@@ -210,11 +243,6 @@ export default function PostalDispatchPage() {
           columns={columns}
           searchKey="toTitle"
           loading={loading}
-          onView={(i) => {
-            const { id, ...rest } = i;
-            setForm(rest);
-            setModal("view");
-          }}
           onEdit={(i) => {
             const { id, ...rest } = i;
             setForm(rest);
@@ -224,136 +252,132 @@ export default function PostalDispatchPage() {
           onDelete={(i) => handleDelete(i.id)}
         />
 
+        {/* Pagination */}
+
+        <div className="flex justify-between items-center">
+
+          <Button
+            disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
+          >
+            Previous
+          </Button>
+
+          <div className="flex gap-2">
+
+            {[...Array(totalPages)].map((_, i) => (
+
+              <Button
+                key={i}
+                variant={page === i + 1 ? "default" : "outline"}
+                onClick={() => setPage(i + 1)}
+              >
+                {i + 1}
+              </Button>
+
+            ))}
+
+          </div>
+
+          <Button
+            disabled={page === totalPages}
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next
+          </Button>
+
+        </div>
+
         {/* Dialog */}
 
-        <Dialog
-          open={modal !== null}
-          onOpenChange={() => {
-            setModal(null);
-            setEditId(null);
-          }}
-        >
-          <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto rounded-2xl">
+        <Dialog open={modal !== null} onOpenChange={() => setModal(null)}>
+
+          <DialogContent className="max-w-xl rounded-2xl">
 
             <DialogHeader>
+
               <DialogTitle>
+
                 {modal === "add"
-                  ? "Add Postal Dispatch"
+                  ? "Add Dispatch"
                   : modal === "edit"
-                  ? "Edit Postal Dispatch"
+                  ? "Edit Dispatch"
                   : "View Dispatch"}
+
               </DialogTitle>
+
             </DialogHeader>
 
             <div className="grid grid-cols-2 gap-4">
 
-              <div className="space-y-2">
-                <Label>To / Title *</Label>
-                <Input
-                  value={form.toTitle}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      toTitle: e.target.value,
-                    })
-                  }
-                  disabled={isView}
-                />
-              </div>
+              <Input
+                placeholder="To"
+                value={form.toTitle}
+                disabled={isView}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    toTitle: e.target.value,
+                  })
+                }
+              />
 
-              <div className="space-y-2">
-                <Label>Reference No</Label>
-                <Input
-                  value={form.referenceNo}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      referenceNo: e.target.value,
-                    })
-                  }
-                  disabled={isView}
-                />
-              </div>
+              <Input
+                placeholder="Reference"
+                value={form.referenceNo}
+                disabled={isView}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    referenceNo: e.target.value,
+                  })
+                }
+              />
 
-              <div className="space-y-2">
-                <Label>From</Label>
-                <Input
-                  value={form.fromTitle}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      fromTitle: e.target.value,
-                    })
-                  }
-                  disabled={isView}
-                />
-              </div>
+              <Input
+                placeholder="From"
+                value={form.fromTitle}
+                disabled={isView}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    fromTitle: e.target.value,
+                  })
+                }
+              />
 
-              <div className="space-y-2">
-                <Label>Date</Label>
-                <Input
-                  type="date"
-                  value={form.date}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      date: e.target.value,
-                    })
-                  }
-                  disabled={isView}
-                />
-              </div>
+              <Input
+                type="date"
+                value={form.date}
+                disabled={isView}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    date: e.target.value,
+                  })
+                }
+              />
 
-              <div className="col-span-2 space-y-2">
-                <Label>Address</Label>
-                <Input
-                  value={form.address}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      address: e.target.value,
-                    })
-                  }
-                  disabled={isView}
-                />
-              </div>
-
-              <div className="col-span-2 space-y-2">
-                <Label>Note</Label>
-                <Textarea
-                  value={form.note}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      note: e.target.value,
-                    })
-                  }
-                  disabled={isView}
-                />
-              </div>
-
-              <div className="col-span-2 flex items-center gap-2">
-                <Checkbox
-                  checked={form.confidential}
-                  onCheckedChange={(c) =>
-                    setForm({
-                      ...form,
-                      confidential: !!c,
-                    })
-                  }
-                  disabled={isView}
-                />
-                <Label>Confidential</Label>
-              </div>
+              <Textarea
+                className="col-span-2"
+                placeholder="Note"
+                value={form.note}
+                disabled={isView}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    note: e.target.value,
+                  })
+                }
+              />
 
             </div>
 
             {!isView && (
+
               <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setModal(null)}
-                >
+
+                <Button variant="outline" onClick={() => setModal(null)}>
                   Cancel
                 </Button>
 
@@ -361,12 +385,15 @@ export default function PostalDispatchPage() {
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                   onClick={handleSave}
                 >
-                  {modal === "add" ? "Add" : "Update"}
+                  Save
                 </Button>
+
               </div>
+
             )}
 
           </DialogContent>
+
         </Dialog>
 
       </div>
