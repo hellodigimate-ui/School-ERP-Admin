@@ -39,9 +39,9 @@ const API_URL = "/api/v1/phone/logs";
 const empty: Omit<PhoneCall, "id"> = {
   callerName: "",
   phoneNumber: "",
+  callTime: "",
   callType: "Incoming",
   purpose: "",
-  callTime: "",
   createdAt: new Date().toISOString().split("T")[0],
 };
 
