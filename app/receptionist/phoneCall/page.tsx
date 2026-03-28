@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 import {
   Select,
@@ -42,6 +41,7 @@ const empty: Omit<PhoneCall, "id"> = {
   phoneNumber: "",
   callType: "Incoming",
   purpose: "",
+  callTime: "",
   createdAt: new Date().toISOString().split("T")[0],
 };
 
@@ -52,23 +52,27 @@ export default function PhoneCallLogPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+
   // Fetch Data
   const reload = async () => {
     try {
       setLoading(true);
 
-      const res = await axiosInstance.get(API_URL);
+      const res = await axiosInstance.get(API_URL, {
+        params: {
+          page,
+          limit,
+        },
+      });
 
-      console.log("FULL API RESPONSE:", res.data);
+      const responseData = res?.data?.data || res?.data || [];
 
-      // ✅ Handle both cases: {data: []} OR []
-      const rawData = Array.isArray(res?.data)
-        ? res.data
-        : res?.data?.data || [];
-
-      console.log("RAW DATA:", rawData);
-
-      const formatted = rawData.map((item: any) => ({
+      const formatted = responseData.map((item: any) => ({
         id: item._id || item.id,
 
         callerName:
@@ -88,24 +92,38 @@ export default function PhoneCallLogPage() {
           item.call_type ||
           "Incoming",
 
+        callTime: item.callTime
+          ? new Date(item.callTime).toTimeString().slice(0, 5)
+          : "",
+
         purpose:
           item.purpose ||
           item.reason ||
           "",
 
-        createdAt: item.createdAt
+        createdAt: item.callTime
+          ? new Date(item.callTime).toISOString().split("T")[0]
+          : item.createdAt
           ? item.createdAt.split("T")[0]
-          : item.created_at
-          ? item.created_at.split("T")[0]
           : "",
       }));
 
-      console.log("FORMATTED DATA:", formatted);
-
       setData(formatted);
 
+      setTotalPages(
+        res?.data?.totalPages ||
+          res?.data?.pagination?.totalPages ||
+          1
+      );
+
+      setTotal(
+        res?.data?.total ||
+          res?.data?.pagination?.total ||
+          0
+      );
+
     } catch (error) {
-      console.error("RELOAD ERROR:", error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -113,7 +131,7 @@ export default function PhoneCallLogPage() {
 
   useEffect(() => {
     reload();
-  }, []);
+  }, [page]);
 
   // Save
   const handleSave = async () => {
@@ -123,13 +141,22 @@ export default function PhoneCallLogPage() {
     }
 
     try {
+      const callTimeISO = form.callTime
+        ? new Date(`${form.createdAt}T${form.callTime}`).toISOString()
+        : null;
+
+      const payload = {
+        ...form,
+        callTime: callTimeISO,
+      };
+
       if (modal === "add") {
-        await axiosInstance.post(API_URL, form);
+        await axiosInstance.post(API_URL, payload);
         toast.success("Call log added");
       }
 
       if (modal === "edit" && editId) {
-        await axiosInstance.put(`${API_URL}/${editId}`, form);
+        await axiosInstance.put(`${API_URL}/${editId}`, payload);
         toast.success("Call updated");
       }
 
@@ -137,6 +164,7 @@ export default function PhoneCallLogPage() {
       setForm(empty);
       setEditId(null);
       reload();
+
     } catch (error) {
       console.error(error);
     }
@@ -161,7 +189,7 @@ export default function PhoneCallLogPage() {
       key: "callType",
       label: "Type",
       render: (i: PhoneCall) => (
-        <StatusBadge status={i.callType || "Incoming"} />
+        <StatusBadge status={i.callType || "INCOMING"} />
       ),
     },
 
@@ -187,7 +215,7 @@ export default function PhoneCallLogPage() {
           </div>
 
           <Button
-            className="bg-gradient-to-r from-primary to-pink-500 text-white rounded-xl shadow-lg hover:scale-105 transition"
+            className="bg-gradient-to-r from-primary to-pink-500 text-white rounded-xl shadow-lg"
             onClick={() => {
               setForm(empty);
               setModal("add");
@@ -218,6 +246,38 @@ export default function PhoneCallLogPage() {
             }}
             onDelete={handleDelete}
           />
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between px-6 py-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Total : {total}
+            </div>
+
+            <div className="flex gap-2">
+
+              <Button
+                variant="outline"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Previous
+              </Button>
+
+              <div className="px-4 py-2 border rounded-lg">
+                {page} / {totalPages}
+              </div>
+
+              <Button
+                variant="outline"
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </Button>
+
+            </div>
+          </div>
+
         </div>
 
         {/* Modal */}
@@ -228,10 +288,10 @@ export default function PhoneCallLogPage() {
             setEditId(null);
           }}
         >
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-background/95 backdrop-blur-xl shadow-2xl">
+          <DialogContent className="max-w-2xl rounded-3xl">
 
             <DialogHeader>
-              <DialogTitle className="text-2xl bg-gradient-to-r from-primary to-pink-500 bg-clip-text text-transparent">
+              <DialogTitle>
                 {modal === "add"
                   ? "Add Call Log"
                   : modal === "edit"
@@ -242,10 +302,9 @@ export default function PhoneCallLogPage() {
 
             <div className="grid grid-cols-2 gap-6 pt-4">
 
-              <div className="space-y-2">
-                <Label>Name *</Label>
+              <div>
+                <Label>Name</Label>
                 <Input
-                  className="rounded-xl"
                   value={form.callerName}
                   onChange={(e) =>
                     setForm({ ...form, callerName: e.target.value })
@@ -254,10 +313,9 @@ export default function PhoneCallLogPage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Phone *</Label>
+              <div>
+                <Label>Phone</Label>
                 <Input
-                  className="rounded-xl"
                   value={form.phoneNumber}
                   onChange={(e) =>
                     setForm({ ...form, phoneNumber: e.target.value })
@@ -266,7 +324,7 @@ export default function PhoneCallLogPage() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div>
                 <Label>Call Type</Label>
                 <Select
                   value={form.callType}
@@ -275,20 +333,26 @@ export default function PhoneCallLogPage() {
                   }
                   disabled={isView}
                 >
-                  <SelectTrigger className="rounded-xl">
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
+
                   <SelectContent>
-                    <SelectItem value="Incoming">Incoming</SelectItem>
-                    <SelectItem value="Outgoing">Outgoing</SelectItem>
+                    <SelectItem value="INCOMING">
+                      Incoming
+                    </SelectItem>
+
+                    <SelectItem value="OUTGOING">
+                      Outgoing
+                    </SelectItem>
+
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="space-y-2">
+              <div>
                 <Label>Purpose</Label>
                 <Input
-                  className="rounded-xl"
                   value={form.purpose}
                   onChange={(e) =>
                     setForm({ ...form, purpose: e.target.value })
@@ -297,11 +361,10 @@ export default function PhoneCallLogPage() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div>
                 <Label>Date</Label>
                 <Input
                   type="date"
-                  className="rounded-xl"
                   value={form.createdAt}
                   onChange={(e) =>
                     setForm({ ...form, createdAt: e.target.value })
@@ -310,22 +373,30 @@ export default function PhoneCallLogPage() {
                 />
               </div>
 
+              <div>
+                <Label>Call Time</Label>
+                <Input
+                  type="time"
+                  value={form.callTime}
+                  onChange={(e) =>
+                    setForm({ ...form, callTime: e.target.value })
+                  }
+                  disabled={isView}
+                />
+              </div>
+
             </div>
 
             {!isView && (
-              <div className="flex justify-end gap-3 pt-6 border-t">
+              <div className="flex justify-end gap-3 pt-6">
                 <Button
                   variant="outline"
-                  className="rounded-xl"
                   onClick={() => setModal(null)}
                 >
                   Cancel
                 </Button>
 
-                <Button
-                  className="rounded-xl bg-gradient-to-r from-primary to-pink-500 text-white"
-                  onClick={handleSave}
-                >
+                <Button onClick={handleSave}>
                   {modal === "add" ? "Add" : "Update"}
                 </Button>
               </div>
