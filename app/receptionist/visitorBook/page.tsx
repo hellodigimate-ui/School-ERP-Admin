@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -174,7 +175,7 @@ export default function VisitorBookPage() {
       label: "Status",
       render: (row: any) => (
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
             row.status === "In Campus"
               ? "bg-green-100 text-green-600"
               : "bg-gray-200 text-gray-700"
@@ -277,10 +278,22 @@ export default function VisitorBookPage() {
 
         {/* Modal */}
         <Dialog open={modal !== null} onOpenChange={() => setModal(null)}>
-          <DialogContent className="max-w-2xl rounded-3xl bg-gradient-to-br from-indigo-50 via-white to-pink-50 shadow-2xl p-6 max-h-[85vh] overflow-y-auto">
-            
-            <DialogHeader className="mb-4 border-b border-indigo-200 pb-3 sticky top-0 bg-gradient-to-br from-indigo-50 via-white to-pink-50 z-10">
-              <DialogTitle className="text-2xl font-bold text-indigo-800">
+          <DialogContent
+            className="
+            max-w-2xl 
+            rounded-3xl 
+            bg-background 
+            text-foreground 
+            shadow-2xl 
+            p-4 sm:p-6 
+            max-h-[90vh] 
+            overflow-y-auto 
+            border
+            transition-colors
+          "
+          >
+            <DialogHeader className="mb-4 border-b pb-3 sticky top-0 bg-background z-10">
+              <DialogTitle className="text-xl sm:text-2xl font-bold">
                 {modal === "add"
                   ? "Add Visitor"
                   : modal === "edit"
@@ -295,29 +308,40 @@ export default function VisitorBookPage() {
 
               /* ================= VIEW MODE ================= */
 
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 
                 {[
-                  { label: "Visitor Name", value: form.visitorName, color: "bg-indigo-100" },
-                  { label: "Phone", value: form.phone, color: "bg-purple-100" },
-                  { label: "Purpose", value: form.purpose, color: "bg-pink-100" },
-                  { label: "Id Proof", value: form.idProof, color: "bg-gray-100" },
-                  { label: "Id Number", value: form.idNumber, color: "bg-emrald-100" },
-                  { label: "To Meet", value: form.visitingTo, color: "bg-green-100" },
-                  { label: "Date", value: form.visitDate, color: "bg-yellow-100" },
-                  { label: "In Time", value: form.entryTime || "-", color: "bg-indigo-50" },
-                  { label: "Out Time", value: form.exitTime || "-", color: "bg-pink-50" },
-                  { label: "Status", value: form.status, color: "bg-green-50" },
+                  { label: "Visitor Name", value: form.visitorName },
+                  { label: "Phone", value: form.phone },
+                  { label: "Purpose", value: form.purpose },
+                  { label: "ID Proof", value: form.idProof },
+                  { label: "ID Number", value: form.idNumber },
+                  { label: "To Meet", value: form.visitingTo },
+                  { label: "Date", value: form.visitDate },
+                  { label: "In Time", value: form.entryTime || "-" },
+                  { label: "Out Time", value: form.exitTime || "-" },
+                  { label: "Status", value: form.status },
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className={`${item.color} rounded-2xl p-4 shadow-md flex justify-between items-center`}
+                    className="
+                    bg-muted/50
+                    rounded-2xl
+                    p-3 sm:p-4
+                    shadow-sm
+                    flex
+                    flex-col
+                    sm:flex-row
+                    sm:justify-between
+                    sm:items-center
+                    border
+                    "
                   >
-                    <span className="font-semibold text-gray-700">
+                    <span className="font-medium text-muted-foreground text-sm">
                       {item.label}
                     </span>
 
-                    <span className="text-gray-800 font-medium">
+                    <span className="text-sm sm:text-base font-semibold">
                       {item.value || "-"}
                     </span>
 
@@ -328,9 +352,9 @@ export default function VisitorBookPage() {
 
             ) : (
 
-              /* ================= EDIT / ADD ================= */
+              /* ================= ADD / EDIT ================= */
 
-              <div className="grid grid-cols-2 gap-6 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-4">
 
                 <InputField label="Visitor Name">
                   <Input
@@ -378,7 +402,13 @@ export default function VisitorBookPage() {
                     onChange={(e) =>
                       setForm({ ...form, idProof: e.target.value })
                     }
-                    className="w-full border rounded-xl p-2 bg-white"
+                    className="
+                    w-full 
+                    border 
+                    rounded-xl 
+                    p-2 
+                    bg-background
+                    "
                   >
                     <option value="">Select ID Proof</option>
                     <option value="Aadhar Card">Aadhar Card</option>
@@ -438,11 +468,11 @@ export default function VisitorBookPage() {
 
             {/* ================= BUTTONS ================= */}
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
 
               <Button
                 variant="outline"
-                className="rounded-xl"
+                className="rounded-xl w-full sm:w-auto"
                 onClick={() => setModal(null)}
               >
                 Close
@@ -450,7 +480,7 @@ export default function VisitorBookPage() {
 
               {!isView && (
                 <Button
-                  className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl"
+                  className="rounded-xl w-full sm:w-auto"
                   onClick={handleSave}
                 >
                   {modal === "add" ? "Add Visitor" : "Update Visitor"}
