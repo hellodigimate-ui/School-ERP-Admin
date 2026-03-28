@@ -92,12 +92,12 @@ const StatCards = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ho">
       {stats && dummyStats.map((stat, i) => {
         const Icon = iconMap[stat.label] || Users;
         const gradient =
           gradientMap[stat.label] ||
-          "bg-gradient-to-br from-gray-400 to-gray-600";
+          "bg-gradient-to-br from-gray-400 to-gray-600 ";
 
         const isPositiveChange =
           !stat.change?.startsWith("-") &&
@@ -116,13 +116,13 @@ const StatCards = () => {
             <div className="absolute bottom-3 left-4 w-16 h-16 rounded-full bg-white/5 blur-xl" />
 
             {/* Icon + Change */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="flex justify-between items-center mb-4 hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center hover:scale-110 transition-transform duration-300" >
                 <Icon className="w-5 h-5" />
               </div>
 
               <div
-                className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full
+                className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full hover:scale-110 transition-transform duration-300
                 ${
                   isPositiveChange
                     ? "bg-white/20 text-white"
@@ -137,12 +137,12 @@ const StatCards = () => {
             </div>
 
             {/* Value */}
-            <p className="text-3xl font-extrabold drop-shadow-md">
+            <p className="text-3xl font-extrabold drop-shadow-md hover:scale-110 transition-transform duration-300">
               {stats[stat.value]}
             </p>
 
             {/* Label */}
-            <p className="mt-1 text-sm opacity-80 font-semibold">
+            <p className="mt-1 text-sm opacity-80 font-semibold hover:underline">
               {stat.label}
             </p>
           </div>

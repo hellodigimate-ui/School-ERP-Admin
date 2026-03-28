@@ -90,12 +90,12 @@ const RecentActivity = () => {
 
   return (
     <div
-      className="bg-white rounded-2xl p-6 border border-gray-200 shadow-md dark:bg-gray-900 animate-fade-in"
+      className="bg-white rounded-2xl p-6 border border-gray-200 shadow-md dark:bg-gray-900 animate-fade-in hover:scale-105 transition-transform duration-300"
       style={{ animationDelay: "400ms" }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="font-display font-bold text-gray-900 dark:text-gray-100 text-lg">
+      <div className="flex items-center justify-between mb-6 hover:scale-105 transition-transform duration-300">
+        <h3 className="font-display font-bold text-gray-900 dark:text-gray-100 text-lg hover:scale-105 transition-transform duration-300  ">
           Recent Activity
         </h3>
         <button className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors">
@@ -104,22 +104,26 @@ const RecentActivity = () => {
       </div>
 
       {/* Activities List */}
-      <div className="space-y-5">
+      <div className="space-y-5 hover:scale-105 transition-transform duration-300">
         {users.map((user) => (
           <div
             key={user.id}
-            className="border p-4 rounded-lg flex justify-between items-center "
+            className="border p-4 rounded-lg flex justify-between items-center hover:scale-105 transition-transform duration-300"
           >
             <div>
-              <p className="font-semibold">{user.name}</p>
-              <p className="text-sm text-gray-500">{user.email}</p>
+              <p className="font-semibold hover:scale-105 transition-transform duration-300">
+                {user.name}
+              </p>
+              <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">
+                {user.email}
+              </p>
             </div>
 
-            <div className="text-right">
-              <p className="text-xs bg-gray-100 dark:text-gray-500 px-2 py-1 rounded">
+            <div className="text-right hover:scale-105 transition-transform duration-300">
+              <p className="text-xs bg-gray-100 dark:text-gray-500 px-2 py-1 rounded hover:scale-110 transition-transform duration-300  ">
                 {user.role}
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-400 mt-1 hover:scale-105 transition-transform duration-300">
                 {new Date(user.createdAt).toLocaleDateString()}
               </p>
             </div>

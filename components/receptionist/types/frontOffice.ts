@@ -13,22 +13,24 @@ export interface AdmissionEnquiry {
 
 export interface VisitorEntry {
   id: string;
-  name: string;
+  visitorName: string;
   phone: string;
   purpose: string;
   visitingTo: string;
+  visitDate: string;
+  idNumber: string;
   idProof: string;
+  status: string;
   noOfPersons: number;
-  inTime: string;
-  outTime: string;
-  date: string;
-  note: string;
+  entryTime: string;
+  exitTime: string;
 }
 
 export interface PhoneCall {
   id: string;
   callerName: string;
   phoneNumber: string;
+  callTime: string;
   callType: "Incoming" | "Outgoing";
   purpose: string;
   createdAt: string;
@@ -39,11 +41,9 @@ export interface PostalRecord {
   type: "Receive" | "Dispatch";
   fromTitle: string;
   referenceNo: string;
-  address: string;
   date: string;
   toTitle: string;
   note: string;
-  confidential: boolean;
 }
 
 export interface Complaint {

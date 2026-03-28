@@ -56,7 +56,7 @@
       { label: "Exam", path: "/admin/examination/exam" },
       { label: "Exam Schedule", path: "/admin/examination/schedule" },
       { label: "Exam Result", path: "/admin/examination/result" },
-      { label: "Marks Grade", path: "/admin/examination/marks-grade" },
+      // { label: "Marks Grade", path: "/admin/examination/marks-grade" },
       { label: "Online Exam", path: "/admin/examination/online" },
     ]},
     { label: "Fees Collection", icon: IndianRupeeIcon, path: "", children: [

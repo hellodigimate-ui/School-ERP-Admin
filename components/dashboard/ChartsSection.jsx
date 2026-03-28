@@ -77,18 +77,18 @@ export default function ChartsSection() {
   }, []);
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid md:grid-cols-3 gap-6 ">
       {/* Gender Card */}
-      <Card className="flex-1 min-w-[280px] border-0 shadow-md col-span-1">
+      <Card className="flex-1 min-w-[280px] border-0 shadow-md col-span-1 hover:scale-105 transition-transform duration-300">
         <CardContent className="p-6">
-          <h3 className="font-bold text-lg mb-4">Student Gender Ratio</h3>
+          <h3 className="font-bold text-lg mb-4 hover:scale-105 transition-transform duration-300">Student Gender Ratio</h3>
 
           {loading ? (
-            <p className="text-sm text-gray-500">Loading...</p>
+            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">Loading...</p>
           ) : genderData.length === 0 ? (
-            <p className="text-sm text-gray-500">No data found</p>
+            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">No data found</p>
           ) : (
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 hover:scale-105 transition-transform duration-300">
               <ResponsiveContainer width={chartSize} height={chartSize}>
                 <PieChart>
                   <Pie
@@ -105,16 +105,16 @@ export default function ChartsSection() {
                 </PieChart>
               </ResponsiveContainer>
 
-              <div className="space-y-3">
+              <div className="space-y-3 hover:scale-105 transition-transform duration-300">
                 {genderData.map((d) => (
-                  <div key={d.name} className="flex items-center gap-3">
+                  <div key={d.name} className="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
                     <div
-                      className="w-3 h-3 rounded-full"
+                      className="w-3 h-3 rounded-full hover:scale-105 transition-transform duration-300"
                       style={{ backgroundColor: d.color }}
                     />
                     <div>
-                      <p className="text-sm font-semibold">{d.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm font-semibold hover:scale-105 transition-transform duration-300">{d.name}</p>
+                      <p className="text-xs text-muted-foreground hover:scale-105 transition-transform duration-300">
                         {d.value} students
                       </p>
                     </div>
@@ -127,16 +127,16 @@ export default function ChartsSection() {
       </Card>
 
       {/* Role Card */}
-      <Card className="flex-1 min-w-[280px] border-0 shadow-lg col-span-2 rounded-2xl hover:shadow-2xl transition-all duration-300">
+      <Card className="flex-1 min-w-[280px] border-0 shadow-lg col-span-2 rounded-2xl hover:scale-105 transition-transform duration-300">
         <CardContent className="p-6">
-          <h3 className="font-bold text-lg mb-4">User Roles Distribution</h3>
+          <h3 className="font-bold text-lg mb-4 hover:scale-105 transition-transform duration-300">User Roles Distribution</h3>
 
           {loading ? (
-            <p className="text-sm text-gray-500">Loading...</p>
+            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">Loading...</p>
           ) : roleData.length === 0 ? (
-            <p className="text-sm text-gray-500">No data found</p>
+            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">No data found</p>
           ) : (
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-6 hover:scale-105 transition-transform duration-300">
               {/* Pie Chart */}
               <ResponsiveContainer width={160} height={160}>
                 <PieChart>
@@ -156,20 +156,20 @@ export default function ChartsSection() {
               </ResponsiveContainer>
 
               {/* Role Legend */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 hover:scale-105 transition-transform duration-300">
                 {roleData.map((role) => (
                   <div
                     key={role.name}
                     className="flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 transition-all shadow-sm"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 hover:scale-105 transition-transform duration-300">
                       <div
-                        className="w-3 h-3 rounded-full"
+                        className="w-3 h-3 rounded-full hover:scale-105 transition-transform duration-300"
                         style={{ backgroundColor: role.color }}
                       />
-                      <span className="text-sm font-medium">{role.name}</span>
+                      <span className="text-sm font-medium hover:scale-105 transition-transform duration-300">{role.name}</span>
                     </div>
-                    <span className="text-xs text-gray-100">{role.value}</span>
+                    <span className="text-xs text-gray-100 hover:scale-105 transition-transform duration-300">{role.value}</span>
                   </div>
                 ))}
               </div>
