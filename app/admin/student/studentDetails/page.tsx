@@ -587,7 +587,7 @@ useEffect(() => {
                                   <div className="bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-600 text-white p-6 flex flex-col items-center">
 
                                     <img
-                                      src={selectedStudent.image || "/student.png"}
+                                      src={selectedStudent.photo || "/student.png"}
                                       alt="student"
                                       className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
                                     />
@@ -713,7 +713,7 @@ useEffect(() => {
                                         <p><strong>Mother Phone:</strong> {selectedStudent?.parent?.motherPhone || "-"}</p>
 
                                         <p className="col-span-2">
-                                          <strong>Address:</strong> {selectedStudent?.parent?.address || "-"}
+                                          <strong>Address:</strong> {selectedStudent?.currentAddress || "-"}
                                         </p>
                                       </div>
                                     </div>
@@ -725,15 +725,11 @@ useEffect(() => {
                                       </h3>
 
                                       <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <p><strong>Name:</strong> {selectedStudent?.guardian?.name || "-"}</p>
-                                        <p><strong>Relation:</strong> {selectedStudent?.guardian?.relation || "-"}</p>
+                                        <p><strong>Name:</strong> {selectedStudent?.parent?.guardianName || "-"}</p>
+                                        <p><strong>Relation:</strong> {selectedStudent?.parent?.guardianRelation || "-"}</p>
 
-                                        <p><strong>Phone:</strong> {selectedStudent?.guardian?.phone || "-"}</p>
-                                        <p><strong>Email:</strong> {selectedStudent?.guardian?.email || "-"}</p>
-
-                                        <p className="col-span-2">
-                                          <strong>Address:</strong> {selectedStudent?.guardian?.address || "-"}
-                                        </p>
+                                        <p><strong>Phone:</strong> {selectedStudent?.parent?.guardianPhone || "-"}</p>
+                                        
                                       </div>
                                     </div>
 
