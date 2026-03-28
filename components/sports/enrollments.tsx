@@ -40,12 +40,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Plus, Trash2, Pencil, Eye } from "lucide-react";
+import { Search, Plus, Trash2, Pencil, Eye, Edit2, MapPin, User, Activity, CheckCircle, Calendar } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 
+// const statusConfig: any = {
+//   ACTIVE: "bg-green-100 text-green-700",
+//   INACTIVE: "bg-gray-100 text-gray-600",
+// };
+
 const statusConfig: any = {
-  ACTIVE: "bg-green-100 text-green-700",
-  INACTIVE: "bg-gray-100 text-gray-600",
+  ENROLLED: "bg-green-100 text-green-700",
+  COMPLETED: "bg-gray-100 text-gray-600",
+  INACTIVE: "bg-red-100 text-red-700",
 };
 
 export default function EnrollmentTab() {
@@ -77,9 +83,10 @@ const [selectedStudentName, setSelectedStudentName] = useState("");
 const fetchUsers = async (branchId: string) => {
   try {
     const res = await axiosInstance.get(
-      `/api/v1/users?branch=${branchId}&role=STUDENT`
+      `/api/v1/students?branch=${branchId}`
     );
-    if (res.data.success) setUsers(res.data.data);
+    console.log(res.data);
+    if (res.data.success) setUsers(res.data.data.students);
   } catch (err) {
     console.error("Failed to load users", err);
     setUsers([]);
@@ -97,7 +104,7 @@ useEffect(() => {
   // 🔥 Fetch Enrollments
   const fetchEnrollments = async () => {
     try {
-      const res = await axiosInstance.get("/api/v1/enrollments", {
+      const res = await axiosInstance.get("/api/v1/sports/enrollments", {
         params: {
           page: pageEnrollments,
           limit: 10,
@@ -154,7 +161,7 @@ useEffect(() => {
   // 🔥 Create Enrollment
   const handleEnroll = async () => {
     try {
-      await axiosInstance.post("/api/v1/enrollments", form);
+      await axiosInstance.post("/api/v1/sports/enrollments", form);
       setShowEnrollDialog(false);
       setForm({ studentId: "", sportId: "", branchId: "" });
       fetchEnrollments();
@@ -168,7 +175,7 @@ useEffect(() => {
     if (!selectedEnrollment) return;
     try {
       await axiosInstance.put(
-        `/api/v1/enrollments/${selectedEnrollment.id}`,
+        `/api/v1/sports/enrollments/${selectedEnrollment.id}`,
         selectedEnrollment
       );
       setSelectedEnrollment(null);
@@ -181,7 +188,7 @@ useEffect(() => {
   // 🔥 Delete Enrollment
   const handleDelete = async (id: string) => {
     try {
-      await axiosInstance.delete(`/api/v1/enrollments/${id}`);
+      await axiosInstance.delete(`/api/v1/sports/enrollments/${id}`);
       fetchEnrollments();
     } catch (err) {
       console.error("Delete error", err);
@@ -205,164 +212,301 @@ useEffect(() => {
           />
         </div>
 
-{/* 🔥 Enroll Modal */}
-<Dialog open={showEnrollDialog} onOpenChange={setShowEnrollDialog}>
-  <DialogTrigger asChild>
-    <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white">
-      <Plus size={16} /> Enroll Student
-    </Button>
-  </DialogTrigger>
+      {/* 🔥 Enroll Modal */}
+      <Dialog open={showEnrollDialog} onOpenChange={setShowEnrollDialog}>
+        <DialogTrigger asChild>
+          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+            <Plus size={16} /> Enroll Student
+          </Button>
+        </DialogTrigger>
 
-  <DialogContent className="space-y-4">
-    <DialogTitle className="text-xl font-bold text-blue-600">
-      Enroll Student
+        <DialogContent className="space-y-4">
+          <DialogTitle className="text-xl font-bold text-blue-600">
+            Enroll Student
+          </DialogTitle>
+
+          {/* 🔹 Branch Select */}
+          <Select
+            value={form.branchId}
+            onValueChange={(value) => {
+              setForm({ ...form, branchId: value, studentId: "" })
+              fetchUsers(value) // fetch students for this branch
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Branch" />
+            </SelectTrigger>
+            <SelectContent>
+              {branches.map((b) => (
+                <SelectItem key={b.id} value={b.id}>
+                  {b.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* 🔹 Student Search & Select using Popover */}
+          <div className="space-y-2">
+            <label>Select Student</label>
+            <Popover open={studentPopoverOpen} onOpenChange={setStudentPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left"
+                >
+                  {selectedStudentName || "Search student..."}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="p-0 w-full max-h-60 overflow-y-auto">
+                <Command>
+                  <CommandInput
+                    placeholder="Search student..."
+                    value={searchStudents}
+                    onValueChange={setSearchStudents}
+                  />
+                  <CommandList>
+                    <CommandEmpty>No students found</CommandEmpty>
+                    {users.map((u) => (
+                      <CommandItem
+                        key={u.id}
+                        value={u.name}
+                        onSelect={() => {
+                          setForm({ ...form, studentId: u.id })
+                          setSelectedStudentName(u.name)
+                          setStudentPopoverOpen(false)
+                        }}
+                      >
+                        {u.name} ({u.studentId})
+                      </CommandItem>
+                    ))}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* 🔹 Sport Select */}
+          <Select
+            value={form.sportId}
+            onValueChange={(value) => setForm({ ...form, sportId: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Sport" />
+            </SelectTrigger>
+            <SelectContent>
+              {sports.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* 🔹 Enroll Button */}
+          <Button
+            onClick={handleEnroll}
+            className="w-full bg-green-500 hover:bg-green-600 text-white"
+          >
+            Enroll
+          </Button>
+        </DialogContent>
+      </Dialog>
+      </div>
+
+{/* 🔥 Table */}
+<div className="bg-white rounded-xl shadow overflow-hidden border">
+  <Table>
+    <TableHeader>
+      <TableRow className="bg-blue-50">
+        <TableHead>#</TableHead>
+        <TableHead>Student</TableHead>
+        <TableHead>Sport</TableHead>
+        <TableHead>Branch</TableHead>
+        <TableHead>Date</TableHead>
+        <TableHead>Status</TableHead>
+        <TableHead className="text-right">Actions</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {enrollmentData.map((e, i) => (
+        <TableRow key={e.id} className="hover:bg-blue-50 transition">
+          <TableCell>{i + 1}</TableCell>
+          <TableCell>{students.find((s) => s.id === e.studentId)?.name || e.Student.name}</TableCell>
+          <TableCell>{sports.find((s) => s.id === e.sportId)?.name}</TableCell>
+          <TableCell>{branches.find((b) => b.id === e.branchId)?.name}</TableCell>
+          <TableCell>{new Date(e.enrollmentDate).toLocaleDateString()}</TableCell>
+          <TableCell>
+            <Badge className={statusConfig[e.status]}>{e.status}</Badge>
+          </TableCell>
+          <TableCell className="text-right flex gap-2 justify-end">
+
+
+            {/* 🔹 View Modal */}
+            <Dialog open={!!viewEnrollment} onOpenChange={() => setViewEnrollment(null)}>
+              <DialogContent className="space-y-6 w-[400px]">
+                <DialogTitle className="text-2xl font-bold text-blue-600 flex items-center gap-2">
+                  <Eye size={24} /> Enrollment Details
+                </DialogTitle>
+
+                {viewEnrollment && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <User className="text-blue-500" size={20} />
+                      <span className="font-semibold">Student:</span>
+                      <span>{students.find((s) => s.id === viewEnrollment.studentId)?.name || viewEnrollment.Student?.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Activity className="text-green-500" size={20} />
+                      <span className="font-semibold">Sport:</span>
+                      <span>{sports.find((s) => s.id === viewEnrollment.sportId)?.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <MapPin className="text-purple-500" size={20} />
+                      <span className="font-semibold">Branch:</span>
+                      <span>{branches.find((b) => b.id === viewEnrollment.branchId)?.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Calendar className="text-orange-500" size={20} />
+                      <span className="font-semibold">Enrollment Date:</span>
+                      <span>{new Date(viewEnrollment.enrollmentDate).toLocaleDateString()}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="text-green-700" size={20} />
+                      <span className="font-semibold">Status:</span>
+                      <span className="capitalize">{viewEnrollment.status}</span>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
+{/* 🔹 Edit Modal */}
+<Dialog open={!!selectedEnrollment} onOpenChange={() => setSelectedEnrollment(null)}>
+  <DialogContent className="space-y-6 w-[400px]">
+    <DialogTitle className="text-2xl font-bold text-yellow-500 flex items-center gap-2">
+      <Edit2 size={24} /> Edit Enrollment
     </DialogTitle>
 
-    {/* 🔹 Branch Select */}
-    <Select
-      value={form.branchId}
-      onValueChange={(value) => {
-        setForm({ ...form, branchId: value, studentId: "" })
-        fetchUsers(value) // fetch students for this branch
-      }}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="Select Branch" />
-      </SelectTrigger>
-      <SelectContent>
-        {branches.map((b) => (
-          <SelectItem key={b.id} value={b.id}>
-            {b.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    {selectedEnrollment && (
+      <div className="space-y-4">
+        {/* 🔹 Read-only Branch */}
+        <div className="flex items-center gap-2 text-gray-700 font-semibold">
+          <MapPin size={18} /> Branch:
+          <span className="text-gray-900">
+            {branches.find(b => b.id === selectedEnrollment.branchId)?.name}
+          </span>
+        </div>
 
-    {/* 🔹 Student Search & Select using Popover */}
-    <div className="space-y-2">
-      <label>Select Student</label>
-      <Popover open={studentPopoverOpen} onOpenChange={setStudentPopoverOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-start text-left"
-          >
-            {selectedStudentName || "Search student..."}
-          </Button>
-        </PopoverTrigger>
+        {/* 🔹 Read-only Student */}
+        <div className="flex items-center gap-2 text-gray-700 font-semibold">
+          <User size={18} /> Student:
+          <span className="text-gray-900">
+            {students.find(s => s.id === selectedEnrollment.studentId)?.name || selectedEnrollment.Student?.name }
+          </span>
+        </div>
 
-        <PopoverContent className="p-0 w-full max-h-60 overflow-y-auto">
-          <Command>
-            <CommandInput
-              placeholder="Search student..."
-              value={searchStudents}
-              onValueChange={setSearchStudents}
-            />
-            <CommandList>
-              <CommandEmpty>No students found</CommandEmpty>
-              {users.map((u) => (
-                <CommandItem
-                  key={u.id}
-                  value={u.name}
-                  onSelect={() => {
-                    setForm({ ...form, studentId: u.id })
-                    setSelectedStudentName(u.name)
-                    setStudentPopoverOpen(false)
-                  }}
-                >
-                  {u.name} ({u.studentId})
-                </CommandItem>
-              ))}
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </div>
+        {/* 🔹 Sport Select (Editable) */}
+        <label className="flex items-center gap-2 font-semibold text-gray-700">
+          <Activity size={18} /> Sport
+        </label>
+        <Select
+          value={selectedEnrollment.sportId || ""}
+          onValueChange={(value) => setSelectedEnrollment({ ...selectedEnrollment, sportId: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select Sport" />
+          </SelectTrigger>
+          <SelectContent>
+            {sports.map((s) => (
+              <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-    {/* 🔹 Sport Select */}
-    <Select
-      value={form.sportId}
-      onValueChange={(value) => setForm({ ...form, sportId: value })}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="Select Sport" />
-      </SelectTrigger>
-      <SelectContent>
-        {sports.map((s) => (
-          <SelectItem key={s.id} value={s.id}>
-            {s.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+        {/* 🔹 Status Select (Editable) */}
+        <label className="flex items-center gap-2 font-semibold text-gray-700">
+          <CheckCircle size={18} /> Status
+        </label>
+        <Select
+          value={selectedEnrollment.status || ""}
+          onValueChange={(value) => setSelectedEnrollment({ ...selectedEnrollment, status: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.keys(statusConfig).map((status) => (
+              <SelectItem key={status} value={status}>{status}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-    {/* 🔹 Enroll Button */}
-    <Button
-      onClick={handleEnroll}
-      className="w-full bg-green-500 hover:bg-green-600 text-white"
-    >
-      Enroll
-    </Button>
+        {/* 🔹 Update Button */}
+        <Button
+          onClick={async () => {
+            try {
+              // Send only the editable fields to the API
+              await axiosInstance.put(
+                `/api/v1/sports/enrollments/${selectedEnrollment.id}`,
+                {
+                  sportId: selectedEnrollment.sportId,
+                  status: selectedEnrollment.status,
+                }
+              );
+              setSelectedEnrollment(null);
+              fetchEnrollments();
+            } catch (err) {
+              console.error("Update error", err);
+            }
+          }}
+          className="w-full bg-yellow-500 hover:bg-yellow-600 text-white flex items-center justify-center gap-2"
+        >
+          <Edit2 size={18} /> Update Enrollment
+        </Button>
+      </div>
+    )}
   </DialogContent>
 </Dialog>
-      </div>
 
-      {/* 🔥 Table */}
-      <div className="bg-white rounded-xl shadow overflow-hidden border">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-blue-50">
-              <TableHead>#</TableHead>
-              <TableHead>Student</TableHead>
-              <TableHead>Sport</TableHead>
-              <TableHead>Branch</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {enrollmentData.map((e, i) => (
-              <TableRow key={e.id} className="hover:bg-blue-50 transition">
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>{students.find((s) => s.id === e.studentId)?.name || e.studentId}</TableCell>
-                <TableCell>{sports.find((s) => s.id === e.sportId)?.name}</TableCell>
-                <TableCell>{branches.find((b) => b.id === e.branchId)?.name}</TableCell>
-                <TableCell>{new Date(e.enrollmentDate).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <Badge className={statusConfig[e.status]}>{e.status}</Badge>
-                </TableCell>
-                <TableCell className="text-right flex gap-2 justify-end">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="text-blue-600"
-                    onClick={() => setViewEnrollment(e)}
-                  >
-                    <Eye size={16} />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="text-yellow-500"
-                    onClick={() => setSelectedEnrollment(e)}
-                  >
-                    <Pencil size={16} />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="text-red-500"
-                    onClick={() => handleDelete(e.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            {/* 🔹 Buttons to open modals */}
+            <Button
+              size="icon"
+              variant="ghost"
+              className="text-blue-600"
+              onClick={() => setViewEnrollment(e)}
+            >
+              <Eye size={16} />
+            </Button>
+
+            <Button
+              size="icon"
+              variant="ghost"
+              className="text-yellow-500"
+              onClick={() => setSelectedEnrollment(e)}
+            >
+              <Pencil size={16} />
+            </Button>
+
+            {/* Delete Button */}
+            <Button
+              size="icon"
+              variant="ghost"
+              className="text-red-500"
+              onClick={() => handleDelete(e.id)}
+            >
+              <Trash2 size={16} />
+            </Button>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</div>
 
       {/* 🔥 Pagination */}
       <div className="flex items-center justify-between pt-4">

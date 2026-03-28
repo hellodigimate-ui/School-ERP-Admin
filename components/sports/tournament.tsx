@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,12 +19,17 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Plus, Trash2 } from "lucide-react";
+import {  Plus, Trash2 } from "lucide-react";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 export default function TournamentTab() {
   const [data, setData] = useState<any[]>([]);
   const [branches, setBranches] = useState<any[]>([]);
   const [sports, setSports] = useState<any[]>([]);
+
+  const [loading, setLoading] = useState(false);
+  const [loadingBranches, setLoadingBranches] = useState(false);
+  const [loadingSports, setLoadingSports] = useState(false);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -46,11 +52,14 @@ export default function TournamentTab() {
   // 🔥 Fetch tournaments
   const fetchTournaments = async () => {
     try {
-      const res = await axios.get("/api/v1/tournaments", {
+      setLoading(true);
+
+      const res = await axiosInstance.get("/api/v1/sports/tournaments", {
         params: {
           page,
           limit: 10,
-          status: searchStatus || undefined,
+          status:
+            searchStatus === "ALL" ? undefined : searchStatus || undefined,
         },
       });
 
@@ -58,18 +67,50 @@ export default function TournamentTab() {
       setTotalPages(res.data.pagination.totalPages);
     } catch (err) {
       console.error("Fetch tournaments error", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 🔥 Fetch dropdowns
-  const fetchDropdowns = async () => {
-    const [b, s] = await Promise.all([
-      axios.get("/api/v1/branches"),
-      axios.get("/api/v1/sports"),
-    ]);
+  // 🔥 Fetch branches
+  const fetchBranches = async () => {
+    try {
+      setLoadingBranches(true);
 
-    setBranches(b.data.data);
-    setSports(s.data.data);
+      const res = await axiosInstance.get("/api/v1/branches", {
+        params: {
+          page: 1,
+          perPage: 50,
+        },
+      });
+
+      setBranches(res.data.data);
+    } catch (err) {
+      console.error("Branches error", err);
+    } finally {
+      setLoadingBranches(false);
+    }
+  };
+
+  // 🔥 Fetch sports (based on branch)
+  const fetchSports = async (branchId: string) => {
+    try {
+      setLoadingSports(true);
+
+      const res = await axiosInstance.get("/api/v1/sports", {
+        params: {
+          page: 1,
+          limit: 50,
+          branchId,
+        },
+      });
+
+      setSports(res.data.data);
+    } catch (err) {
+      console.error("Sports error", err);
+    } finally {
+      setLoadingSports(false);
+    }
   };
 
   useEffect(() => {
@@ -77,13 +118,26 @@ export default function TournamentTab() {
   }, [page, searchStatus]);
 
   useEffect(() => {
-    fetchDropdowns();
+    fetchBranches();
   }, []);
+
+  useEffect(() => {
+    if (form.branchId) {
+      fetchSports(form.branchId);
+    } else {
+      setSports([]);
+    }
+  }, [form.branchId]);
 
   // 🔥 Create
   const handleCreate = async () => {
+    if (!form.name || !form.branchId || !form.sportId) {
+      alert("Fill required fields");
+      return;
+    }
+
     try {
-      await axios.post("/api/v1/tournaments", {
+      await axiosInstance.post("/api/v1/sports/tournaments", {
         ...form,
         registrationFee: Number(form.registrationFee),
       });
@@ -109,20 +163,20 @@ export default function TournamentTab() {
   // 🔥 Delete
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`/api/v1/tournaments/${id}`);
+      await axiosInstance.delete(`/api/v1/sports/tournaments/${id}`);
       fetchTournaments();
     } catch (err) {
       console.error("Delete error", err);
     }
   };
 
-  // 🔥 Update Status
+  // 🔥 Status update
   const handleStatusChange = async (id: string, status: string) => {
     try {
-      await axios.put(`/api/v1/tournaments/${id}`, { status });
+      await axiosInstance.put(`/api/v1/sports/tournaments/${id}`, { status });
       fetchTournaments();
     } catch (err) {
-      console.error("Status update error", err);
+      console.error("Status error", err);
     }
   };
 
@@ -136,21 +190,24 @@ export default function TournamentTab() {
     <div className="space-y-5">
       {/* 🔥 Top Bar */}
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div className="relative">
-          <Search
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2"
-          />
-          <Input
-            placeholder="Filter by status..."
-            className="pl-9 w-64"
-            value={searchStatus}
-            onChange={(e) => {
-              setSearchStatus(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
+        {/* Status Filter */}
+        <Select
+          value={searchStatus}
+          onValueChange={(v) => {
+            setSearchStatus(v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All</SelectItem>
+            <SelectItem value="UPCOMING">Upcoming</SelectItem>
+            <SelectItem value="ONGOING">Ongoing</SelectItem>
+            <SelectItem value="COMPLETED">Completed</SelectItem>
+          </SelectContent>
+        </Select>
 
         {/* CREATE */}
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -170,9 +227,16 @@ export default function TournamentTab() {
             />
 
             {/* Branch */}
-            <Select onValueChange={(v) => setForm({ ...form, branchId: v })}>
+            <Select
+              value={form.branchId}
+              onValueChange={(v) =>
+                setForm({ ...form, branchId: v, sportId: "" })
+              }
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select Branch" />
+                <SelectValue
+                  placeholder={loadingBranches ? "Loading..." : "Select Branch"}
+                />
               </SelectTrigger>
               <SelectContent>
                 {branches.map((b) => (
@@ -184,9 +248,21 @@ export default function TournamentTab() {
             </Select>
 
             {/* Sport */}
-            <Select onValueChange={(v) => setForm({ ...form, sportId: v })}>
+            <Select
+              value={form.sportId}
+              onValueChange={(v) => setForm({ ...form, sportId: v })}
+              disabled={!form.branchId || loadingSports}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select Sport" />
+                <SelectValue
+                  placeholder={
+                    !form.branchId
+                      ? "Select branch first"
+                      : loadingSports
+                        ? "Loading..."
+                        : "Select Sport"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {sports.map((s) => (
@@ -216,8 +292,8 @@ export default function TournamentTab() {
             />
 
             <Input
-              placeholder="Registration Fee"
               type="number"
+              placeholder="Registration Fee"
               value={form.registrationFee}
               onChange={(e) =>
                 setForm({ ...form, registrationFee: e.target.value })
@@ -238,50 +314,56 @@ export default function TournamentTab() {
       </div>
 
       {/* 🔥 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data.map((t) => (
-          <div
-            key={t.id}
-            className="border rounded-xl p-4 shadow-sm hover:shadow-lg"
-          >
-            <div className="flex justify-between">
-              <h3 className="font-semibold">{t.name}</h3>
-              <Badge className={statusColors[t.status]}>{t.status}</Badge>
+      {loading ? (
+        <p>Loading tournaments...</p>
+      ) : data.length === 0 ? (
+        <p className="text-muted-foreground">No tournaments found</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {data.map((t) => (
+            <div
+              key={t.id}
+              className="border rounded-xl p-4 shadow-sm hover:shadow-lg"
+            >
+              <div className="flex justify-between">
+                <h3 className="font-semibold">{t.name}</h3>
+                <Badge className={statusColors[t.status]}>{t.status}</Badge>
+              </div>
+
+              <p className="text-sm mt-2 text-muted-foreground">{t.location}</p>
+
+              <p className="text-xs mt-1">
+                {new Date(t.startDate).toLocaleDateString()} →{" "}
+                {new Date(t.endDate).toLocaleDateString()}
+              </p>
+
+              <p className="text-sm mt-2">₹ {t.registrationFee || 0}</p>
+
+              <div className="flex justify-between mt-4">
+                <Select onValueChange={(v) => handleStatusChange(t.id, v)}>
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue placeholder="Change Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="UPCOMING">Upcoming</SelectItem>
+                    <SelectItem value="ONGOING">Ongoing</SelectItem>
+                    <SelectItem value="COMPLETED">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="text-destructive"
+                  onClick={() => handleDelete(t.id)}
+                >
+                  <Trash2 size={14} />
+                </Button>
+              </div>
             </div>
-
-            <p className="text-sm mt-2 text-muted-foreground">{t.location}</p>
-
-            <p className="text-xs mt-1">
-              {new Date(t.startDate).toLocaleDateString()} →{" "}
-              {new Date(t.endDate).toLocaleDateString()}
-            </p>
-
-            <p className="text-sm mt-2">₹ {t.registrationFee || 0}</p>
-
-            <div className="flex justify-between mt-4">
-              <Select onValueChange={(v) => handleStatusChange(t.id, v)}>
-                <SelectTrigger className="w-[130px]">
-                  <SelectValue placeholder="Change Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="UPCOMING">Upcoming</SelectItem>
-                  <SelectItem value="ONGOING">Ongoing</SelectItem>
-                  <SelectItem value="COMPLETED">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button
-                size="icon"
-                variant="ghost"
-                className="text-destructive"
-                onClick={() => handleDelete(t.id)}
-              >
-                <Trash2 size={14} />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* 🔥 Pagination */}
       <div className="flex justify-between items-center">
