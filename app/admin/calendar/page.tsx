@@ -315,8 +315,21 @@ const handleCreateEvent = async () => {
                           <span className={`text-sm font-medium ${isToday ? "text-indigo-600 font-bold" : "text-foreground"}`}>{day}</span>
                           <div className="mt-1 space-y-1">
                             {events.map(ev => (
-                              <div key={ev.id} className={`text-[10px] px-1 py-0.5 rounded-full truncate font-medium ${typeColors[ev.eventType]}`}>
-                                {ev.name}
+                              <div
+                                key={ev.id}
+                                className="text-[10px] p-1 rounded-md bg-white shadow-sm border border-gray-200 space-y-[2px]"
+                              >
+                                {/* Event Name */}
+                                <p className="truncate font-medium text-gray-800">
+                                  {ev.name}
+                                </p>
+
+                                {/* Event Type Label */}
+                                <span
+                                  className={`inline-block px-1 py-[1px] rounded text-[9px] font-semibold ${typeColors[ev.eventType]}`}
+                                >
+                                  {ev.eventType}
+                                </span>
                               </div>
                             ))}
                           </div>

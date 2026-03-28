@@ -360,7 +360,7 @@ const Page = () => {
                         <TableHead className="font-semibold text-gray-700 dark:text-gray-400">Purpose</TableHead>
                         <TableHead className="font-semibold text-gray-700 dark:text-gray-400">Date</TableHead>
                         
-                        <TableHead className="font-semibold text-right text-gray-700 dark:text-gray-400 dark:text-gray-400">Actions</TableHead>
+                        <TableHead className="font-semibold text-right text-gray-700  dark:text-gray-400">Actions</TableHead>
                     </TableRow>
                     </TableHeader>
 

@@ -1,15 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,6 +60,8 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { toast } from "sonner";
 import { useLanguage } from "@/context/LanguageContext";
 import { Textarea } from "@/components/ui/textarea";
+import ProfileSettings from "../../../components/website-setting/profileSetting";
+import SecuritySetting from "@/components/website-setting/securitySetting";
 
 // ─── Mock Data ────────────────────────────────────────────────────
 interface Currency {
@@ -98,50 +96,158 @@ interface ApiKey {
 }
 
 const initialApiKeys: ApiKey[] = [
+  // ─── Razorpay ─────────────────────
   {
     id: 1,
     provider: "Razorpay",
-    label: "Razorpay Key ID",
+    label: "Key ID",
     keyType: "public",
-    value: "rzp_live_xxxxxxxxxxxxxxx",
+    value: "rzp_test_1DP5mmOlF5G5ag",
     status: "active",
-    lastUpdated: "2026-03-10",
+    lastUpdated: "2026-03-20",
   },
   {
     id: 2,
     provider: "Razorpay",
-    label: "Razorpay Key Secret",
+    label: "Key Secret",
     keyType: "secret",
-    value: "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    value: "s3cr3tR@z0rp@yKey123456",
     status: "active",
-    lastUpdated: "2026-03-10",
+    lastUpdated: "2026-03-20",
   },
   {
     id: 3,
-    provider: "Stripe",
-    label: "Stripe Publishable Key",
-    keyType: "public",
-    value: "pk_live_xxxxxxxxxxxxxxx",
+    provider: "Razorpay",
+    label: "Webhook Secret",
+    keyType: "secret",
+    value: "whsec_test_razorpay_987654",
     status: "inactive",
-    lastUpdated: "2026-02-20",
+    lastUpdated: "2026-03-18",
   },
+
+  // ─── Google Meet / Google API ─────
   {
     id: 4,
-    provider: "Stripe",
-    label: "Stripe Secret Key",
-    keyType: "secret",
-    value: "sk_live_xxxxxxxxxxxxxxx",
-    status: "inactive",
-    lastUpdated: "2026-02-20",
+    provider: "GMeet",
+    label: "Client ID",
+    keyType: "public",
+    value: "1234567890-abcxyz.apps.googleusercontent.com",
+    status: "active",
+    lastUpdated: "2026-03-15",
   },
   {
     id: 5,
-    provider: "PayU",
-    label: "PayU Merchant Key",
+    provider: "GMeet",
+    label: "Client Secret",
+    keyType: "secret",
+    value: "GOCSPX-abcdef123456789",
+    status: "active",
+    lastUpdated: "2026-03-15",
+  },
+  {
+    id: 6,
+    provider: "GMeet",
+    label: "API Key",
     keyType: "public",
-    value: "xxxxxxxx",
+    value: "AIzaSyD-EXAMPLE-KEY-123456",
     status: "inactive",
-    lastUpdated: "2026-01-15",
+    lastUpdated: "2026-03-10",
+  },
+
+  // ─── Email (SMTP) ─────────────────
+  {
+    id: 7,
+    provider: "Email (SMTP)",
+    label: "SMTP Host",
+    keyType: "public",
+    value: "smtp.gmail.com",
+    status: "active",
+    lastUpdated: "2026-03-12",
+  },
+  {
+    id: 8,
+    provider: "Email (SMTP)",
+    label: "SMTP Port",
+    keyType: "public",
+    value: "587",
+    status: "active",
+    lastUpdated: "2026-03-12",
+  },
+  {
+    id: 9,
+    provider: "Email (SMTP)",
+    label: "Username",
+    keyType: "public",
+    value: "noreply@yourapp.com",
+    status: "active",
+    lastUpdated: "2026-03-12",
+  },
+  {
+    id: 10,
+    provider: "Email (SMTP)",
+    label: "Password",
+    keyType: "secret",
+    value: "email_app_password_123456",
+    status: "active",
+    lastUpdated: "2026-03-12",
+  },
+
+  // ─── WhatsApp (Meta / Twilio) ─────
+  {
+    id: 11,
+    provider: "WhatsApp",
+    label: "Access Token",
+    keyType: "secret",
+    value: "EAAGm0PX4ZCpsBAExampleWhatsAppToken",
+    status: "active",
+    lastUpdated: "2026-03-14",
+  },
+  {
+    id: 12,
+    provider: "WhatsApp",
+    label: "Phone Number ID",
+    keyType: "public",
+    value: "123456789012345",
+    status: "active",
+    lastUpdated: "2026-03-14",
+  },
+  {
+    id: 13,
+    provider: "WhatsApp",
+    label: "Business Account ID",
+    keyType: "public",
+    value: "987654321098765",
+    status: "inactive",
+    lastUpdated: "2026-03-10",
+  },
+
+  // ─── SMS (Twilio / Fast2SMS) ──────
+  {
+    id: 14,
+    provider: "SMS",
+    label: "Account SID",
+    keyType: "public",
+    value: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    status: "active",
+    lastUpdated: "2026-03-16",
+  },
+  {
+    id: 15,
+    provider: "SMS",
+    label: "Auth Token",
+    keyType: "secret",
+    value: "your_twilio_auth_token_123456",
+    status: "active",
+    lastUpdated: "2026-03-16",
+  },
+  {
+    id: 16,
+    provider: "SMS",
+    label: "Sender ID",
+    keyType: "public",
+    value: "TXTSMS",
+    status: "active",
+    lastUpdated: "2026-03-16",
   },
 ];
 
@@ -416,10 +522,8 @@ function CurrencyTab() {
 
   return (
     <div className="space-y-6">
-
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
         {/* TOTAL */}
         <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
           <CardContent className="pt-6 flex items-center gap-4">
@@ -462,17 +566,18 @@ function CurrencyTab() {
             </div>
           </CardContent>
         </Card>
-
       </div>
 
       {/* TOOLBAR */}
       <Card className="border-0 shadow-md rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row justify-between gap-3">
-
             {/* SEARCH */}
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={16}
+              />
               <Input
                 placeholder="Search currencies..."
                 value={search}
@@ -488,7 +593,6 @@ function CurrencyTab() {
             >
               <Plus size={16} /> Add Currency
             </Button>
-
           </div>
         </CardContent>
       </Card>
@@ -496,7 +600,6 @@ function CurrencyTab() {
       {/* TABLE */}
       <Card className="border-0 shadow-md rounded-2xl">
         <CardContent className="pt-6 overflow-x-auto">
-
           <Table>
             <TableHeader>
               <TableRow>
@@ -513,7 +616,6 @@ function CurrencyTab() {
             <TableBody>
               {filtered.map((c) => (
                 <TableRow key={c.id} className="hover:bg-gray-50 transition">
-
                   <TableCell className="font-medium">{c.name}</TableCell>
 
                   <TableCell>
@@ -540,7 +642,10 @@ function CurrencyTab() {
 
                   <TableCell>
                     {c.isDefault ? (
-                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                      <Star
+                        size={16}
+                        className="text-yellow-500 fill-yellow-500"
+                      />
                     ) : (
                       <button
                         onClick={() => setDefault(c.id)}
@@ -570,38 +675,35 @@ function CurrencyTab() {
                       <Trash2 size={14} />
                     </Button>
                   </TableCell>
-
                 </TableRow>
               ))}
 
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell
+                    colSpan={7}
+                    className="text-center text-muted-foreground py-8"
+                  >
                     No currencies found
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
-
         </CardContent>
       </Card>
 
       {/* DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="rounded-2xl border-0 shadow-2xl">
-
           <DialogHeader>
             <DialogTitle>
               {editItem ? "Edit Currency" : "Add Currency"}
             </DialogTitle>
-            <DialogDescription>
-              Fill in the details below.
-            </DialogDescription>
+            <DialogDescription>Fill in the details below.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-
             <div className="grid grid-cols-2 gap-4">
               <Input
                 value={form.name}
@@ -650,19 +752,21 @@ function CurrencyTab() {
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-
           </div>
 
           <DialogFooter>
-            <Button variant="outline" className="rounded-xl">Cancel</Button>
-            <Button onClick={handleSave} className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl">
+            <Button variant="outline" className="rounded-xl">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl"
+            >
               {editItem ? "Update" : "Add"}
             </Button>
           </DialogFooter>
-
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
@@ -773,10 +877,8 @@ function LanguageTab() {
 
   return (
     <div className="space-y-6">
-
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
         <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
           <CardContent className="pt-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center shadow">
@@ -830,16 +932,17 @@ function LanguageTab() {
             </div>
           </CardContent>
         </Card>
-
       </div>
 
       {/* TOOLBAR */}
       <Card className="border-0 shadow-md rounded-2xl">
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row justify-between gap-3">
-
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={16}
+              />
               <Input
                 placeholder="Search languages..."
                 value={search}
@@ -854,7 +957,6 @@ function LanguageTab() {
             >
               <Plus size={16} /> Add Language
             </Button>
-
           </div>
         </CardContent>
       </Card>
@@ -862,7 +964,6 @@ function LanguageTab() {
       {/* TABLE */}
       <Card className="border-0 shadow-md rounded-2xl">
         <CardContent className="pt-6 overflow-x-auto">
-
           <Table>
             <TableHeader>
               <TableRow>
@@ -879,7 +980,6 @@ function LanguageTab() {
             <TableBody>
               {filtered.map((l) => (
                 <TableRow key={l.id} className="hover:bg-gray-50 transition">
-
                   <TableCell className="font-medium">{l.name}</TableCell>
 
                   <TableCell>
@@ -911,7 +1011,10 @@ function LanguageTab() {
 
                   <TableCell>
                     {l.isDefault ? (
-                      <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                      <Star
+                        size={16}
+                        className="text-yellow-500 fill-yellow-500"
+                      />
                     ) : (
                       <button
                         onClick={() => setDefault(l.id)}
@@ -941,28 +1044,27 @@ function LanguageTab() {
                       <Trash2 size={14} />
                     </Button>
                   </TableCell>
-
                 </TableRow>
               ))}
 
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell
+                    colSpan={7}
+                    className="text-center text-muted-foreground py-8"
+                  >
                     No languages found
                   </TableCell>
                 </TableRow>
               )}
-
             </TableBody>
           </Table>
-
         </CardContent>
       </Card>
 
       {/* DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="rounded-2xl border-0 shadow-2xl">
-
           <DialogHeader>
             <DialogTitle>
               {editItem ? "Edit Language" : "Add Language"}
@@ -973,7 +1075,6 @@ function LanguageTab() {
           </DialogHeader>
 
           <div className="space-y-4">
-
             <div className="grid grid-cols-2 gap-4">
               <Input
                 value={form.name}
@@ -1030,19 +1131,21 @@ function LanguageTab() {
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-
           </div>
 
           <DialogFooter>
-            <Button variant="outline" className="rounded-xl">Cancel</Button>
-            <Button onClick={handleSave} className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl">
+            <Button variant="outline" className="rounded-xl">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl"
+            >
               {editItem ? "Update" : "Add"}
             </Button>
           </DialogFooter>
-
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
@@ -1155,317 +1258,283 @@ function ApiKeysTab() {
     );
   };
 
-return (
-  <div className="space-y-6">
-
-    {/* SUMMARY CARDS */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-      <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
-        <CardContent className="pt-6 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center shadow">
-            <Key size={24} />
-          </div>
-          <div>
-            <p className="text-2xl font-bold">{apiKeys.length}</p>
-            <p className="text-sm text-muted-foreground">Total Keys</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
-        <CardContent className="pt-6 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 text-white flex items-center justify-center shadow">
-            <Check size={24} />
-          </div>
-          <div>
-            <p className="text-2xl font-bold">
-              {apiKeys.filter((k) => k.status === "active").length}
-            </p>
-            <p className="text-sm text-muted-foreground">Active Keys</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
-        <CardContent className="pt-6 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow">
-            <Shield size={24} />
-          </div>
-          <div>
-            <p className="text-2xl font-bold">
-              {apiKeys.filter((k) => k.keyType === "secret").length}
-            </p>
-            <p className="text-sm text-muted-foreground">Secret Keys</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
-        <CardContent className="pt-6 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-white flex items-center justify-center shadow">
-            <Globe size={24} />
-          </div>
-          <div>
-            <p className="text-2xl font-bold">{providers.length}</p>
-            <p className="text-sm text-muted-foreground">Providers</p>
-          </div>
-        </CardContent>
-      </Card>
-
-    </div>
-
-    {/* TOOLBAR */}
-    <Card className="border-0 shadow-md rounded-2xl">
-      <CardContent className="pt-6 flex flex-col sm:flex-row justify-between gap-3">
-
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-          <Input
-            placeholder="Search API keys..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 rounded-xl bg-gray-50 focus:bg-white transition"
-          />
-        </div>
-
-        <Button
-          onClick={openAdd}
-          className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl shadow hover:opacity-90"
-        >
-          <Plus size={16} /> Add API Key
-        </Button>
-
-      </CardContent>
-    </Card>
-
-    {/* PROVIDERS */}
-    {providers
-      .filter((p) => filtered.some((k) => k.provider === p))
-      .map((provider) => (
-        <Card key={provider} className="border-0 shadow-md rounded-2xl">
-
-          {/* Provider Header */}
-          <CardHeader className="pb-3 border-b">
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <span className="w-2 h-6 rounded bg-gradient-to-b from-indigo-500 to-purple-500" />
-                {provider}
-              </CardTitle>
-              <Badge className="bg-green-100 text-green-700 border-0">
-                {
-                  apiKeys.filter(
-                    (k) => k.provider === provider && k.status === "active",
-                  ).length
-                } Active
-              </Badge>
+  return (
+    <div className="space-y-6">
+      {/* SUMMARY CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
+          <CardContent className="pt-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center shadow">
+              <Key size={24} />
             </div>
-          </CardHeader>
-
-          <CardContent className="overflow-x-auto">
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Label</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Updated</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {filtered
-                  .filter((k) => k.provider === provider)
-                  .map((k) => (
-                    <TableRow key={k.id} className="hover:bg-gray-50 transition">
-
-                      <TableCell className="font-medium">{k.label}</TableCell>
-
-                      <TableCell>
-                        <Badge
-                          className={
-                            k.keyType === "secret"
-                              ? "bg-red-100 text-red-600 border-0"
-                              : "bg-indigo-100 text-indigo-700 border-0"
-                          }
-                        >
-                          {k.keyType}
-                        </Badge>
-                      </TableCell>
-
-                      {/* KEY DISPLAY */}
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <code className="text-xs bg-black text-green-400 px-2 py-1 rounded font-mono">
-                            {visibleKeys.has(k.id)
-                              ? k.value
-                              : maskValue(k.value)}
-                          </code>
-
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-7 w-7 hover:bg-gray-100"
-                            onClick={() => toggleVisibility(k.id)}
-                          >
-                            {visibleKeys.has(k.id) ? (
-                              <EyeOff size={14} />
-                            ) : (
-                              <Eye size={14} />
-                            )}
-                          </Button>
-
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-7 w-7 hover:bg-gray-100"
-                            onClick={() => copyToClipboard(k.value)}
-                          >
-                            <Copy size={14} />
-                          </Button>
-                        </div>
-                      </TableCell>
-
-                      <TableCell>
-                        <Switch
-                          checked={k.status === "active"}
-                          onCheckedChange={() => toggleStatus(k.id)}
-                        />
-                      </TableCell>
-
-                      <TableCell className="text-muted-foreground text-sm">
-                        {k.lastUpdated}
-                      </TableCell>
-
-                      <TableCell className="text-right space-x-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="hover:bg-indigo-50"
-                          onClick={() => openEdit(k)}
-                        >
-                          <Pencil size={14} />
-                        </Button>
-
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="hover:bg-red-50 text-red-500"
-                          onClick={() => handleDelete(k.id)}
-                        >
-                          <Trash2 size={14} />
-                        </Button>
-                      </TableCell>
-
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-
+            <div>
+              <p className="text-2xl font-bold">{apiKeys.length}</p>
+              <p className="text-sm text-muted-foreground">Total Keys</p>
+            </div>
           </CardContent>
         </Card>
-      ))}
 
-    {filtered.length === 0 && (
-      <Card className="border-0 shadow-md rounded-2xl">
-        <CardContent className="py-10 text-center text-muted-foreground">
-          No API keys found
-        </CardContent>
-      </Card>
-    )}
+        <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
+          <CardContent className="pt-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 text-white flex items-center justify-center shadow">
+              <Check size={24} />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">
+                {apiKeys.filter((k) => k.status === "active").length}
+              </p>
+              <p className="text-sm text-muted-foreground">Active Keys</p>
+            </div>
+          </CardContent>
+        </Card>
 
-    {/* DIALOG */}
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent className="rounded-2xl border-0 shadow-2xl">
+        <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
+          <CardContent className="pt-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow">
+              <Shield size={24} />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">
+                {apiKeys.filter((k) => k.keyType === "secret").length}
+              </p>
+              <p className="text-sm text-muted-foreground">Secret Keys</p>
+            </div>
+          </CardContent>
+        </Card>
 
-        <DialogHeader>
-          <DialogTitle>
-            {editItem ? "Edit API Key" : "Add API Key"}
-          </DialogTitle>
-          <DialogDescription>
-            Securely manage your API credentials.
-          </DialogDescription>
-        </DialogHeader>
+        <Card className="border-0 shadow-md rounded-2xl hover:shadow-xl transition">
+          <CardContent className="pt-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-white flex items-center justify-center shadow">
+              <Globe size={24} />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{providers.length}</p>
+              <p className="text-sm text-muted-foreground">Providers</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-        <div className="space-y-4">
+      {/* PROVIDERS */}
+      {providers
+        .filter((p) => filtered.some((k) => k.provider === p))
+        .map((provider) => (
+          <Card key={provider} className="border-0 shadow-md rounded-2xl">
+            {/* Provider Header */}
+            <CardHeader className="pb-3 border-b">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="w-2 h-6 rounded bg-gradient-to-b from-indigo-500 to-purple-500" />
+                  {provider}
+                </CardTitle>
+                <Badge className="bg-green-100 text-green-700 border-0">
+                  {
+                    apiKeys.filter(
+                      (k) => k.provider === provider && k.status === "active",
+                    ).length
+                  }{" "}
+                  Active
+                </Badge>
+              </div>
+            </CardHeader>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              value={form.provider}
-              onChange={(e) =>
-                setForm({ ...form, provider: e.target.value })
-              }
-              placeholder="Provider"
-              className="rounded-xl bg-gray-50"
-            />
-            <Input
-              value={form.label}
-              onChange={(e) =>
-                setForm({ ...form, label: e.target.value })
-              }
-              placeholder="Label"
-              className="rounded-xl bg-gray-50"
+            <CardContent className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Label</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Key</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Updated</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {filtered
+                    .filter((k) => k.provider === provider)
+                    .map((k) => (
+                      <TableRow
+                        key={k.id}
+                        className="hover:bg-gray-50 transition"
+                      >
+                        <TableCell className="font-medium">{k.label}</TableCell>
+
+                        <TableCell>
+                          <Badge
+                            className={
+                              k.keyType === "secret"
+                                ? "bg-red-100 text-red-600 border-0"
+                                : "bg-indigo-100 text-indigo-700 border-0"
+                            }
+                          >
+                            {k.keyType}
+                          </Badge>
+                        </TableCell>
+
+                        {/* KEY DISPLAY */}
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <code className="text-xs bg-black text-green-400 px-2 py-1 rounded font-mono">
+                              {visibleKeys.has(k.id)
+                                ? k.value
+                                : maskValue(k.value)}
+                            </code>
+
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-7 w-7 hover:bg-gray-100"
+                              onClick={() => toggleVisibility(k.id)}
+                            >
+                              {visibleKeys.has(k.id) ? (
+                                <EyeOff size={14} />
+                              ) : (
+                                <Eye size={14} />
+                              )}
+                            </Button>
+
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-7 w-7 hover:bg-gray-100"
+                              onClick={() => copyToClipboard(k.value)}
+                            >
+                              <Copy size={14} />
+                            </Button>
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <Switch
+                            checked={k.status === "active"}
+                            onCheckedChange={() => toggleStatus(k.id)}
+                          />
+                        </TableCell>
+
+                        <TableCell className="text-muted-foreground text-sm">
+                          {k.lastUpdated}
+                        </TableCell>
+
+                        <TableCell className="text-right space-x-1">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="hover:bg-indigo-50"
+                            onClick={() => openEdit(k)}
+                          >
+                            <Pencil size={14} />
+                          </Button>
+
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="hover:bg-red-50 text-red-500"
+                            onClick={() => handleDelete(k.id)}
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        ))}
+
+      {filtered.length === 0 && (
+        <Card className="border-0 shadow-md rounded-2xl">
+          <CardContent className="py-10 text-center text-muted-foreground">
+            No API keys found
+          </CardContent>
+        </Card>
+      )}
+
+      {/* DIALOG */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="rounded-2xl border-0 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {editItem ? "Edit API Key" : "Add API Key"}
+            </DialogTitle>
+            <DialogDescription>
+              Securely manage your API credentials.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                value={form.provider}
+                onChange={(e) => setForm({ ...form, provider: e.target.value })}
+                placeholder="Provider"
+                className="rounded-xl bg-gray-50"
+              />
+              <Input
+                value={form.label}
+                onChange={(e) => setForm({ ...form, label: e.target.value })}
+                placeholder="Label"
+                className="rounded-xl bg-gray-50"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                value={form.keyType}
+                onValueChange={(v) =>
+                  setForm({ ...form, keyType: v as "public" | "secret" })
+                }
+              >
+                <SelectTrigger className="rounded-xl bg-gray-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="public">Public</SelectItem>
+                  <SelectItem value="secret">Secret</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={form.status}
+                onValueChange={(v) =>
+                  setForm({ ...form, status: v as "active" | "inactive" })
+                }
+              >
+                <SelectTrigger className="rounded-xl bg-gray-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Textarea
+              value={form.value}
+              onChange={(e) => setForm({ ...form, value: e.target.value })}
+              placeholder="Paste API key..."
+              className="rounded-xl bg-gray-50 font-mono"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Select
-              value={form.keyType}
-              onValueChange={(v) =>
-                setForm({ ...form, keyType: v as "public" | "secret" })
-              }
+          <DialogFooter>
+            <Button variant="outline" className="rounded-xl">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl"
             >
-              <SelectTrigger className="rounded-xl bg-gray-50">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">Public</SelectItem>
-                <SelectItem value="secret">Secret</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={form.status}
-              onValueChange={(v) =>
-                setForm({ ...form, status: v as "active" | "inactive" })
-              }
-            >
-              <SelectTrigger className="rounded-xl bg-gray-50">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Textarea
-            value={form.value}
-            onChange={(e) => setForm({ ...form, value: e.target.value })}
-            placeholder="Paste API key..."
-            className="rounded-xl bg-gray-50 font-mono"
-          />
-
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" className="rounded-xl">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl">
-            {editItem ? "Update" : "Add"}
-          </Button>
-        </DialogFooter>
-
-      </DialogContent>
-    </Dialog>
-
-  </div>
-);
+              {editItem ? "Update" : "Add"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }
 
 // ─── Main Page ────────────────────────────────────────────────────
@@ -1474,16 +1543,6 @@ export default function SystemSettingsPage() {
   const defaultTab = path.includes("/settings/language")
     ? "language"
     : "currency";
-
-  const [twoFactorAuth, setTwoFactorAuth] = useState(false);
-
-  const handleSaveProfile = () => {
-    toast.success("Profile settings saved successfully");
-  };
-
-  const handleSaveSecurity = () => {
-    toast.success("Security settings updated");
-  };
 
   return (
     <AdminLayout>
@@ -1504,309 +1563,49 @@ export default function SystemSettingsPage() {
         {/* Settings Tabs */}
         <Tabs defaultValue={defaultTab} className="space-y-6">
           <TabsList className="bg-gradient-to-r from-gray-100 to-gray-200 p-1 rounded-xl shadow-inner">
-            <TabsTrigger value="profile" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">
+            <TabsTrigger
+              value="profile"
+              className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all"
+            >
               <User className="w-4 h-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="security" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">
+            <TabsTrigger
+              value="security"
+              className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all"
+            >
               <Shield className="w-4 h-4" />
               Security
             </TabsTrigger>
-            <TabsTrigger value="currency" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">
+            <TabsTrigger
+              value="currency"
+              className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all"
+            >
               <IndianRupeeIcon size={14} /> Currency
             </TabsTrigger>
-            <TabsTrigger value="language" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">
+            <TabsTrigger
+              value="language"
+              className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all"
+            >
               <Globe size={14} /> Language
             </TabsTrigger>
 
-            <TabsTrigger value="system" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">
-              <Database className="w-4 h-4" />
-              System
-            </TabsTrigger>
-            <TabsTrigger value="api-keys" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all">
+            <TabsTrigger
+              value="api-keys"
+              className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg transition-all"
+            >
               <Key size={14} /> API Keys
             </TabsTrigger>
           </TabsList>
 
           {/* Profile Settings */}
           <TabsContent value="profile" className="space-y-6">
-
-            <Card className="border-0 rounded-2xl shadow-lg overflow-hidden">
-
-              {/* Gradient Header */}
-              <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white">
-                <h2 className="text-xl font-semibold">Profile Information</h2>
-                <p className="text-sm opacity-90">
-                  Update your personal information and profile picture
-                </p>
-              </div>
-
-              <CardContent className="space-y-8 p-6">
-
-                {/* Avatar Section */}
-                <div className="flex flex-col sm:flex-row items-center gap-6">
-
-                  {/* Avatar with ring */}
-                  <div className="relative">
-                    <Avatar className="w-24 h-24 ring-4 ring-indigo-100 shadow-md">
-                      <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" />
-                      <AvatarFallback className="text-xl bg-indigo-100 text-indigo-600">
-                        JD
-                      </AvatarFallback>
-                    </Avatar>
-
-                    {/* small edit indicator */}
-                    <div className="absolute bottom-0 right-0 bg-indigo-500 text-white p-1 rounded-full shadow">
-                      <Upload className="w-3 h-3" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-center sm:text-left">
-                    <Button
-                      variant="outline"
-                      className="gap-2 rounded-xl border-indigo-200 hover:bg-indigo-50"
-                    >
-                      <Upload className="w-4 h-4" />
-                      Change Photo
-                    </Button>
-                    <p className="text-sm text-muted-foreground">
-                      JPG, PNG or GIF. Max size 2MB.
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Personal Info */}
-                <div className="grid gap-5 md:grid-cols-2">
-
-                  <div className="space-y-2">
-                    <Label>First Name</Label>
-                    <Input
-                      defaultValue="John"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Last Name</Label>
-                    <Input
-                      defaultValue="Doe"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Email Address</Label>
-                    <Input
-                      type="email"
-                      defaultValue="john.doe@eduadmin.com"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Phone Number</Label>
-                    <Input
-                      type="tel"
-                      defaultValue="+1 (555) 123-4567"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label>Role</Label>
-                    <Input
-                      defaultValue="Super Admin"
-                      disabled
-                      className="rounded-xl bg-gray-100 text-gray-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Action Bar */}
-                <div className="flex justify-between items-center pt-4 border-t">
-
-                  <p className="text-sm text-muted-foreground">
-                    Last updated just now
-                  </p>
-
-                  <Button
-                    onClick={handleSaveProfile}
-                    className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl px-6 shadow-md hover:opacity-90"
-                  >
-                    Save Changes
-                  </Button>
-                </div>
-
-              </CardContent>
-            </Card>
+            <ProfileSettings />
           </TabsContent>
 
           {/* Security Settings */}
           <TabsContent value="security" className="space-y-6">
-
-            {/* PASSWORD CARD */}
-            <Card className="border-0 rounded-2xl shadow-lg overflow-hidden">
-
-              {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-6 text-white">
-                <h2 className="text-xl font-semibold">Password & Authentication</h2>
-                <p className="text-sm opacity-90">
-                  Manage your password and security settings
-                </p>
-              </div>
-
-              <CardContent className="space-y-8 p-6">
-
-                {/* Password Inputs */}
-                <div className="space-y-5">
-                  <div className="space-y-2">
-                    <Label>Current Password</Label>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label>New Password</Label>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Confirm Password</Label>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* 2FA SECTION */}
-                <div className="flex items-center justify-between p-5 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 hover:shadow-sm transition">
-
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow">
-                      <Key className="w-5 h-5" />
-                    </div>
-
-                    <div>
-                      <p className="font-semibold text-gray-800">
-                        Two-Factor Authentication
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Add an extra layer of security to your account
-                      </p>
-                    </div>
-                  </div>
-
-                  <Switch
-                    checked={twoFactorAuth}
-                    onCheckedChange={setTwoFactorAuth}
-                  />
-                </div>
-
-                {/* ACTION */}
-                <div className="flex justify-end pt-2">
-                  <Button
-                    onClick={handleSaveSecurity}
-                    className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl px-6 shadow-md hover:opacity-90"
-                  >
-                    Update Password
-                  </Button>
-                </div>
-
-              </CardContent>
-            </Card>
-
-            {/* SESSIONS CARD */}
-            <Card className="border-0 rounded-2xl shadow-lg overflow-hidden">
-
-              {/* Header */}
-              <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
-                <h2 className="text-xl font-semibold">Active Sessions</h2>
-                <p className="text-sm opacity-90">
-                  Manage your active login sessions
-                </p>
-              </div>
-
-              <CardContent className="space-y-4 p-6">
-
-                {[
-                  {
-                    device: "MacBook Pro",
-                    location: "New York, US",
-                    current: true,
-                    time: "Active now",
-                  },
-                  {
-                    device: "iPhone 14",
-                    location: "New York, US",
-                    current: false,
-                    time: "2 hours ago",
-                  },
-                  {
-                    device: "Windows PC",
-                    location: "Boston, US",
-                    current: false,
-                    time: "3 days ago",
-                  },
-                ].map((session, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 rounded-xl bg-white border hover:shadow-md transition-all"
-                  >
-
-                    <div className="flex items-center gap-4">
-
-                      {/* Device Icon */}
-                      <div className="p-2 rounded-lg bg-gray-100">
-                        <Monitor className="w-5 h-5 text-gray-600" />
-                      </div>
-
-                      <div>
-                        <p className="font-medium text-gray-800 flex items-center gap-2">
-                          {session.device}
-
-                          {session.current && (
-                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                              Active
-                            </span>
-                          )}
-                        </p>
-
-                        <p className="text-sm text-muted-foreground">
-                          {session.location} • {session.time}
-                        </p>
-                      </div>
-                    </div>
-
-                    {!session.current && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-500 hover:bg-red-50 rounded-lg"
-                      >
-                        Revoke
-                      </Button>
-                    )}
-                  </div>
-                ))}
-
-              </CardContent>
-            </Card>
-
+            <SecuritySetting />
           </TabsContent>
 
           {/* Currency Settings */}
@@ -1820,134 +1619,6 @@ export default function SystemSettingsPage() {
           </TabsContent>
           <TabsContent value="api-keys" className="space-y-6">
             <ApiKeysTab />
-          </TabsContent>
-
-          {/* System Settings */}
-          <TabsContent value="system" className="space-y-6">
-
-            <Card className="border-0 rounded-2xl shadow-lg overflow-hidden">
-
-              {/* HEADER */}
-              <div className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 p-6 text-white">
-                <h2 className="text-xl font-semibold">System Configuration</h2>
-                <p className="text-sm opacity-90">
-                  Configure system-wide settings for your institution
-                </p>
-              </div>
-
-              <CardContent className="space-y-8 p-6">
-
-                {/* FORM SECTION */}
-                <div className="grid gap-5 md:grid-cols-2">
-
-                  <div className="space-y-2">
-                    <Label>Institution Name</Label>
-                    <Input
-                      defaultValue="EduAdmin Academy"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Institution Code</Label>
-                    <Input
-                      defaultValue="EDU-001"
-                      className="rounded-xl bg-gray-50 focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Current Academic Year</Label>
-                    <Select defaultValue="2024-25">
-                      <SelectTrigger className="rounded-xl bg-gray-50">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="2023-24">2023-2024</SelectItem>
-                        <SelectItem value="2024-25">2024-2025</SelectItem>
-                        <SelectItem value="2025-26">2025-2026</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Date Format</Label>
-                    <Select defaultValue="mdy">
-                      <SelectTrigger className="rounded-xl bg-gray-50">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mdy">MM/DD/YYYY</SelectItem>
-                        <SelectItem value="dmy">DD/MM/YYYY</SelectItem>
-                        <SelectItem value="ymd">YYYY-MM-DD</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                </div>
-
-                <Separator />
-
-                {/* STORAGE SECTION */}
-                <div className="space-y-4">
-
-                  <h4 className="font-semibold text-gray-800">Data & Storage</h4>
-
-                  <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 border border-blue-100 shadow-sm space-y-4">
-
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Storage Used</span>
-                      <span className="font-semibold text-gray-800">
-                        2.4 GB / 10 GB
-                      </span>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="h-3 bg-white rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full transition-all"
-                        style={{ width: "24%" }}
-                      />
-                    </div>
-
-                    {/* Extra Info */}
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Available: 7.6 GB</span>
-                      <span>24% used</span>
-                    </div>
-
-                  </div>
-
-                </div>
-
-                {/* ACTION BAR */}
-                <div className="flex justify-between items-center pt-4 border-t">
-
-                  <p className="text-sm text-muted-foreground">
-                    Last updated just now
-                  </p>
-
-                  <div className="flex gap-3">
-
-                    <Button
-                      variant="outline"
-                      className="rounded-xl border-blue-200 hover:bg-blue-50"
-                    >
-                      Export Data
-                    </Button>
-
-                    <Button
-                      className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl px-6 shadow-md hover:opacity-90"
-                    >
-                      Save Settings
-                    </Button>
-
-                  </div>
-                </div>
-
-              </CardContent>
-            </Card>
-
           </TabsContent>
         </Tabs>
       </div>

@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
@@ -578,7 +579,11 @@ useEffect(() => {
 
                           {/* ================= VIEW MODAL ================= */}
                           <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-                            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl shadow-2xl">
+                            
+                            {/* 🔥 Overlay Fix (Opacity Kam) */}
+                            {/* <DialogOverlay className="bg-black/30 backdrop-blur-sm" /> */}
+
+                            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0 rounded-2xl shadow-2xl bg-white dark:bg-gray-900">
 
                               {selectedStudent && (
                                 <div>
@@ -600,22 +605,22 @@ useEffect(() => {
                                       Admission No: {selectedStudent.admissionNumber || "-"}
                                     </p>
 
-                                    <Badge className="mt-2 bg-white text-indigo-600 font-medium">
+                                    <Badge className="mt-2 bg-white text-indigo-600 dark:bg-gray-800 dark:text-white font-medium">
                                       {selectedStudent?.section?.class?.name || "-"} -{" "}
                                       {selectedStudent?.section?.name || "-"}
                                     </Badge>
                                   </div>
 
                                   {/* ================= BODY ================= */}
-                                  <div className="p-6 space-y-6 bg-gray-50">
+                                  <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-800">
 
                                     {/* ================= BASIC INFO ================= */}
-                                    <div className="bg-white p-5 rounded-xl shadow-sm border">
-                                      <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                                    <div className="bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                                      <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">
                                         📋 Basic Information
                                       </h3>
 
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
+                                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
                                         <p><strong>Roll No:</strong> {selectedStudent.rollNumber || "-"}</p>
                                         <p><strong>Gender:</strong> {selectedStudent.gender || "-"}</p>
                                         <p><strong>DOB:</strong> {selectedStudent.dateOfBirth || "-"}</p>
@@ -628,13 +633,12 @@ useEffect(() => {
                                     </div>
 
                                     {/* ================= FEE DETAILS ================= */}
-                                    <div className="bg-green-50 p-5 rounded-xl shadow-sm border">
-                                      <h3 className="font-semibold text-green-700 mb-4 flex items-center gap-2">
+                                    <div className="bg-green-50 dark:bg-green-900/20 p-5 rounded-xl shadow-sm border border-green-200 dark:border-green-800">
+                                      <h3 className="font-semibold text-green-700 dark:text-green-300 mb-4">
                                         💰 Fee Details
                                       </h3>
 
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
-
+                                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
                                         <p>Admission Fee: ₹{selectedStudent?.fee?.admissionFee || 0}</p>
                                         <p>Tuition Fee: ₹{selectedStudent?.fee?.tutionFee || 0}</p>
 
@@ -643,11 +647,11 @@ useEffect(() => {
 
                                         <p>Other Fee: ₹{selectedStudent?.fee?.otherFee || 0}</p>
 
-                                        <p className="font-semibold text-green-800">
+                                        <p className="font-semibold text-green-800 dark:text-green-400">
                                           Total Fee: ₹{selectedStudent?.fee?.totalFee || 0}
                                         </p>
 
-                                        <p className="font-semibold text-blue-600">
+                                        <p className="font-semibold text-blue-600 dark:text-blue-400">
                                           Deposited: ₹{selectedStudent?.fee?.depositFee || 0}
                                         </p>
 
@@ -662,50 +666,40 @@ useEffect(() => {
                                       </div>
 
                                       <div className="mt-4">
-                                        <Badge className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+                                        <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300 px-3 py-1 rounded-full">
                                           {selectedStudent?.fee?.status || "PENDING"}
                                         </Badge>
                                       </div>
                                     </div>
 
                                     {/* ================= DISCOUNT ================= */}
-                                    <div className="bg-purple-50 p-5 rounded-xl shadow-sm border">
-                                      <h3 className="font-semibold text-purple-700 mb-4 flex items-center gap-2">
+                                    <div className="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-xl shadow-sm border border-purple-200 dark:border-purple-800">
+                                      <h3 className="font-semibold text-purple-700 dark:text-purple-300 mb-4">
                                         🎯 Discount
                                       </h3>
 
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <p>
-                                          <strong>Name:</strong>{" "}
-                                          {selectedStudent?.discount?.Discount?.name || "-"}
-                                        </p>
+                                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                                        <p><strong>Name:</strong> {selectedStudent?.discount?.Discount?.name || "-"}</p>
+                                        <p><strong>Type:</strong> {selectedStudent?.discount?.Discount?.type || "-"}</p>
 
                                         <p>
-                                          <strong>Type:</strong>{" "}
-                                          {selectedStudent?.discount?.Discount?.type || "-"}
+                                          <strong>Value:</strong> {selectedStudent?.discount?.Discount?.value || 0}
+                                          {selectedStudent?.discount?.Discount?.type === "PERCENTAGE" ? "%" : "₹"}
                                         </p>
 
-                                        <p>
-                                          <strong>Value:</strong>{" "}
-                                          {selectedStudent?.discount?.Discount?.value || 0}
-                                          {selectedStudent?.discount?.Discount?.type === "PERCENTAGE"
-                                            ? "%"
-                                            : "₹"}
-                                        </p>
-
-                                        <p className="font-semibold text-purple-700">
+                                        <p className="font-semibold text-purple-700 dark:text-purple-400">
                                           Amount: ₹{selectedStudent?.discount?.amount || 0}
                                         </p>
                                       </div>
                                     </div>
 
                                     {/* ================= PARENT DETAILS ================= */}
-                                    <div className="bg-orange-50 p-5 rounded-xl shadow-sm border">
-                                      <h3 className="font-semibold text-orange-700 mb-4 flex items-center gap-2">
+                                    <div className="bg-orange-50 dark:bg-orange-900/20 p-5 rounded-xl shadow-sm border border-orange-200 dark:border-orange-800">
+                                      <h3 className="font-semibold text-orange-700 dark:text-orange-300 mb-4">
                                         👨‍👩‍👧 Parent Details
                                       </h3>
 
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
+                                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
                                         <p><strong>Father Name:</strong> {selectedStudent?.parent?.fatherName || "-"}</p>
                                         <p><strong>Father Phone:</strong> {selectedStudent?.parent?.fatherPhone || "-"}</p>
 
@@ -719,17 +713,17 @@ useEffect(() => {
                                     </div>
 
                                     {/* ================= GUARDIAN DETAILS ================= */}
-                                    <div className="bg-cyan-50 p-5 rounded-xl shadow-sm border">
-                                      <h3 className="font-semibold text-cyan-700 mb-4 flex items-center gap-2">
+                                    <div className="bg-cyan-50 dark:bg-cyan-900/20 p-5 rounded-xl shadow-sm border border-cyan-200 dark:border-cyan-800">
+                                      <h3 className="font-semibold text-cyan-700 dark:text-cyan-300 mb-4">
                                         🛡 Guardian Details
                                       </h3>
 
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
+                                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
                                         <p><strong>Name:</strong> {selectedStudent?.parent?.guardianName || "-"}</p>
                                         <p><strong>Relation:</strong> {selectedStudent?.parent?.guardianRelation || "-"}</p>
 
                                         <p><strong>Phone:</strong> {selectedStudent?.parent?.guardianPhone || "-"}</p>
-                                        
+
                                       </div>
                                     </div>
 
