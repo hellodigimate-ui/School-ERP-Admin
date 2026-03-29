@@ -11,15 +11,15 @@ import { axiosInstance } from "@/apiHome/axiosInstanc";
 export default function ChartsSection() {
   const [genderData, setGenderData] = useState([]);
   const [roleData, setRoleData] = useState([]);
+  const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const genderColors = {
-    Male: "#3b82f6",     // bright blue
-    Female: "#ec4899",   // vibrant pink
-    Other: "#dc2626",    // rich purple
+    Male: "#3b82f6",
+    Female: "#ec4899",
+    Other: "#dc2626",
   };
-
-  const chartSize = 140;
 
   const roleColors = {
     ADMIN: "#6366f1",
@@ -30,66 +30,66 @@ export default function ChartsSection() {
     COACH: "#14b8a6",
     SCANNER: "#e11d48",
     ACCOUNTANT: "#10b981",
-    LIBRAIAN: "#f97316",
+    LIBRARIAN: "#f97316", // ✅ fixed
     DRIVER: "#64748b",
     RECEPTIONIST: "#ec4899",
   };
 
-  const fetchGenderData = async () => {
-    try {
-      const res = await axiosInstance.get("/api/v1/students/gender/count");
-      const formatted = res.data.data.map((g) => ({
-        name:
-          g.gender === "Male"
-            ? "Boys"
-            : g.gender === "Female"
-              ? "Girls"
-              : "Others",
-        value: g.count,
-        color: genderColors[g.gender] || "gray",
-      }));
-      setGenderData(formatted);
-    } catch (error) {
-      console.error("Error fetching gender data", error);
-    }
-  };
-
-  const fetchRoleData = async () => {
-    try {
-      const res = await axiosInstance.get("/api/v1/admin/users/count");
-      const formatted = res.data.data.map((r) => ({
-        name: r.role,
-        value: r._count.role,
-        color: roleColors[r.role] || "#8884d8",
-      }));
-      setRoleData(formatted);
-    } catch (error) {
-      console.error("Error fetching role data", error);
-    }
-  };
-
   useEffect(() => {
     const fetchAll = async () => {
-      await Promise.all([fetchGenderData(), fetchRoleData()]);
-      setLoading(false);
+      try {
+        const [genderRes, roleRes] = await Promise.all([
+          axiosInstance.get("/api/v1/students/gender/count"),
+          axiosInstance.get("/api/v1/admin/users/count"),
+        ]);
+
+        const genderFormatted = genderRes.data.data.map((g) => ({
+          name:
+            g.gender === "Male"
+              ? "Boys"
+              : g.gender === "Female"
+              ? "Girls"
+              : "Others",
+          value: g.count,
+          color: genderColors[g.gender] || "gray",
+        }));
+
+        const roleFormatted = roleRes.data.data.map((r) => ({
+          name: r.role,
+          value: r._count.role,
+          color: roleColors[r.role] || "#8884d8",
+        }));
+
+        setGenderData(genderFormatted);
+        setRoleData(roleFormatted);
+      } catch (err) {
+        console.error("Error fetching data", err);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchAll();
   }, []);
 
   return (
-    <div className="grid md:grid-cols-3 gap-6 ">
+    <div className="grid md:grid-cols-3 gap-6">
       {/* Gender Card */}
-      <Card className="flex-1 min-w-[280px] border-0 shadow-md col-span-1 hover:scale-105 transition-transform duration-300">
+      <Card className="col-span-1 shadow-md hover:scale-105 transition-transform duration-300">
         <CardContent className="p-6">
-          <h3 className="font-bold text-lg mb-4 hover:scale-105 transition-transform duration-300">Student Gender Ratio</h3>
+          <h3 className="font-bold text-lg mb-4">
+            Student Gender Ratio
+          </h3>
 
           {loading ? (
-            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">Loading...</p>
+            <div className="animate-pulse h-32 bg-gray-200 rounded-lg" />
           ) : genderData.length === 0 ? (
-            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">No data found</p>
+            <p className="text-sm text-gray-500 text-center">
+              📊 No data available
+            </p>
           ) : (
-            <div className="flex items-center gap-6 hover:scale-105 transition-transform duration-300">
-              <ResponsiveContainer width={chartSize} height={chartSize}>
+            <div className="flex items-center gap-6">
+              <ResponsiveContainer width={140} height={140}>
                 <PieChart>
                   <Pie
                     data={genderData}
@@ -97,24 +97,48 @@ export default function ChartsSection() {
                     outerRadius={65}
                     dataKey="value"
                     strokeWidth={0}
+                    onClick={(data) => setSelectedGender(data)}
                   >
-                    {genderData.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
+                    {genderData.map((entry) => (
+                      <Cell
+                        key={entry.name}
+                        fill={entry.color}
+                        opacity={
+                          selectedGender &&
+                          selectedGender.name !== entry.name
+                            ? 0.4
+                            : 1
+                        }
+                      />
                     ))}
                   </Pie>
+
+                  {/* Center Label */}
+                  {selectedGender && (
+                    <text
+                      x="50%"
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="text-sm font-bold fill-gray-700"
+                    >
+                      {selectedGender.value}
+                    </text>
+                  )}
                 </PieChart>
               </ResponsiveContainer>
 
-              <div className="space-y-3 hover:scale-105 transition-transform duration-300">
+              {/* Legend */}
+              <div className="space-y-3">
                 {genderData.map((d) => (
-                  <div key={d.name} className="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
+                  <div key={d.name} className="flex items-center gap-3">
                     <div
-                      className="w-3 h-3 rounded-full hover:scale-105 transition-transform duration-300"
+                      className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: d.color }}
                     />
                     <div>
-                      <p className="text-sm font-semibold hover:scale-105 transition-transform duration-300">{d.name}</p>
-                      <p className="text-xs text-muted-foreground hover:scale-105 transition-transform duration-300">
+                      <p className="text-sm font-semibold">{d.name}</p>
+                      <p className="text-xs text-muted-foreground">
                         {d.value} students
                       </p>
                     </div>
@@ -123,21 +147,32 @@ export default function ChartsSection() {
               </div>
             </div>
           )}
+
+          {/* Selected Info */}
+          {selectedGender && (
+            <div className="mt-4 text-sm font-semibold text-center">
+              {selectedGender.name}: {selectedGender.value} students
+            </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Role Card */}
-      <Card className="flex-1 min-w-[280px] border-0 shadow-lg col-span-2 rounded-2xl hover:scale-105 transition-transform duration-300">
+      <Card className="col-span-2 shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300">
         <CardContent className="p-6">
-          <h3 className="font-bold text-lg mb-4 hover:scale-105 transition-transform duration-300">User Roles Distribution</h3>
+          <h3 className="font-bold text-lg mb-4">
+            User Roles Distribution
+          </h3>
 
           {loading ? (
-            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">Loading...</p>
+            <div className="animate-pulse h-40 bg-gray-200 rounded-lg" />
           ) : roleData.length === 0 ? (
-            <p className="text-sm text-gray-500 hover:scale-105 transition-transform duration-300">No data found</p>
+            <p className="text-sm text-gray-500 text-center">
+              📊 No data available
+            </p>
           ) : (
-            <div className="flex flex-col lg:flex-row gap-6 hover:scale-105 transition-transform duration-300">
-              {/* Pie Chart */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Pie */}
               <ResponsiveContainer width={160} height={160}>
                 <PieChart>
                   <Pie
@@ -147,32 +182,66 @@ export default function ChartsSection() {
                     dataKey="value"
                     strokeWidth={0}
                     paddingAngle={3}
+                    onClick={(data) => setSelectedRole(data)}
                   >
-                    {roleData.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
+                    {roleData.map((entry) => (
+                      <Cell
+                        key={entry.name}
+                        fill={entry.color}
+                        opacity={
+                          selectedRole &&
+                          selectedRole.name !== entry.name
+                            ? 0.4
+                            : 1
+                        }
+                      />
                     ))}
                   </Pie>
+
+                  {/* Center Value */}
+                  {selectedRole && (
+                    <text
+                      x="50%"
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="text-sm font-bold fill-gray-700"
+                    >
+                      {selectedRole.value}
+                    </text>
+                  )}
                 </PieChart>
               </ResponsiveContainer>
 
-              {/* Role Legend */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 hover:scale-105 transition-transform duration-300">
+              {/* Legend */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {roleData.map((role) => (
                   <div
                     key={role.name}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 transition-all shadow-sm"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-100"
                   >
-                    <div className="flex items-center gap-2 hover:scale-105 transition-transform duration-300">
+                    <div className="flex items-center gap-2">
                       <div
-                        className="w-3 h-3 rounded-full hover:scale-105 transition-transform duration-300"
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: role.color }}
                       />
-                      <span className="text-sm font-medium hover:scale-105 transition-transform duration-300">{role.name}</span>
+                      <span className="text-sm font-medium">
+                        {role.name}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-100 hover:scale-105 transition-transform duration-300">{role.value}</span>
+                    <span className="text-xs text-gray-600">
+                      {role.value}
+                    </span>
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Selected Info */}
+          {selectedRole && (
+            <div className="mt-4 text-sm font-semibold text-center">
+              {selectedRole.name}: {selectedRole.value} users
             </div>
           )}
         </CardContent>
