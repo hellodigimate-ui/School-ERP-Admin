@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// /* eslint-disable react-hooks/exhaustive-deps */
 
 "use client";
 
@@ -30,7 +29,7 @@ export default function ChartsSection() {
     COACH: "#14b8a6",
     SCANNER: "#e11d48",
     ACCOUNTANT: "#10b981",
-    LIBRARIAN: "#f97316", // ✅ fixed
+    LIBRARIAN: "#f97316",
     DRIVER: "#64748b",
     RECEPTIONIST: "#ec4899",
   };
@@ -75,16 +74,16 @@ export default function ChartsSection() {
   return (
     <div className="grid md:grid-cols-3 gap-6">
       {/* Gender Card */}
-      <Card className="col-span-1 shadow-md hover:scale-105 transition-transform duration-300">
+      <Card className="col-span-1 shadow-md hover:scale-105 transition-transform duration-300 bg-background text-foreground">
         <CardContent className="p-6">
           <h3 className="font-bold text-lg mb-4">
             Student Gender Ratio
           </h3>
 
           {loading ? (
-            <div className="animate-pulse h-32 bg-gray-200 rounded-lg" />
+            <div className="animate-pulse h-32 bg-muted rounded-lg" />
           ) : genderData.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               📊 No data available
             </p>
           ) : (
@@ -113,14 +112,14 @@ export default function ChartsSection() {
                     ))}
                   </Pie>
 
-                  {/* Center Label */}
+                  {/* Center Value */}
                   {selectedGender && (
                     <text
                       x="50%"
                       y="50%"
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="text-sm font-bold fill-gray-700"
+                      className="fill-foreground text-sm font-bold"
                     >
                       {selectedGender.value}
                     </text>
@@ -158,16 +157,16 @@ export default function ChartsSection() {
       </Card>
 
       {/* Role Card */}
-      <Card className="col-span-2 shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300">
+      <Card className="col-span-2 shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300 bg-background text-foreground">
         <CardContent className="p-6">
           <h3 className="font-bold text-lg mb-4">
             User Roles Distribution
           </h3>
 
           {loading ? (
-            <div className="animate-pulse h-40 bg-gray-200 rounded-lg" />
+            <div className="animate-pulse h-40 bg-muted rounded-lg" />
           ) : roleData.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center">
+            <p className="text-sm text-muted-foreground text-center">
               📊 No data available
             </p>
           ) : (
@@ -205,7 +204,7 @@ export default function ChartsSection() {
                       y="50%"
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="text-sm font-bold fill-gray-700"
+                      className="fill-foreground text-sm font-bold"
                     >
                       {selectedRole.value}
                     </text>
@@ -213,12 +212,14 @@ export default function ChartsSection() {
                 </PieChart>
               </ResponsiveContainer>
 
-              {/* Legend */}
+              {/* Role Legend */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {roleData.map((role) => (
                   <div
                     key={role.name}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-100"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg 
+                    bg-muted text-foreground 
+                    dark:bg-muted/40 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <div
@@ -229,7 +230,7 @@ export default function ChartsSection() {
                         {role.name}
                       </span>
                     </div>
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-muted-foreground">
                       {role.value}
                     </span>
                   </div>
