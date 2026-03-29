@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 "use client";
@@ -11,6 +12,7 @@ import {
   Calendar,
   AlertCircle,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 
@@ -57,6 +59,8 @@ interface User {
 const RecentActivity = () => {
   const [users, setUsers] = useState<User[]>([]);
 
+  const router=useRouter();
+
   const [page, setPage] = useState(1);
   const [perPage] = useState(10);
 
@@ -98,7 +102,7 @@ const RecentActivity = () => {
         <h3 className="font-display font-bold text-gray-900 dark:text-gray-100 text-lg hover:scale-105 transition-transform duration-300  ">
           Recent Activity
         </h3>
-        <button className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors">
+        <button onClick={()=>router.push("/admin/hr")} className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors">
           View All <ArrowUpRight className="w-4 h-4" />
         </button>
       </div>
