@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, ArrowUpRight } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
+import { useRouter } from "next/navigation";
 
 interface Attendance {
   id: string;
@@ -18,6 +19,7 @@ interface Attendance {
 const RecentAttendance = () => {
   const [data, setData] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(false);
+  const router=useRouter();
 
   const fetchAttendance = async () => {
     try {
@@ -47,7 +49,7 @@ const RecentAttendance = () => {
         <h3 className="font-display font-bold text-gray-900 dark:text-gray-100 text-lg hover:scale-105 transition-transform duration-300">
           Recent Attendance
         </h3>
-        <button className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors hover:scale-105 transition-transform duration-300">
+        <button onClick={()=>router.push("/admin/attendance/qr-code")} className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors hover:scale-105 duration-300">
           View All <ArrowUpRight className="w-4 h-4" />
         </button>
       </div>
