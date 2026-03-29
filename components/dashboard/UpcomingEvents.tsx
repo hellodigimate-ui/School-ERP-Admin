@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import {  MapPin, ArrowUpRight } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
+import { useRouter } from "next/navigation";
 // import { axiosInstance } from "@/apiHome/axiosInstance"; // Make sure path is correct
 
 interface Event {
@@ -16,6 +17,8 @@ interface Event {
 const UpcomingEvents = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const router=useRouter();
 
   const gradients = [
     "from-purple-500 to-pink-500",
@@ -57,7 +60,7 @@ const UpcomingEvents = () => {
         <h3 className="font-display font-bold text-gray-900 dark:text-gray-100 text-lg hover:scale-105 transition-transform duration-300">
           Upcoming Events
         </h3>
-        <button className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors hover:scale-105 transition-transform duration-300">
+        <button onClick={()=>router.push("/admin/calendar")} className="text-indigo-600 font-semibold flex items-center gap-1 text-sm hover:underline transition-colors hover:scale-105 duration-300">
           View All <ArrowUpRight className="w-4 h-4" />
         </button>
       </div>
