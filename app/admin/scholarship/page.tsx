@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,9 +44,11 @@ import {
   PauseCircle,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { AdminLayout } from "@/components/layout/AdminLayout";
 import ScholarshipTypes from "@/components/schoolership/schoolershiType";
 import EligibilityCriteria from "@/components/schoolership/eligiblityCretria";
+
+import { axiosInstance } from "@/apiHome/axiosInstanc";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 
 // Sample data
 const scholarshipTypes = [
@@ -178,27 +180,40 @@ export default function page() {
   // const [showAddType, setShowAddType] = useState(false);
   const [showAddApplication, setShowAddApplication] = useState(false);
 
+  const [statsData, setStatsData] = useState({
+    totalScholarships: 0,
+    totalApplications: 0,
+    approvedScholarships: 0,
+    rejectedScholarships: 0,
+  });
+
+  const [statsLoading, setStatsLoading] = useState(false);
+
 
   const stats = [
     {
       label: "Total Scholarships",
-      value: scholarshipTypes.length,
-      color: "from-blue-400 to-blue-600",
+      value: statsData.totalScholarships,
+      icon: GraduationCap,
+      gradient: "from-indigo-500 via-purple-500 to-pink-500",
     },
     {
       label: "Total Applications",
-      value: applications.length,
-      color: "from-emerald-400 to-green-600",
+      value: statsData.totalApplications,
+      icon: CheckCircle,
+      gradient: "from-emerald-400 to-green-600",
     },
     {
       label: "Approved",
-      value: applications.filter((a) => a.status === "Approved").length,
-      color: "from-teal-400 to-teal-600",
+      value: statsData.approvedScholarships,
+      icon: CheckCircle,
+      gradient: "from-teal-400 to-teal-600",
     },
     {
-      label: "Pending",
-      value: applications.filter((a) => a.status === "Pending").length,
-      color: "from-amber-400 to-orange-500",
+      label: "Rejected",
+      value: statsData.rejectedScholarships,
+      icon: XCircle,
+      gradient: "from-red-400 to-rose-600",
     },
   ];
 
@@ -230,6 +245,28 @@ export default function page() {
       status: "Pending",
     });
   };
+
+const fetchStats = async () => {
+  try {
+    setStatsLoading(true);
+
+    const res = await axiosInstance.get(
+      "/api/v1/scholarships/stats"
+    );
+
+    if (res.data.success) {
+      setStatsData(res.data.data);
+    }
+  } catch (err) {
+    console.error("Stats fetch failed", err);
+  } finally {
+    setStatsLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchStats();
+}, []);
 
   const handleAppAdd = () => {
     setApplicationList((prev) => [...prev, { ...appForm, id: Date.now() }]);
@@ -277,17 +314,39 @@ export default function page() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {stats.map((stat) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+      {stats.map((stat) => {
+        const Icon = stat.icon;
+
+        return (
           <div
             key={stat.label}
-            className={`bg-gradient-to-br ${stat.color} rounded-xl p-4 text-primary-foreground shadow-card animate-fade-in`}
+            className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-xl bg-gradient-to-br ${stat.gradient} hover:scale-[1.02] transition`}
           >
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-sm opacity-80">{stat.label}</p>
+            {/* Glow Effect */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm opacity-80">{stat.label}</p>
+
+                {statsLoading ? (
+                  <div className="h-6 w-16 bg-white/30 rounded animate-pulse mt-1" />
+                ) : (
+                  <h2 className="text-3xl font-bold mt-1">
+                    {stat.value}
+                  </h2>
+                )}
+              </div>
+
+              <div className="bg-white/20 p-3 rounded-xl">
+                <Icon size={22} />
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
+    </div>
 
       {/* Tabs */}
       <Tabs
