@@ -3,6 +3,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, Plus, MoreHorizontal, Mail, Phone, GitBranch, BookOpen, Award, Pencil, Trash2, Users, Save, User, ToggleRight, Lock } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,9 @@ export default function Teachers() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get('id');
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
@@ -112,6 +116,16 @@ export default function Teachers() {
     fetchBranches();
     fetchSubjects();
   }, []);
+
+  useEffect(() => {
+    if (highlightId) {
+      // Scroll to the highlighted row
+      const element = document.getElementById(`teacher-${highlightId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [highlightId, teachers]);
 
   const fetchTeachers = async () => {
     try {
@@ -314,7 +328,8 @@ const fetchSubjects = async () => {
             {paginatedTeachers.map((t) => (
               <TableRow
                 key={t.id}
-                className="hover:bg-muted/50 transition-all duration-200"
+                id={`teacher-${t.userId}`}
+                className={t.userId === highlightId ? "bg-green-100 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-900" : "hover:bg-muted/50 transition-all duration-200"}
               >
 
                 {/* Teacher */}
