@@ -58,6 +58,11 @@ export default function VisitorBookPage() {
     });
   };
 
+  const formatDate = (val: string) => {
+    if (!val) return "-";
+    return new Date(val).toLocaleDateString("en-IN");
+  };
+
   // ✅ Fetch Visitors (API Pagination)
   const reload = async () => {
     try {
@@ -317,9 +322,9 @@ export default function VisitorBookPage() {
                   { label: "ID Proof", value: form.idProof },
                   { label: "ID Number", value: form.idNumber },
                   { label: "To Meet", value: form.visitingTo },
-                  { label: "Date", value: form.visitDate },
-                  { label: "In Time", value: form.entryTime || "-" },
-                  { label: "Out Time", value: form.exitTime || "-" },
+                  { label: "Date", value: formatDate(form.visitDate) },
+                  { label: "In Time", value: formatTime(form.entryTime) },
+                  { label: "Out Time", value: formatTime(form.exitTime) },
                   { label: "Status", value: form.status },
                 ].map((item) => (
                   <div
