@@ -1,162 +1,251 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client"
 
-
-import { Percent, Plus, Edit, Trash2 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {  Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 import Layout from "@/components/accountant/Layout";
-import Header from "@/components/accountant/header";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-
-
-const DisabledDiscount = () => {
-  const discounts = [
-    { id: 1, name: "Visually Impaired", percentage: 50, applicableFees: "Tuition, Transport", students: 3 },
-    { id: 2, name: "Hearing Impaired", percentage: 40, applicableFees: "Tuition", students: 2 },
-    { id: 3, name: "Physically Disabled", percentage: 30, applicableFees: "All Fees", students: 4 },
-  ];
-
-  return (
-    <div className="space-y-5">
-      <div className="bg-card rounded-2xl border border-border p-5">
-        <h3 className="font-semibold text-foreground mb-4">Add Disabled Discount</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input type="text" placeholder="Disability Type" className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
-          <input type="number" placeholder="Discount %" className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
-          <select className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
-            <option>Applicable Fees</option>
-            <option>All Fees</option>
-            <option>Tuition Only</option>
-            <option>Tuition + Transport</option>
-          </select>
-        </div>
-        <button className="mt-4 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Discount
-        </button>
-      </div>
-      <div className="bg-card rounded-2xl border border-border overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border bg-muted/50">
-              <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">#</th>
-              <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Disability Type</th>
-              <th className="text-center text-xs font-semibold text-muted-foreground px-5 py-3">Discount %</th>
-              <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Applicable Fees</th>
-              <th className="text-center text-xs font-semibold text-muted-foreground px-5 py-3">Students</th>
-              <th className="text-center text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {discounts.map(d => (
-              <tr key={d.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                <td className="px-5 py-3 text-sm text-muted-foreground">{d.id}</td>
-                <td className="px-5 py-3 text-sm font-medium text-foreground">{d.name}</td>
-                <td className="px-5 py-3 text-center"><span className="text-xs font-semibold bg-accent/10 text-accent px-2.5 py-1 rounded-full">{d.percentage}%</span></td>
-                <td className="px-5 py-3 text-sm text-muted-foreground">{d.applicableFees}</td>
-                <td className="px-5 py-3 text-center text-sm font-medium text-foreground">{d.students}</td>
-                <td className="px-5 py-3 text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <button className="p-1.5 rounded-lg hover:bg-muted"><Edit className="w-3.5 h-3.5 text-muted-foreground" /></button>
-                    <button className="p-1.5 rounded-lg hover:bg-destructive/10"><Trash2 className="w-3.5 h-3.5 text-destructive" /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-const SiblingDiscount = () => {
-  const discounts = [
-    { id: 1, siblings: "2 Siblings", percentage: 10, applicableFees: "Tuition", beneficiaries: 12 },
-    { id: 2, siblings: "3 Siblings", percentage: 15, applicableFees: "Tuition + Transport", beneficiaries: 6 },
-    { id: 3, siblings: "4+ Siblings", percentage: 20, applicableFees: "All Fees", beneficiaries: 2 },
-  ];
-
-  return (
-    <div className="space-y-5">
-      <div className="bg-card rounded-2xl border border-border p-5">
-        <h3 className="font-semibold text-foreground mb-4">Add Sibling Discount</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <select className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
-            <option>Number of Siblings</option>
-            <option>2 Siblings</option>
-            <option>3 Siblings</option>
-            <option>4+ Siblings</option>
-          </select>
-          <input type="number" placeholder="Discount %" className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
-          <select className="rounded-xl border border-input bg-background px-3 py-2.5 text-sm">
-            <option>Applicable Fees</option>
-            <option>All Fees</option>
-            <option>Tuition Only</option>
-            <option>Tuition + Transport</option>
-          </select>
-        </div>
-        <button className="mt-4 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Discount
-        </button>
-      </div>
-      <div className="bg-card rounded-2xl border border-border overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border bg-muted/50">
-              <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">#</th>
-              <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Sibling Count</th>
-              <th className="text-center text-xs font-semibold text-muted-foreground px-5 py-3">Discount %</th>
-              <th className="text-left text-xs font-semibold text-muted-foreground px-5 py-3">Applicable Fees</th>
-              <th className="text-center text-xs font-semibold text-muted-foreground px-5 py-3">Beneficiaries</th>
-              <th className="text-center text-xs font-semibold text-muted-foreground px-5 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {discounts.map(d => (
-              <tr key={d.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                <td className="px-5 py-3 text-sm text-muted-foreground">{d.id}</td>
-                <td className="px-5 py-3 text-sm font-medium text-foreground">{d.siblings}</td>
-                <td className="px-5 py-3 text-center"><span className="text-xs font-semibold bg-primary/10 text-primary px-2.5 py-1 rounded-full">{d.percentage}%</span></td>
-                <td className="px-5 py-3 text-sm text-muted-foreground">{d.applicableFees}</td>
-                <td className="px-5 py-3 text-center text-sm font-medium text-foreground">{d.beneficiaries}</td>
-                <td className="px-5 py-3 text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <button className="p-1.5 rounded-lg hover:bg-muted"><Edit className="w-3.5 h-3.5 text-muted-foreground" /></button>
-                    <button className="p-1.5 rounded-lg hover:bg-destructive/10"><Trash2 className="w-3.5 h-3.5 text-destructive" /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
 
 const Page = () => {
-  const searchParams = useSearchParams();
-  const tab = searchParams.get("tab") || "disabled";
+
+  const [editOpen, setEditOpen] = useState(false)
+
+  const [discounts, setDiscounts] = useState<any[]>([])
+  const [selectedDiscount, setSelectedDiscount] = useState<any>(null)
+
+  const [page, setPage] = useState(1)
+  const [perPage] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [loading, setLoading] = useState(false)
+
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    type: "",
+    value: "",
+    isActive: true
+  })
+
+  // FETCH
+  const fetchDiscounts = async () => {
+
+    try {
+
+      setLoading(true)
+
+      const res = await axiosInstance.get("/api/v1/discounts", {
+        params: { page, perPage }
+      })
+
+      setDiscounts(res.data.data.discounts)
+      setTotalPages(res.data.data.pagination.totalPages)
+
+    } catch (error) {
+
+      console.error("Failed to fetch discounts", error)
+
+    } finally {
+
+      setLoading(false)
+
+    }
+
+  }
+
+  useEffect(() => {
+    fetchDiscounts()
+  }, [page])
+
+
+  // OPEN EDIT
+  const openEdit = (discount: any) => {
+
+    setSelectedDiscount(discount)
+
+    setForm({
+      name: discount.name,
+      description: discount.description || "",
+      type: discount.type,
+      value: String(discount.value),
+      isActive: discount.isActive
+    })
+
+    setEditOpen(true)
+
+  }
+
 
   return (
+
     <Layout>
-      <Header title="Fees Discount" description="Manage discounts for disabled and sibling students" icon={Percent} />
-      <Tabs defaultValue={tab} className="w-full">
-        <TabsList className="bg-card border border-border rounded-xl p-1 h-auto flex-wrap gap-1">
-          <TabsTrigger value="disabled" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Disabled Discount</TabsTrigger>
-          <TabsTrigger value="sibling" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sibling Discount</TabsTrigger>
-        </TabsList>
-        <TabsContent value="disabled"><DisabledDiscount /></TabsContent>
-        <TabsContent value="sibling"><SiblingDiscount /></TabsContent>
-      </Tabs>
+
+      <div className="min-h-screen p-8 space-y-8 bg-background">
+
+        {/* HEADER */}
+
+        <div className="flex justify-between items-center bg-card/80 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-border">
+          
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Fee Discounts
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Manage all student fee discounts
+            </p>
+          </div>
+
+        </div>
+
+        {/* TABLE */}
+
+        <Card className="rounded-2xl shadow-lg border border-border bg-card/80 backdrop-blur-md">
+
+          <CardContent className="p-6">
+
+            <Table>
+
+            <TableHeader>
+              <TableRow className="bg-secondary/50 dark:bg-secondary/30">
+                <TableHead className="font-semibold text-foreground">#</TableHead>
+                <TableHead className="font-semibold text-foreground">Name</TableHead>
+                <TableHead className="font-semibold text-foreground">Type</TableHead>
+                <TableHead className="font-semibold text-foreground">Value</TableHead>
+                <TableHead className="font-semibold text-foreground">Status</TableHead>
+                <TableHead className="font-semibold text-foreground">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+
+              <TableBody>
+
+                {discounts.map((d, index) => (
+
+                  <TableRow key={d.id}>
+
+                    <TableCell>{index + 1}</TableCell>
+
+                    <TableCell>{d.name}</TableCell>
+
+                    <TableCell>{d.type}</TableCell>
+
+                    <TableCell>
+                      {d.type === "PERCENTAGE" ? `${d.value}%` : `₹${d.value}`}
+                    </TableCell>
+
+                    <TableCell>
+
+                      <Badge
+                        className={
+                          d.isActive
+                            ? "bg-secondary/70 text-foreground border border-border"
+                            : "bg-secondary/70 text-foreground border border-border"
+                        }
+                      >
+                        {d.isActive ? "Active" : "Inactive"}
+                      </Badge>
+
+                    </TableCell>
+
+                    <TableCell className="flex gap-2">
+
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="hover:bg-secondary/40"
+                      onClick={() => openEdit(d)}
+                    >
+                      <Eye size={16} />
+                    </Button>
+
+                    </TableCell>
+
+                  </TableRow>
+
+                ))}
+
+              </TableBody>
+
+            </Table>
+
+          </CardContent>
+
+        </Card>
+
+      </div>
+
+
+      {/* VIEW MODAL */}
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-md">
+
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Discount Details
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 text-sm">
+
+            {/* Name */}
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Name</span>
+              <span className="font-medium">{form.name || "-"}</span>
+            </div>
+
+            {/* Type */}
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Type</span>
+              <span className="font-medium">{form.type || "-"}</span>
+            </div>
+
+            {/* Value */}
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Value</span>
+              <span className="font-medium">
+                {form.type === "PERCENTAGE"
+                  ? `${form.value}%`
+                  : `₹${form.value}`}
+              </span>
+            </div>
+
+            {/* Status */}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Status</span>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium
+                ${
+                  form.isActive
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {form.isActive ? "Active" : "Inactive"}
+              </span>
+            </div>
+
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end pt-4">
+            <Button variant="outline" onClick={() => setEditOpen(false)}>
+              Close
+            </Button>
+          </div>
+
+        </DialogContent>
+      </Dialog>
+
     </Layout>
-  );
-};
 
-const PageWrapper = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <Page />
-  </Suspense>
-);
+  )
 
-export default PageWrapper;
+}
+
+export default Page

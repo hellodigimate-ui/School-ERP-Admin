@@ -1,3 +1,4 @@
+// /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 
@@ -183,3 +184,344 @@ const Page = () => {
 };
 
 export default Page;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useMemo, useState } from "react";
+// import {
+//   BookOpenCheck,
+//   Download,
+//   CheckCircle2,
+//   Clock,
+//   XCircle,
+// } from "lucide-react";
+
+
+// import { Input } from "@/components/ui/input";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { Badge } from "@/components/ui/badge";
+// import Layout from "@/components/accountant/Layout";
+// import Header from "@/components/accountant/header";
+// import { axiosInstance } from "@/apiHome/axiosInstanc";
+
+// const Page = () => {
+//   const [students, setStudents] = useState<any[]>([]);
+//   const [ledger, setLedger] = useState<any[]>([]);
+//   const [fee, setFee] = useState<any>(null);
+
+//   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [classFilter, setClassFilter] = useState("all");
+
+//   const [loadingStudents, setLoadingStudents] = useState(false);
+//   const [loadingLedger, setLoadingLedger] = useState(false);
+//   const [error, setError] = useState("");
+
+//   // ===============================
+//   // 📡 Fetch Students
+//   // ===============================
+//   useEffect(() => {
+//     const fetchStudents = async () => {
+//       try {
+//         setLoadingStudents(true);
+//         const res = await axiosInstance.get("/students");
+//         setStudents(res.data);
+//         if (res.data.length > 0) {
+//           setSelectedStudent(res.data[0].id);
+//         }
+//       } catch (err: any) {
+//         setError("Failed to load students");
+//       } finally {
+//         setLoadingStudents(false);
+//       }
+//     };
+
+//     fetchStudents();
+//   }, []);
+
+//   // ===============================
+//   // 📡 Fetch Payments + Fee
+//   // ===============================
+//   useEffect(() => {
+//     if (!selectedStudent) return;
+
+//     const fetchLedger = async () => {
+//       try {
+//         setLoadingLedger(true);
+//         const res = await axiosInstance.get(
+//           `/api/v1/payments/student/${selectedStudent}`
+//         );
+
+//         const { fee, payments } = res.data.data;
+
+//         setFee(fee);
+
+//         // 🔥 Convert payments → ledger format
+//         const ledgerData = payments.map((p: any) => ({
+//           date: p.paymentDate,
+//           particular: "Fee Payment",
+//           debit: 0,
+//           credit: Number(p.amount),
+//           mode: p.paymentMode,
+//           status: p.status === "COMPLETED" ? "Paid" : "Failed",
+//         }));
+
+//         // Add total fee as first debit entry
+//         if (fee) {
+//           ledgerData.unshift({
+//             date: fee.createdAt,
+//             particular: "Total Fee",
+//             debit: Number(fee.totalFee),
+//             credit: 0,
+//             mode: "-",
+//             status: "Unpaid",
+//           });
+//         }
+
+//         setLedger(ledgerData);
+//       } catch (err: any) {
+//         setError(
+//           err?.response?.data?.message || "Failed to fetch ledger data"
+//         );
+//       } finally {
+//         setLoadingLedger(false);
+//       }
+//     };
+
+//     fetchLedger();
+//   }, [selectedStudent]);
+
+//   // ===============================
+//   // 🔍 Filter Students
+//   // ===============================
+//   const filteredStudents = useMemo(() => {
+//     return students
+//       .filter((s) => classFilter === "all" || s.class === classFilter)
+//       .filter(
+//         (s) =>
+//           s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+//           s.id.toLowerCase().includes(searchQuery.toLowerCase())
+//       );
+//   }, [students, searchQuery, classFilter]);
+
+//   // ===============================
+//   // 🧮 Running Balance
+//   // ===============================
+//   let runningBalance = 0;
+//   const computedLedger = ledger.map((entry) => {
+//     runningBalance += entry.debit - entry.credit;
+//     return { ...entry, balance: runningBalance };
+//   });
+
+//   const totalDebit = ledger.reduce((sum, e) => sum + e.debit, 0);
+//   const totalCredit = ledger.reduce((sum, e) => sum + e.credit, 0);
+//   const totalBalance = totalDebit - totalCredit;
+
+//   // ===============================
+//   // 🎨 Helpers
+//   // ===============================
+//   const formatDate = (date: string) =>
+//     new Date(date).toLocaleDateString("en-IN");
+
+//   const statusBadge = (status: string) => {
+//     switch (status) {
+//       case "Paid":
+//         return (
+//           <Badge className="bg-emerald-100 text-emerald-700">
+//             <CheckCircle2 className="w-3 h-3 mr-1" />
+//             Paid
+//           </Badge>
+//         );
+//       case "Partial":
+//         return (
+//           <Badge className="bg-amber-100 text-amber-700">
+//             <Clock className="w-3 h-3 mr-1" />
+//             Partial
+//           </Badge>
+//         );
+//       default:
+//         return (
+//           <Badge className="bg-red-100 text-red-700">
+//             <XCircle className="w-3 h-3 mr-1" />
+//             Unpaid
+//           </Badge>
+//         );
+//     }
+//   };
+
+//   const student = students.find((s) => s.id === selectedStudent);
+
+//   // ===============================
+//   // UI
+//   // ===============================
+//   return (
+//     <Layout>
+//       <Header
+//         title="Student Ledger"
+//         description="Dynamic fee & payment tracking"
+//         icon={BookOpenCheck}
+//       />
+
+//       {error && (
+//         <p className="text-red-500 text-sm mb-3">{error}</p>
+//       )}
+
+//       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+//         {/* LEFT PANEL */}
+//         <Card>
+//           <CardHeader>
+//             <CardTitle className="text-sm">Find Student</CardTitle>
+//           </CardHeader>
+
+//           <CardContent className="space-y-3">
+//             <Input
+//               placeholder="Search..."
+//               value={searchQuery}
+//               onChange={(e) => setSearchQuery(e.target.value)}
+//             />
+
+//             <Select value={classFilter} onValueChange={setClassFilter}>
+//               <SelectTrigger>
+//                 <SelectValue placeholder="Class" />
+//               </SelectTrigger>
+//               <SelectContent>
+//                 <SelectItem value="all">All</SelectItem>
+//                 {[...new Set(students.map((s) => s.class))].map((c) => (
+//                   <SelectItem key={c} value={c}>
+//                     {c}
+//                   </SelectItem>
+//                 ))}
+//               </SelectContent>
+//             </Select>
+
+//             {loadingStudents ? (
+//               <p className="text-xs">Loading...</p>
+//             ) : (
+//               filteredStudents.map((s) => (
+//                 <div
+//                   key={s.id}
+//                   onClick={() => setSelectedStudent(s.id)}
+//                   className="p-2 cursor-pointer hover:bg-muted rounded"
+//                 >
+//                   <p className="text-sm">{s.name}</p>
+//                   <p className="text-xs text-muted-foreground">
+//                     {s.id} · {s.class}
+//                   </p>
+//                 </div>
+//               ))
+//             )}
+//           </CardContent>
+//         </Card>
+
+//         {/* RIGHT PANEL */}
+//         <div className="lg:col-span-3 space-y-4">
+//           {student && (
+//             <>
+//               <Card>
+//                 <CardContent className="flex justify-between py-4">
+//                   <div>
+//                     <p className="font-semibold">{student.name}</p>
+//                     <p className="text-xs">
+//                       Class: {student.class}
+//                     </p>
+//                   </div>
+
+//                   <Button variant="outline">
+//                     <Download className="w-4 h-4 mr-1" />
+//                     Export
+//                   </Button>
+//                 </CardContent>
+//               </Card>
+
+//               {/* SUMMARY */}
+//               <div className="grid grid-cols-3 gap-4">
+//                 <Card>
+//                   <CardContent>₹{totalDebit}</CardContent>
+//                 </Card>
+//                 <Card>
+//                   <CardContent>₹{totalCredit}</CardContent>
+//                 </Card>
+//                 <Card>
+//                   <CardContent>₹{totalBalance}</CardContent>
+//                 </Card>
+//               </div>
+
+//               {/* TABLE */}
+//               <Card>
+//                 <CardHeader className="flex justify-between">
+//                   <CardTitle>Ledger</CardTitle>
+//                 </CardHeader>
+
+//                 <CardContent>
+//                   {loadingLedger ? (
+//                     <p>Loading ledger...</p>
+//                   ) : (
+//                     <Table>
+//                       <TableHeader>
+//                         <TableRow>
+//                           <TableHead>Date</TableHead>
+//                           <TableHead>Particular</TableHead>
+//                           <TableHead>Debit</TableHead>
+//                           <TableHead>Credit</TableHead>
+//                           <TableHead>Balance</TableHead>
+//                           <TableHead>Mode</TableHead>
+//                           <TableHead>Status</TableHead>
+//                         </TableRow>
+//                       </TableHeader>
+
+//                       <TableBody>
+//                         {computedLedger.map((e, i) => (
+//                           <TableRow key={i}>
+//                             <TableCell>{formatDate(e.date)}</TableCell>
+//                             <TableCell>{e.particular}</TableCell>
+//                             <TableCell>{e.debit || "-"}</TableCell>
+//                             <TableCell>{e.credit || "-"}</TableCell>
+//                             <TableCell>{e.balance}</TableCell>
+//                             <TableCell>{e.mode}</TableCell>
+//                             <TableCell>{statusBadge(e.status)}</TableCell>
+//                           </TableRow>
+//                         ))}
+//                       </TableBody>
+//                     </Table>
+//                   )}
+//                 </CardContent>
+//               </Card>
+//             </>
+//           )}
+//         </div>
+//       </div>
+//     </Layout>
+//   );
+// };
+
+// export default Page;
