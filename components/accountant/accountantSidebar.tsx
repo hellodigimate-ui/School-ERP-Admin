@@ -8,16 +8,14 @@ import {
   ChevronDown,
   ChevronRight,
   CreditCard,
-  Wallet,
   BookOpenCheck,
   ArrowLeftRight,
   BarChart3,
   PanelLeftClose,
   PanelLeftOpen,
   Percent,
-  Receipt,
-  Banknote,
   Award,
+  ReceiptIndianRupee,
 } from "lucide-react";
 
 import { useState, useEffect } from "react";
@@ -45,8 +43,8 @@ const navItems: NavItem[] = [
     path: "/accountant/feesCollection"
   },
   {
-    label: "Fees Setup",
-    icon: Receipt,
+    label: "Fees Recieve",
+    icon: ReceiptIndianRupee,
     path: "/accountant/feesSetup"
     
   },
@@ -61,18 +59,18 @@ const navItems: NavItem[] = [
     icon: Award,
     path: "/accountant/scholarship"
   },
-  {
-    label: "Expenses",
-    icon: Wallet,
-    path: "/accountant/expenses"
+  // {
+  //   label: "Expenses",
+  //   icon: Wallet,
+  //   path: "/accountant/expenses"
     
-  },
-  {
-    label: "Income",
-    icon: Banknote,
-    path: "/accountant/income"
+  // },
+  // {
+  //   label: "Income",
+  //   icon: Banknote,
+  //   path: "/accountant/income"
   
-  },
+  // },
   { label: "Student Ledger", icon: BookOpenCheck, path: "/accountant/studentLedger" },
   { label: "Transactions", icon: ArrowLeftRight, path: "/accountant/transactions" },
   {
@@ -127,20 +125,20 @@ export default function AccountantSidebar() {
       ${collapsed ? "w-[80px]" : "w-[270px]"}
       sticky top-0 h-screen
       bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 dark:from-sidebar-background dark:via-sidebar-background dark:to-sidebar-background
-      text-foreground dark:text-foreground flex flex-col shadow-lg transition-all duration-300`}
+      text-foreground dark:text-foreground flex flex-col shadow-lg transition-all duration-300 dark:bg-gray-900`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border dark:border-border shrink-0">
+      <div className="flex items-center justify-between p-4 border-b border-border dark:border-border shrink-0 dark:bg-gray-900">
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <CreditCard className="w-6 h-6" />
-            <h2 className="font-bold text-lg">School Finance</h2>
+          <div className="flex items-center gap-2 dark:text-gray-400">
+            <CreditCard className="w-6 h-6 dark:text-gray-400 " />
+            <h2 className="font-bold text-lg dark:text-gray-400">School Finance</h2>
           </div>
         )}
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-secondary/50 dark:hover:bg-secondary/50 transition"
+          className="p-2 rounded-lg hover:bg-secondary/50 dark:hover:bg-secondary/50 transition dark:text-gray-400"
         >
           {collapsed ? (
             <PanelLeftOpen className="w-5 h-5" />
@@ -151,7 +149,7 @@ export default function AccountantSidebar() {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2 scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-transparent">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2 scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-transparent dark:bg-gray-900 dark:text-gray-400">
         {navItems.map((item) => {
           const Icon = item.icon;
           const hasChildren = !!item.children;
@@ -221,14 +219,14 @@ export default function AccountantSidebar() {
 
       {/* User Section */}
       {!collapsed && (
-        <div className="p-4 border-t border-border dark:border-border bg-secondary/30 dark:bg-secondary/30 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground flex items-center justify-center font-bold">
+        <div className="p-4 border-t border-border dark:border-border bg-secondary/30 backdrop-blur-md dark:bg-gray-900">
+          <div className="flex items-center gap-3 dark:bg-gray-900">
+            <div className="w-10 h-10 rounded-full bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground flex items-center justify-center font-bold dark:text-gray-400">
               RK
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold">Rajesh Kumar</p>
-              <p className="text-xs opacity-80">Accountant</p>
+            <div className="flex-1 ">
+              <p className="text-sm font-semibold dark:text-gray-400">Rajesh Kumar</p>
+              <p className="text-xs opacity-80 dark:text-gray-400">Accountant</p>
             </div>
             <LogOut
               className="w-4 h-4 cursor-pointer hover:text-red-400"

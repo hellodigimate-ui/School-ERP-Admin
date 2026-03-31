@@ -45,31 +45,31 @@ export default function ReceptionistSidebar({
     <aside
       className={`fixed top-0 left-0 h-screen z-50
       ${collapsed ? "w-[80px]" : "w-[270px]"}
-      bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 text-gray-800 flex flex-col shadow-lg transition-all duration-300`}
+      bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200 text-gray-800 flex flex-col shadow-lg transition-all duration-300 dark:bg-gray-900`}
     >
       {/* Logo Section */}
-      <div className="flex items-center justify-between p-4 border-b border-white/20">
+      <div className="flex items-center justify-between p-4 border-b border-white/20 dark:bg-gray-900">
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-6 h-6" />
-            <h2 className="font-bold text-lg">Reception Panel</h2>
+          <div className="flex items-center gap-2 dark:text-gray-400">
+            <GraduationCap className="w-6 h-6 " />
+            <h2 className="font-bold text-lg dark:text-gray-400">Reception Panel</h2>
           </div>
         )}
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-white/20 transition"
+          className="p-2 rounded-lg hover:bg-white/20 transition dark:text-gray-400"
         >
           {collapsed ? (
-            <PanelLeftOpen className="w-5 h-5" />
+            <PanelLeftOpen className="w-5 h-5 dark:text-gray-400" />
           ) : (
-            <PanelLeftClose className="w-5 h-5" />
+            <PanelLeftClose className="w-5 h-5 dark:text-gray-400" />
           )}
         </button>
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-2 dark:bg-gray-900">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -78,10 +78,10 @@ export default function ReceptionistSidebar({
             <button
               key={item.label}
               onClick={() => router.push(item.path)}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 dark:text-gray-400
               ${
                 active
-                  ? "bg-white text-indigo-700 shadow-lg"
+                  ? "bg-white text-indigo-700 shadow-lg dark:bg-white-900"
                   : "hover:bg-white/20"
               }`}
             >
@@ -97,9 +97,9 @@ export default function ReceptionistSidebar({
 
       {/* User Section */}
       {!collapsed && (
-        <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
+        <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md dark:bg-gray-900">
+          <div className="flex items-center gap-3 dark:text-gray-400">
+            <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold dark:text-gray-400">
               RS
             </div>
 

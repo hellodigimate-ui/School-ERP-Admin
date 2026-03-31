@@ -81,21 +81,21 @@ export default function LibrarianSidebar() {
       ${collapsed ? "w-[80px]" : "w-[270px]"}
       sticky top-0 h-screen
       bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200
-      text-gray-800 flex flex-col shadow-lg transition-all duration-300
+      text-gray-800 flex flex-col shadow-lg transition-all duration-300 dark:bg-gray-900
       `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-white/20 shrink-0">
+      <div className="flex items-center justify-between p-4 border-b border-white/20 shrink-0 dark:bg-gray-900">
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <Library className="w-6 h-6" />
-            <h2 className="font-bold text-lg">Library Panel</h2>
+          <div className="flex items-center gap-2 dark:text-gray-400">
+            <Library className="w-6 h-6 dark:text-gray-400" />
+            <h2 className="font-bold text-lg dark:text-gray-400" >Library Panel</h2>
           </div>
         )}
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-white/20 transition"
+          className="p-2 rounded-lg hover:bg-white/20 transition dark:text-gray-400"
         >
           {collapsed ? (
             <PanelLeftOpen className="w-5 h-5" />
@@ -106,11 +106,11 @@ export default function LibrarianSidebar() {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-3 scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-transparent">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-3 scrollbar-thin scrollbar-thumb-sky-500 scrollbar-track-transparent dark:bg-gray-900 dark:text-gray-400">
         {menuSections.map((section) => (
           <div key={section.label}>
             {!collapsed && section.label && (
-              <p className="text-xs font-semibold text-gray-600 px-2 mb-1 uppercase tracking-wide">
+              <p className="text-xs font-semibold text-gray-600 px-2 mb-1 uppercase tracking-wide dark:text-gray-400">
                 {section.label}
               </p>
             )}
@@ -146,9 +146,9 @@ export default function LibrarianSidebar() {
 
       {/* User Section */}
       {!collapsed && (
-        <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
+        <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md dark:bg-gray-900">
+          <div className="flex items-center gap-3 dark:text-gray-400">
+            <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold  ">
               LB
             </div>
 
