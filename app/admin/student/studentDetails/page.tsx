@@ -5,6 +5,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Plus, Search, Filter, Download, Upload, Eye, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,8 @@ import { useRouter } from "next/navigation";
 const Page = () => {
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get('id');
 
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -326,6 +329,16 @@ useEffect(() => {
   setPage(1);
 }, [searchTerm, classFilter, selectedBranch]);
 
+useEffect(() => {
+  if (highlightId) {
+    // Scroll to the highlighted row
+    const element = document.getElementById(`student-${highlightId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}, [highlightId, students]);
+
 
   return (
     <AdminLayout>
@@ -522,7 +535,8 @@ useEffect(() => {
                   return (
                     <TableRow
                       key={student.id || student._id}
-                      className="hover:bg-secondary/30 transition"
+                      id={`student-${student.userId}`}
+                      className={student.userId === highlightId ? "bg-green-100 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-900" : "hover:bg-secondary/30 transition"}
                     >
                       <TableCell className="font-mono text-indigo-600">
                         {student.admissionNumber}
