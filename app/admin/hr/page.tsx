@@ -6,6 +6,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,6 +97,19 @@ export default function Page() {
   const [attendanceDetailOpen, setAttendanceDetailOpen] = useState(false);
   const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]);
+
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get('id');
+
+  useEffect(() => {
+    if (highlightId) {
+      // Scroll to the highlighted row
+      const element = document.getElementById(`staff-${highlightId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [highlightId, staffData]);
 
   const downloadAttendancePDF = () => {
     if (!selectedAttendanceRecord) return;
@@ -721,7 +735,7 @@ const fetchAttendance = async () => {
                 {staffData
                   ?.filter(s => (departmentFilter === "all" || s?.department === departmentFilter) && (roleFilter === "all" || s?.role === roleFilter) && (searchTerm === "" || s?.name?.toLowerCase().includes(searchTerm.toLowerCase())))
                   .map(staff => (
-                    <TableRow key={staff.id}>
+                    <TableRow key={staff.id} id={`staff-${staff.userId}`} className={staff.userId === highlightId ? "bg-green-100 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-900" : ""}>
                       
                       <TableCell>
                         <div>
