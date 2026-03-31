@@ -4,6 +4,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, Plus, MoreHorizontal, Mail, Phone, Users } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -77,6 +78,9 @@ const Parents = () => {
   const [parents, setParents] = useState<Parent[]>([]);
   const [loading, setLoading] = useState(false);
   const itemsPerPage = 5;
+
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get('id');
 
   const [selectedParent, setSelectedParent] = useState<any>(null);
 
@@ -184,6 +188,16 @@ useEffect(() => {
   return () => clearTimeout(delayDebounce);
 }, [searchQuery]);
 
+useEffect(() => {
+  if (highlightId) {
+    // Scroll to the highlighted row
+    const element = document.getElementById(`parent-${highlightId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}, [highlightId, parents]);
+
   const totalPages = Math.ceil(filteredParents.length / itemsPerPage);
   const paginatedParents = filteredParents.slice(
     (currentPage - 1) * itemsPerPage,
@@ -233,7 +247,7 @@ useEffect(() => {
           </TableHeader>
           <TableBody>
             {paginatedParents.map((parent) => (
-              <TableRow key={parent.id}>
+              <TableRow key={parent.id} id={`parent-${parent.userId}`} className={parent.userId === highlightId || parent.id === highlightId ? "bg-green-100 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-900" : ""}>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <span className="font-medium">{parent.fatherName}</span>
