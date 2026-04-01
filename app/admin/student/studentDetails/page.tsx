@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, Search, Filter, Download, Upload, Eye, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ import { axiosInstance } from "@/apiHome/axiosInstanc";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
-const Page = () => {
+const StudentDetailsContent = () => {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1045,6 +1045,14 @@ useEffect(() => {
         </div>
       </div>
     </AdminLayout>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <StudentDetailsContent />
+    </Suspense>
   );
 };
 

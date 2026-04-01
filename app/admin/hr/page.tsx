@@ -5,8 +5,9 @@
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+
+export const dynamic = 'force-dynamic';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +78,7 @@ const teacherRatings = [
 
 // --- Component ---
 
-export default function Page() {
+function HRPage({ highlightId }: { highlightId: string | null }) {
   const [activeTab, setActiveTab] = useState("staff-directory");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBranch,setSelectedBranch] = useState("")
@@ -98,8 +99,8 @@ export default function Page() {
   const [fromDate, setFromDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0]);
 
-  const searchParams = useSearchParams();
-  const highlightId = searchParams.get('id');
+  // const searchParams = useSearchParams();
+  // const highlightId = searchParams.get('id');
 
   useEffect(() => {
     if (highlightId) {
@@ -1270,4 +1271,23 @@ const fetchAttendance = async () => {
       </Tabs>
     </AdminLayout>
   );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HRPageWrapper />
+    </Suspense>
+  );
+}
+
+function HRPageWrapper() {
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setHighlightId(urlParams.get('id'));
+  }, []);
+
+  return <HRPage highlightId={highlightId} />;
 }

@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+
+export const dynamic = 'force-dynamic';
 import { Search, Plus, MoreHorizontal, Mail, Phone, GitBranch, BookOpen, Award, Pencil, Trash2, Users, Save, User, ToggleRight, Lock } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,7 @@ const getStatusBadge = (isActive: boolean) => (
 );
 
 /* ---------------- COMPONENT ---------------- */
-export default function Teachers() {
+function TeachersComponent({ highlightId }: { highlightId: string | null }) {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -91,8 +92,8 @@ export default function Teachers() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const searchParams = useSearchParams();
-  const highlightId = searchParams.get('id');
+  // const searchParams = useSearchParams();
+  // const highlightId = searchParams.get('id');
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -733,4 +734,23 @@ const fetchSubjects = async () => {
       </Dialog>
     </AdminLayout>
   );
+}
+
+export default function Teachers() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TeachersWrapper />
+    </Suspense>
+  );
+}
+
+function TeachersWrapper() {
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setHighlightId(urlParams.get('id'));
+  }, []);
+
+  return <TeachersComponent highlightId={highlightId} />;
 }

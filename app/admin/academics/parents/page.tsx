@@ -3,8 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+
+export const dynamic = 'force-dynamic';
 import { Search, Plus, MoreHorizontal, Mail, Phone, Users } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -73,15 +74,15 @@ interface Parent {
 }
 
 
-const Parents = () => {
+const ParentsComponent = ({ highlightId }: { highlightId: string | null }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [parents, setParents] = useState<Parent[]>([]);
   const [loading, setLoading] = useState(false);
   const itemsPerPage = 5;
 
-  const searchParams = useSearchParams();
-  const highlightId = searchParams.get('id');
+  // const searchParams = useSearchParams();
+  // const highlightId = searchParams.get('id');
 
   const [selectedParent, setSelectedParent] = useState<any>(null);
 
@@ -516,4 +517,21 @@ useEffect(() => {
   );
 };
 
-export default Parents;
+export default function Parents() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ParentsWrapper />
+    </Suspense>
+  );
+}
+
+function ParentsWrapper() {
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setHighlightId(urlParams.get('id'));
+  }, []);
+
+  return <ParentsComponent highlightId={highlightId} />;
+}
