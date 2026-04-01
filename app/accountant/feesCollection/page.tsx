@@ -103,7 +103,7 @@ const CollectFees = () => {
                 <th className="px-5 py-3 text-right text-xs">Paid</th>
                 <th className="px-5 py-3 text-right text-xs">Due</th>
                 <th className="px-5 py-3 text-center text-xs">Status</th>
-               
+                <th className="px-5 py-3 text-center text-xs">Action</th>
               </tr>
             </thead>
 
