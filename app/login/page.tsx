@@ -14,17 +14,18 @@ import { toastNotifications } from "@/utils/toastNotifications";
 
 
 const demoAccounts = [
-  // {
-  //   role: "SUPERADMIN",
-  //   email: "superadmin123@gmail.com",
-  //   password: "superadmin@123",
-  //   route: "/superAdmin/dashboard",
-  //   color: "from-blue-500 to-blue-700",
-  // },
+  
+  {
+    role: "SUPER_ADMIN",
+    email: "superadmin123@gmail.com",
+    password: "superadmin@123",
+    route: "/admin/dashboard",
+    color: "from-blue-500 to-blue-700",
+  },
   {
     role: "ADMIN",
-    email: "admin123@gmail.com",
-    password: "admin@123",
+    email: "admin1234@gmail.com",
+    password: "admin@1234",
     route: "/admin/dashboard",
     color: "from-blue-500 to-blue-700",
   },
@@ -70,6 +71,13 @@ const demoAccounts = [
     route: "/receptionist/dashboard",
     color: "from-purple-500 to-indigo-500",
   },
+  {
+    role: "COACH",
+    email: "coach123@gmail.com",
+    password: "coach@123",
+    route: "/coach/dashboard",
+    color: "from-purple-500 to-indigo-500",
+  },
 ];
 
 
@@ -81,10 +89,10 @@ export default function Login() {
 
 
 
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [error, setError] = useState("");
-const [showDemo, setShowDemo] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showDemo, setShowDemo] = useState(false);
 
 
   const [showPassword, setShowPassword] = useState(false);
@@ -114,14 +122,16 @@ const [showDemo, setShowDemo] = useState(false);
     const rawRole = String(response.data.data.role || "").trim();
     const role = rawRole.toUpperCase();
     const routeMap: Record<string, string> = {
+      
+      SUPER_ADMIN: "/superAdmin/dashboard",
       ADMIN: "/admin/dashboard",
-      // SUPERADMIN: "/superAdmin/dashboard",
       STUDENT: "/student/dashboard",
       PARENT: "/parents/dashboard",
       TEACHER: "/teacher/dashboard",
       LIBRAIAN: "/librarian/dashboard",
       ACCOUNTANT: "/accountant/dashboard",
       RECEPTIONIST: "/receptionist/dashboard",
+      COACH: "/coach/dashboard",
     };
 
     const targetRoute = routeMap[role];
@@ -141,12 +151,12 @@ const [showDemo, setShowDemo] = useState(false);
     setError(errorMessage);
     toastNotifications.error.login(errorMessage);
   }
-};
+  };
 
-const handleDemoFill = (account: any) => {
-  setEmail(account.email);
-  setPassword(account.password);
-};
+  const handleDemoFill = (account: any) => {
+    setEmail(account.email);
+    setPassword(account.password);
+  };
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gradient-to-br from-blue-50 via-card dark:via-slate-900 to-blue-100 dark:to-slate-900">
