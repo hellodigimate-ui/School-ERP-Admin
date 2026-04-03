@@ -15,86 +15,87 @@
     ChevronDown,
     IndianRupeeIcon,
     ClipboardCheck,
-    ClipboardList
+    ClipboardList,
+    UserCheck
   } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 
   const menuItems = [
-    { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
+    { label: "Dashboard", icon: LayoutDashboard, path: "/superAdmin/dashboard" },
     { label: "Front Office", icon: UserPlus, path: "", children: [
-      { label: "Admission Enquiry", path: "/admin/front-office/admission-enquiry" },
-      { label: "Visitor Book", path: "/admin/front-office/visitor-book" },
-      { label: "Phone Call Log", path: "/admin/front-office/phone-call-log" },
-      { label: "Postal Receive", path: "/admin/front-office/postal-receive" },
-      { label: "Postal Dispatch", path: "/admin/front-office/postal-dispatch" },
-      { label: "Complains", path: "/admin/front-office/complains" },
+      { label: "Admission Enquiry", path: "/superAdmin/front-office/admission-enquiry" },
+      { label: "Visitor Book", path: "/superAdmin/front-office/visitor-book" },
+      { label: "Phone Call Log", path: "/superAdmin/front-office/phone-call-log" },
+      { label: "Postal Receive", path: "/superAdmin/front-office/postal-receive" },
+      { label: "Postal Dispatch", path: "/superAdmin/front-office/postal-dispatch" },
+      { label: "Complains", path: "/superAdmin/front-office/complains" },
     ]},
     { label: "Academics", icon: GraduationCap, path: "", children: [
-      // { label: "Schools", path: "/admin/academics/schools" },
-      // { label: "Branches", path: "/admin/academics/branches" },
-      { label: "Subjects", path: "/admin/academics/subjects" },
-      { label: "Class", path: "/admin/academics/class" },
-      { label: "Sections", path: "/admin/academics/sections" },
-      { label: "Periods", path: "/admin/academics/periods" },
-      { label: "Class Timetable", path: "/admin/academics/timetable" },
-      { label: "Teachers", path: "/admin/academics/teachers" },
-      { label: "Parents", path: "/admin/academics/parents" },
+      { label: "Schools", path: "/superAdmin/academics/schools" },
+      { label: "Branches", path: "/superAdmin/academics/branches" },
+      { label: "Subjects", path: "/superAdmin/academics/subjects" },
+      { label: "Class", path: "/superAdmin/academics/class" },
+      { label: "Sections", path: "/superAdmin/academics/sections" },
+      { label: "Periods", path: "/superAdmin/academics/periods" },
+      { label: "Class Timetable", path: "/superAdmin/academics/timetable" },
+      { label: "Teachers", path: "/superAdmin/academics/teachers" },
+      { label: "Parents", path: "/superAdmin/academics/parents" },
     ]},
     { label: "Student Information", icon: Users, path: "", children: [
-      { label: "Student Admission", path: "/admin/student/studentAdmission" },
-      { label: "Student Details", path: "/admin/student/studentDetails" },
-      // { label: "Disabled Students", path: "/admin/student/disabledStudents" },
-      // { label: "Bulk Import/Export", path: "/admin/student/bulkImportExport" },
-      // { label: "Students Documents", path: "/admin/student/studentDocuments"},
+      { label: "Student Admission", path: "/superAdmin/student/studentAdmission" },
+      { label: "Student Details", path: "/superAdmin/student/studentDetails" },
+      // { label: "Disabled Students", path: "/superAdmin/student/disabledStudents" },
+      // { label: "Bulk Import/Export", path: "/superAdmin/student/bulkImportExport" },
+      // { label: "Students Documents", path: "/superAdmin/student/studentDocuments"},
     ]},
-    { label: "Certificate", icon: Medal, path: "/admin/certificates" },
+    { label: "Certificate", icon: Medal, path: "/superAdmin/certificates" },
     { label: "Attendance", icon: Clock, path: "", children: [
-      { label: "QR Code", path: "/admin/attendance/qr-code" },
-      { label: "Face Attendance", path: "/admin/attendance/face" },
-      { label: "Biometric", path: "/admin/attendance/biometric" },
-      // { label: "Approve Leave", path: "/admin/attendance/approve-leave" },
+      { label: "QR Code", path: "/superAdmin/attendance/qr-code" },
+      { label: "Face Attendance", path: "/superAdmin/attendance/face" },
+      { label: "Biometric", path: "/superAdmin/attendance/biometric" },
+      // { label: "Approve Leave", path: "/superAdmin/attendance/approve-leave" },
     ]},
     { label: "Examination", icon: FileText, path: "", children: [
-      { label: "Exam", path: "/admin/examination/exam" },
-      { label: "Exam Schedule", path: "/admin/examination/schedule" },
-      { label: "Exam Result", path: "/admin/examination/result" },
-      // { label: "Marks Grade", path: "/admin/examination/marks-grade" },
-      { label: "Online Exam", path: "/admin/examination/online" },
+      { label: "Exam", path: "/superAdmin/examination/exam" },
+      { label: "Exam Schedule", path: "/superAdmin/examination/schedule" },
+      { label: "Exam Result", path: "/superAdmin/examination/result" },
+      // { label: "Marks Grade", path: "/superAdmin/examination/marks-grade" },
+      { label: "Online Exam", path: "/superAdmin/examination/online" },
     ]},
     { label: "Fees Collection", icon: IndianRupeeIcon, path: "", children: [
-      { label: "Collect Fees", path: "/admin/fees/collectFees" },
-      { label: "Payments", path: "/admin/fees/payments" },
-      // { label: "Fees Type", path: "/admin/fees/feesType" },
-      { label: "Fees Discount", path: "/admin/fees/feesDiscount" },
-      // { label: "Fees Reminder", path: "/admin/fees/feesReminder" },
-      // { label: "Search Due Fees", path: "/admin/fees/searchDueFees" },
+      { label: "Collect Fees", path: "/superAdmin/fees/collectFees" },
+      { label: "Payments", path: "/superAdmin/fees/payments" },
+      // { label: "Fees Type", path: "/superAdmin/fees/feesType" },
+      { label: "Fees Discount", path: "/superAdmin/fees/feesDiscount" },
+      // { label: "Fees Reminder", path: "/superAdmin/fees/feesReminder" },
+      // { label: "Search Due Fees", path: "/superAdmin/fees/searchDueFees" },
     ]},
-    { label: "Human Resource", icon: Briefcase, path: "/admin/hr"},
-    { label: "Annual Calendar", icon: Calendar, path: "/admin/calendar" },
-    { label: "Communicate", icon: Bell, path: "/admin/communicate" },
-    { label: "Leave Request", icon: ClipboardCheck, path: "/admin/leave" },
+    { label: "Human Resource", icon: Briefcase, path: "/superAdmin/hr"},
+    { label: "Annual Calendar", icon: Calendar, path: "/superAdmin/calendar" },
+    { label: "Communicate", icon: Bell, path: "/superAdmin/communicate" },
+    { label: "Leave Request", icon: ClipboardCheck, path: "/superAdmin/leave" },
     // { label: "Online Course", icon: MonitorPlay, path: "", children: [
-    //   { label: "Courses", path: "/admin/online-course/courses" },
-    //   { label: "Question Bank", path: "/admin/online-course/question-bank" },
-    //   { label: "Reports", path: "/admin/online-course/reports" },
+    //   { label: "Courses", path: "/superAdmin/online-course/courses" },
+    //   { label: "Question Bank", path: "/superAdmin/online-course/question-bank" },
+    //   { label: "Reports", path: "/superAdmin/online-course/reports" },
     // ]},
-    { label: "Library", icon: Library, path: "/admin/library" },
-    { label: "Inventory", icon: Package, path: "/admin/inventory" },
-    { label: "Behaviour Records", icon: AlertTriangle, path: "/admin/behaviour" },
-    // { label: "G-Meet Live Classes", icon: Video, path: "/admin/live-classes" },
-    { label: "Scholarship", icon: Award, path: "/admin/scholarship" },
-    // { label: "Lesson Plan", icon: BookMarked, path: "/admin/lesson-plan" },
-    { label: "Download Center", icon: Download, path: "/admin/download/uploadContent"},
-    { label: "Homework", icon: ClipboardList, path: "/admin/homework/addHomework" },
+    { label: "Library", icon: Library, path: "/superAdmin/library" },
+    { label: "Inventory", icon: Package, path: "/superAdmin/inventory" },
+    { label: "Behaviour Records", icon: AlertTriangle, path: "/superAdmin/behaviour" },
+    // { label: "G-Meet Live Classes", icon: Video, path: "/superAdmin/live-classes" },
+    { label: "Scholarship", icon: Award, path: "/superAdmin/scholarship" },
+    // { label: "Lesson Plan", icon: BookMarked, path: "/superAdmin/lesson-plan" },
+    { label: "Download Center", icon: Download, path: "/superAdmin/download/uploadContent"},
+    { label: "Homework", icon: ClipboardList, path: "/superAdmin/homework/addHomework" },
 
-    { label: "Transport", icon: Bus, path: "/admin/transport" },
-    { label: "Hostel", icon: Building, path: "/admin/hostel" },
-    { label: "Canteen", icon: UtensilsCrossed, path: "/admin/canteen" },
-    { label: "Sports", icon: Trophy, path: "/admin/sports" },
-    // { label: "Alumni", icon: UserCheck, path: "/admin/alumni" },
-    { label: "Reports", icon: BarChart3, path: "/admin/reports" },
-    // { label: "Front CMS", icon: Globe, path: "/admin/website-settings" },
-    { label: "System Settings", icon: Settings, path: "/admin/setting" },
+    { label: "Transport", icon: Bus, path: "/superAdmin/transport" },
+    { label: "Hostel", icon: Building, path: "/superAdmin/hostel" },
+    { label: "Canteen", icon: UtensilsCrossed, path: "/superAdmin/canteen" },
+    { label: "Sports", icon: Trophy, path: "/superAdmin/sports" },
+    { label: "Alumni", icon: UserCheck, path: "/superAdmin/alumni" },
+    { label: "Reports", icon: BarChart3, path: "/superAdmin/reports" },
+    // { label: "Front CMS", icon: Globe, path: "/superAdmin/website-settings" },
+    { label: "System Settings", icon: Settings, path: "/superAdmin/setting" },
 
   ];
 
@@ -206,7 +207,7 @@ const getInitials = (name) => {
           {!collapsed && (
             <div className="flex items-center gap-2 dark:text-gray-400">
               <GraduationCap className="w-6 h-6" />
-              <h2 className="font-bold text-lg dark:text-gray-400">School Admin</h2>
+              <h2 className="font-bold text-lg dark:text-gray-400">School Super Admin</h2>
             </div>
           )}
 
@@ -300,9 +301,7 @@ const getInitials = (name) => {
         {!collapsed && (
           <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md dark:bg-gray-900 dark:text-gray-400">
             <div className="flex items-center gap-3">
-              {/* <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
-                {loading ? "..." : getInitials(data.name)}
-              </div> */}
+              
 
               <div className="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center font-bold">
                 {loading ? (
@@ -322,7 +321,7 @@ const getInitials = (name) => {
 
               <div className="flex-1">
                 <p className="text-sm font-semibold">{loading ? "..." : data.name}</p>
-                <p className="text-xs opacity-80">Admin</p>
+                <p className="text-xs opacity-80">Super Admin</p>
               </div>
               <LogOut onClick={() => router.push("/")} className="w-4 h-4 cursor-pointer hover:text-red-300" />
             </div>

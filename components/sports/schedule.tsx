@@ -31,9 +31,12 @@ import {
 import { Search, Plus, Trash2, Pencil, Eye, MapPin, Clock, Calendar, User, Activity } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 
-export default function PracticeScheduleTab() {
+interface SportsTabProps {
+  branchId?: string;
+}
+
+export default function PracticeScheduleTab({ branchId }: SportsTabProps) {
   const [data, setData] = useState<any[]>([]);
-  const [branches, setBranches] = useState<any[]>([]);
   const [sports, setSports] = useState<any[]>([]);
   const [coaches, setCoaches] = useState<any[]>([]);
 
@@ -47,12 +50,10 @@ export default function PracticeScheduleTab() {
 
   const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
 
-  const [branchFilter, setBranchFilter] = useState("");
   const [sportFilter, setSportFilter] = useState("");
   const [coachFilter, setCoachFilter] = useState("");
 
   const [form, setForm] = useState({
-    branchId: "",
     sportId: "",
     coachId: "",
     day: "",
@@ -82,12 +83,14 @@ useEffect(() => {
   // 🔹 Fetch schedules
 const fetchSchedules = async () => {
   try {
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : undefined;
+
     const res = await axiosInstance.get("/api/v1/sports/practice/schedules", {
       params: {
         page,
         limit: 10,
         day: search || undefined,
-        branchId: branchFilter === "all" ? undefined : branchFilter,
+        ...(branchId ? { branchId } : {}),
         sportId: sportFilter === "all" ? undefined : sportFilter,
         coachId: coachFilter === "all" ? undefined : coachFilter,
       },
@@ -102,26 +105,18 @@ const fetchSchedules = async () => {
 
 useEffect(() => {
   fetchSchedules();
-}, [page, search]);
-
-useEffect(() => {
-  fetchSchedules();
-}, [page, search, branchFilter, sportFilter, coachFilter]);
-
+}, [page, search, sportFilter, coachFilter]);
 
 
   // 🔹 Fetch dropdowns for Add/Edit modal
 const fetchDropdowns = async () => {
   try {
-    const [b, s, c] = await Promise.all([
-      axiosInstance.get("/api/v1/branches"),
+    const [s, c] = await Promise.all([
       axiosInstance.get("/api/v1/sports"),
       axiosInstance.get("/api/v1/staff?role=COACH"),
     ]);
 
-    setBranches(b.data.data);
     setSports(s.data.data);
-
     setCoaches(c.data.data);
 
   } catch (err) {
@@ -139,16 +134,27 @@ const fetchDropdowns = async () => {
 
   // 🔹 Create schedule
 const handleCreate = async () => {
-  if (!form.branchId || !form.sportId || !form.coachId || !form.day || !form.startTime || !form.endTime || !form.location) {
+  if (!form.sportId || !form.coachId || !form.day || !form.startTime || !form.endTime || !form.location) {
     console.warn("Please fill all required fields before creating schedule.");
     return;
   }
 
+  const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+  if (!branchId) {
+    console.warn("branchId not found in localStorage");
+    return;
+  }
+
   try {
-    console.log("Sending form to backend:", form); // debug
-    await axiosInstance.post("/api/v1/sports/practice/schedules", form);
+    const payload = {
+      ...form,
+      branchId,
+    };
+
+    console.log("Sending form to backend:", payload); // debug
+    await axiosInstance.post("/api/v1/sports/practice/schedules", payload);
     setShowAddDialog(false);
-    setForm({ branchId: "", sportId: "", coachId: "", day: "", startTime: "", endTime: "", location: "" });
+    setForm({ sportId: "", coachId: "", day: "", startTime: "", endTime: "", location: "" });
     fetchSchedules();
   } catch (err) {
     console.error("Create schedule error", err);
@@ -158,11 +164,21 @@ const handleCreate = async () => {
   // 🔹 Update schedule
   const handleUpdate = async () => {
     if (!selectedSchedule) return;
+
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+    if (!branchId) {
+      console.warn("branchId not found in localStorage");
+      return;
+    }
+
     try {
-      await axiosInstance.put(`/api/v1/sports/practice/schedules/${selectedSchedule.id}`, form);
+      await axiosInstance.put(`/api/v1/sports/practice/schedules/${selectedSchedule.id}`, {
+        ...form,
+        branchId,
+      });
       setShowEditDialog(false);
       setSelectedSchedule(null);
-      setForm({ branchId: "", sportId: "", coachId: "", day: "", startTime: "", endTime: "", location: "" });
+      setForm({ sportId: "", coachId: "", day: "", startTime: "", endTime: "", location: "" });
       fetchSchedules();
     } catch (err) {
       console.error("Update schedule error", err);
@@ -183,7 +199,6 @@ const handleCreate = async () => {
   const openEditModal = (schedule: any) => {
     setSelectedSchedule(schedule);
     setForm({
-      branchId: schedule.branchId,
       sportId: schedule.sportId,
       coachId: schedule.coachId,
       day: schedule.day,
@@ -227,29 +242,8 @@ const handleCreate = async () => {
               <Activity size={28} /> Add Practice Schedule
             </DialogTitle>
 
-            {/* Branch */}
-            <div className="space-y-1 bg-green-50 p-3 rounded-xl shadow-inner border border-green-100">
-              <label className="flex items-center gap-2 font-semibold text-green-700">
-                <MapPin size={18} /> Branch
-              </label>
-              <Select
-                value={form.branchId}
-                onValueChange={(v) => setForm({ ...form, branchId: v })}
-              >
-                <SelectTrigger className="w-full border-green-300 focus:ring-1 focus:ring-green-400">
-                  <SelectValue placeholder="Select Branch" />
-                </SelectTrigger>
-                <SelectContent>
-                  {branches.map((b) => (
-                    <SelectItem key={b.id} value={b.id}>
-                      {b.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Branch is set automatically from profile branchId in localStorage */}
 
-            {/* Sport */}
             <div className="space-y-1 bg-orange-50 p-3 rounded-xl shadow-inner border border-orange-100">
               <label className="flex items-center gap-2 font-semibold text-orange-600">
                 <Activity size={18} /> Sport
@@ -384,7 +378,7 @@ const handleCreate = async () => {
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>{sports.find((s) => s.id === d.sportId)?.name}</TableCell>
                 <TableCell>{coaches.find((c) => c.id === d.coachId)?.name}</TableCell>
-                <TableCell>{branches.find((b) => b.id === d.branchId)?.name}</TableCell>
+                {/* <TableCell>{branches.find((b) => b.id === d.branchId)?.name}</TableCell> */}
                 <TableCell><Badge className="bg-purple-100 text-purple-700">{d.day}</Badge></TableCell>
                 <TableCell>{d.startTime.slice(11,16)} - {d.endTime.slice(11,16)}</TableCell>
                 <TableCell>{d.location}</TableCell>
@@ -421,23 +415,8 @@ const handleCreate = async () => {
         <DialogContent className="space-y-4">
           <DialogTitle className="text-xl font-bold text-yellow-600">Edit Schedule</DialogTitle>
 
-          {/* Branch */}
-          <label className="font-medium text-gray-700">Branch</label>
-  <Select
-    value={form.branchId} // bind to form
-    onValueChange={(v) => setForm({ ...form, branchId: v })}
-  >
-    <SelectTrigger>
-      <SelectValue placeholder="Select Branch" />
-    </SelectTrigger>
-    <SelectContent>
-      {branches.map((b) => (
-        <SelectItem key={b.id} value={b.id}>
-          {b.name}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
+          {/* Branch is set automatically from profile branchId in localStorage */}
+          <p className="text-sm text-gray-600">Branch is auto-selected</p>
 
           {/* Sport */}
           <label className="font-medium text-gray-700">Sport</label>
@@ -497,7 +476,7 @@ const handleCreate = async () => {
           <DialogTitle className="text-xl font-bold text-blue-600">View Schedule</DialogTitle>
           {selectedSchedule && (
             <div className="space-y-2">
-              <p><strong>Branch:</strong> {branches.find((b) => b.id === selectedSchedule.branchId)?.name}</p>
+              <p><strong>Branch:</strong> {typeof window !== "undefined" ? localStorage.getItem("branchId") || "-" : "-"}</p>
               <p><strong>Sport:</strong> {sports.find((s) => s.id === selectedSchedule.sportId)?.name}</p>
               <p><strong>Coach:</strong> {coaches.find((c) => c.id === selectedSchedule.coachId)?.name}</p>
               <p><strong>Day:</strong> <Badge className="bg-purple-100 text-purple-700">{selectedSchedule.day}</Badge></p>

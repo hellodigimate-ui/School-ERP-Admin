@@ -22,13 +22,15 @@ import {
 import {  Plus, Trash2 } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 
-export default function TournamentTab() {
+interface SportsTabProps {
+  branchId?: string;
+}
+
+export default function TournamentTab({ branchId }: SportsTabProps) {
   const [data, setData] = useState<any[]>([]);
-  const [branches, setBranches] = useState<any[]>([]);
   const [sports, setSports] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(false);
-  const [loadingBranches, setLoadingBranches] = useState(false);
   const [loadingSports, setLoadingSports] = useState(false);
 
   const [page, setPage] = useState(1);
@@ -39,7 +41,6 @@ export default function TournamentTab() {
   const [showDialog, setShowDialog] = useState(false);
 
   const [form, setForm] = useState({
-    branchId: "",
     sportId: "",
     name: "",
     startDate: "",
@@ -72,36 +73,18 @@ export default function TournamentTab() {
     }
   };
 
-  // 🔥 Fetch branches
-  const fetchBranches = async () => {
-    try {
-      setLoadingBranches(true);
-
-      const res = await axiosInstance.get("/api/v1/branches", {
-        params: {
-          page: 1,
-          perPage: 50,
-        },
-      });
-
-      setBranches(res.data.data);
-    } catch (err) {
-      console.error("Branches error", err);
-    } finally {
-      setLoadingBranches(false);
-    }
-  };
-
-  // 🔥 Fetch sports (based on branch)
-  const fetchSports = async (branchId: string) => {
+  // 🔥 Fetch sports (based on profile branch)
+  const fetchSports = async () => {
     try {
       setLoadingSports(true);
+
+      const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : "";
 
       const res = await axiosInstance.get("/api/v1/sports", {
         params: {
           page: 1,
           limit: 50,
-          branchId,
+          ...(branchId ? { branchId } : {}),
         },
       });
 
@@ -118,27 +101,28 @@ export default function TournamentTab() {
   }, [page, searchStatus]);
 
   useEffect(() => {
-    fetchBranches();
+    fetchSports();
   }, []);
 
-  useEffect(() => {
-    if (form.branchId) {
-      fetchSports(form.branchId);
-    } else {
-      setSports([]);
-    }
-  }, [form.branchId]);
 
   // 🔥 Create
   const handleCreate = async () => {
-    if (!form.name || !form.branchId || !form.sportId) {
+    if (!form.name || !form.sportId) {
       alert("Fill required fields");
+      return;
+    }
+
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+
+    if (!branchId) {
+      alert("Branch not selected in profile");
       return;
     }
 
     try {
       await axiosInstance.post("/api/v1/sports/tournaments", {
         ...form,
+        branchId,
         registrationFee: Number(form.registrationFee),
       });
 
@@ -146,7 +130,6 @@ export default function TournamentTab() {
       fetchTournaments();
 
       setForm({
-        branchId: "",
         sportId: "",
         name: "",
         startDate: "",
@@ -226,41 +209,18 @@ export default function TournamentTab() {
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
 
-            {/* Branch */}
-            <Select
-              value={form.branchId}
-              onValueChange={(v) =>
-                setForm({ ...form, branchId: v, sportId: "" })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={loadingBranches ? "Loading..." : "Select Branch"}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {branches.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>
-                    {b.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             {/* Sport */}
             <Select
               value={form.sportId}
               onValueChange={(v) => setForm({ ...form, sportId: v })}
-              disabled={!form.branchId || loadingSports}
+              disabled={loadingSports}
             >
               <SelectTrigger>
                 <SelectValue
                   placeholder={
-                    !form.branchId
-                      ? "Select branch first"
-                      : loadingSports
-                        ? "Loading..."
-                        : "Select Sport"
+                    loadingSports
+                      ? "Loading..."
+                      : "Select Sport"
                   }
                 />
               </SelectTrigger>

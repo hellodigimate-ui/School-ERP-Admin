@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -22,11 +23,13 @@ import {
 import { Dumbbell, Plus, Search, Pencil, Trash2 } from "lucide-react";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 
-export default function SportsList() {
+interface SportsListProps {
+  branchId?: string;
+}
+
+export default function SportsList({ branchId }: SportsListProps) {
   const [sports, setSports] = useState<any[]>([]);
-  const [branches, setBranches] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingBranches, setLoadingBranches] = useState(false);
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -38,7 +41,6 @@ export default function SportsList() {
   const [form, setForm] = useState({
     name: "",
     description: "",
-    branchId: "",
   });
 
   const [editForm, setEditForm] = useState({
@@ -55,6 +57,7 @@ export default function SportsList() {
         page: page.toString(),
         limit: "12",
         ...(search && { name: search }),
+        ...(branchId ? { branchId } : {}),
       });
 
       const res = await axiosInstance.get(`/api/v1/sports?${params}`);
@@ -71,30 +74,23 @@ export default function SportsList() {
     }
   };
 
-  // ================= FETCH BRANCHES =================
-  const fetchBranches = async () => {
-    try {
-      setLoadingBranches(true);
-
-      const res = await axiosInstance.get("/api/v1/branches?perPage=100");
-      const json = res.data;
-
-      if (json.success) setBranches(json.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingBranches(false);
-    }
-  };
-
   // ================= CRUD =================
   const handleCreate = async () => {
     try {
-      const res = await axiosInstance.post("/api/v1/sports", form);
+      const localBranchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+
+      const payload = {
+        ...form,
+        ...(localBranchId ? { branchId: localBranchId } : {}),
+      };
+
+      const res = await axiosInstance.post("/api/v1/sports", payload);
+
+      console.log("Create response:", res.data);
 
       if (res.data.success) {
         setShowDialog(false);
-        setForm({ name: "", description: "", branchId: "" });
+        setForm({ name: "", description: "" });
         fetchSports();
       }
     } catch (err) {
@@ -132,10 +128,6 @@ export default function SportsList() {
     fetchSports();
   }, [page, search]);
 
-  useEffect(() => {
-    if (showDialog) fetchBranches();
-  }, [showDialog]);
-
   // ================= UI =================
   return (
     <div className="space-y-6">
@@ -169,34 +161,6 @@ export default function SportsList() {
             <DialogTitle>Add Sport</DialogTitle>
 
             <div className="space-y-4">
-              {/* Branch */}
-              <Select
-                value={form.branchId}
-                onValueChange={(val) => setForm({ ...form, branchId: val })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Branch" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {loadingBranches ? (
-                    <SelectItem value="loading" disabled>
-                      Loading...
-                    </SelectItem>
-                  ) : branches.length === 0 ? (
-                    <SelectItem value="empty" disabled>
-                      No branches
-                    </SelectItem>
-                  ) : (
-                    branches.map((b) => (
-                      <SelectItem key={b.id} value={b.id}>
-                        {b.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-
               <Input
                 placeholder="Sport name"
                 value={form.name}

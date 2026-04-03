@@ -54,10 +54,13 @@ const statusConfig: any = {
   INACTIVE: "bg-red-100 text-red-700",
 };
 
-export default function EnrollmentTab() {
+interface SportsTabProps {
+  branchId?: string;
+}
+
+export default function EnrollmentTab({ branchId }: SportsTabProps) {
   const [enrollmentData, setEnrollmentData] = useState<any[]>([]);
   const [sports, setSports] = useState<any[]>([]);
-  const [branches, setBranches] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
 
   const [searchEnrollments, setSearchEnrollments] = useState("");
@@ -72,21 +75,25 @@ export default function EnrollmentTab() {
   const [form, setForm] = useState({
     studentId: "",
     sportId: "",
-    branchId: "",
   });
 
 const [users, setUsers] = useState<any[]>([]);
 const [studentPopoverOpen, setStudentPopoverOpen] = useState(false);
 const [selectedStudentName, setSelectedStudentName] = useState("");
 
-// Fetch users by branch
-const fetchUsers = async (branchId: string) => {
+// Fetch users from profile branch
+const fetchUsers = async () => {
   try {
-    const res = await axiosInstance.get(
-      `/api/v1/students?branch=${branchId}`
-    );
-    console.log(res.data);
-    if (res.data.success) setUsers(res.data.data.students);
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+    if (!branchId) {
+      setUsers([]);
+      return;
+    }
+
+    const res = await axiosInstance.get(`/api/v1/students`, {
+      params: { branch: branchId, search: searchStudents || undefined },
+    });
+    if (res.data.success) setUsers(res.data.data.students || []);
   } catch (err) {
     console.error("Failed to load users", err);
     setUsers([]);
@@ -95,9 +102,8 @@ const fetchUsers = async (branchId: string) => {
 
 // Optional: dynamically filter students while typing
 useEffect(() => {
-  if (form.branchId) fetchUsers(form.branchId);
-}, [searchStudents]);  
-
+  fetchUsers();
+}, [searchStudents]);
 
 
 
@@ -124,12 +130,6 @@ useEffect(() => {
     setSports(res.data.data);
   };
 
-  // 🔥 Fetch Branches
-  const fetchBranches = async () => {
-    const res = await axiosInstance.get("/api/v1/branches");
-    setBranches(res.data.data);
-  };
-
   // 🔥 Fetch Students
   const fetchStudents = async () => {
     try {
@@ -149,7 +149,6 @@ useEffect(() => {
 
   useEffect(() => {
     fetchSports();
-    fetchBranches();
     fetchStudents();
   }, []);
 
@@ -160,10 +159,19 @@ useEffect(() => {
 
   // 🔥 Create Enrollment
   const handleEnroll = async () => {
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+    if (!branchId) {
+      console.warn("branchId not found in localStorage");
+      return;
+    }
+
     try {
-      await axiosInstance.post("/api/v1/sports/enrollments", form);
+      await axiosInstance.post("/api/v1/sports/enrollments", {
+        ...form,
+        branchId,
+      });
       setShowEnrollDialog(false);
-      setForm({ studentId: "", sportId: "", branchId: "" });
+      setForm({ studentId: "", sportId: "" });
       fetchEnrollments();
     } catch (err) {
       console.error("Enroll error", err);
@@ -225,25 +233,8 @@ useEffect(() => {
             Enroll Student
           </DialogTitle>
 
-          {/* 🔹 Branch Select */}
-          <Select
-            value={form.branchId}
-            onValueChange={(value) => {
-              setForm({ ...form, branchId: value, studentId: "" })
-              fetchUsers(value) // fetch students for this branch
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Branch" />
-            </SelectTrigger>
-            <SelectContent>
-              {branches.map((b) => (
-                <SelectItem key={b.id} value={b.id}>
-                  {b.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {/* Branch is set automatically from profile branchId in localStorage */}
+          <p className="text-sm text-gray-600">Branch is auto-selected</p>
 
           {/* 🔹 Student Search & Select using Popover */}
           <div className="space-y-2">
@@ -322,7 +313,6 @@ useEffect(() => {
         <TableHead>#</TableHead>
         <TableHead>Student</TableHead>
         <TableHead>Sport</TableHead>
-        <TableHead>Branch</TableHead>
         <TableHead>Date</TableHead>
         <TableHead>Status</TableHead>
         <TableHead className="text-right">Actions</TableHead>
@@ -334,7 +324,7 @@ useEffect(() => {
           <TableCell>{i + 1}</TableCell>
           <TableCell>{students.find((s) => s.id === e.studentId)?.name || e.Student.name}</TableCell>
           <TableCell>{sports.find((s) => s.id === e.sportId)?.name}</TableCell>
-          <TableCell>{branches.find((b) => b.id === e.branchId)?.name}</TableCell>
+
           <TableCell>{new Date(e.enrollmentDate).toLocaleDateString()}</TableCell>
           <TableCell>
             <Badge className={statusConfig[e.status]}>{e.status}</Badge>
@@ -366,7 +356,7 @@ useEffect(() => {
                     <div className="flex items-center gap-2">
                       <MapPin className="text-purple-500" size={20} />
                       <span className="font-semibold">Branch:</span>
-                      <span>{branches.find((b) => b.id === viewEnrollment.branchId)?.name}</span>
+                      <span>{typeof window !== "undefined" ? localStorage.getItem("branchId") || "-" : "-"}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -398,7 +388,7 @@ useEffect(() => {
         <div className="flex items-center gap-2 text-gray-700 font-semibold">
           <MapPin size={18} /> Branch:
           <span className="text-gray-900">
-            {branches.find(b => b.id === selectedEnrollment.branchId)?.name}
+            {typeof window !== "undefined" ? localStorage.getItem("branchId") || "-" : "-"}
           </span>
         </div>
 

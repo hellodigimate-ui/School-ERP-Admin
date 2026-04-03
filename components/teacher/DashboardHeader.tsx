@@ -1,16 +1,16 @@
 "use client";
 
-import { Bell, Search, User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 import {
   Popover,
   PopoverContent,
@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../ThemeToggle";
 
 
 interface DashboardHeaderProps {
@@ -50,7 +51,6 @@ const recentNotifications = [
 ];
 
 export function DashboardHeader({
-  teacherName = "Jane Doe",
 }: DashboardHeaderProps) {
   const unreadCount = recentNotifications.filter((n) => n.unread).length;
   const router=useRouter();
@@ -125,7 +125,7 @@ export function DashboardHeader({
         </Popover>
 
         {/* Profile Dropdown */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-3 hover:bg-muted rounded-lg p-2 transition-colors">
               <Avatar className="w-9 h-9">
@@ -170,36 +170,14 @@ export function DashboardHeader({
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
+            <DropdownMenuItem onClick={()=>router.push("/")}  className="text-destructive focus:text-destructive cursor-pointer">
               <LogOut className="w-4 h-4 mr-2" />
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
+        <ThemeToggle/>
       </div>
     </header>
-  );
-}
-
-export function DashboardTitle({
-  teacherName = "Jane Doe",
-}: DashboardHeaderProps) {
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-  return (
-    <div className="flex items-center justify-between mb-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back, {teacherName}
-        </p>
-      </div>
-      <p className="text-sm text-muted-foreground">{today}</p>
-    </div>
   );
 }

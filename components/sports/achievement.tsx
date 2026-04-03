@@ -33,9 +33,12 @@ import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 const API = "/api/v1";
 
-export default function AchievementsTab() {
+interface SportsTabProps {
+  branchId?: string;
+}
+
+export default function AchievementsTab({ branchId }: SportsTabProps) {
   const [achievements, setAchievements] = useState<any[]>([]);
-  const [branches, setBranches] = useState<any[]>([]);
   const [sports, setSports] = useState<any[]>([]);
   const [tournaments, setTournaments] = useState<any[]>([]);
 
@@ -67,7 +70,6 @@ export default function AchievementsTab() {
 
   const [form, setForm] = useState({
     studentId: "",
-    branchId: "",
     sportId: "",
     tournamentId: "",
     title: "",
@@ -80,7 +82,6 @@ export default function AchievementsTab() {
   const resetForm = () => {
     setForm({
       studentId: "",
-      branchId: "",
       sportId: "",
       tournamentId: "",
       title: "",
@@ -112,21 +113,20 @@ export default function AchievementsTab() {
   };
 
   const fetchMeta = async () => {
-    const [b, s, t] = await Promise.all([
-      axiosInstance.get(`${API}/branches`),
+    const [s, t] = await Promise.all([
       axiosInstance.get(`${API}/sports`, { params: { page: 1, limit: 500 } }),
       axiosInstance.get(`${API}/sports/tournaments`, {
         params: { page: 1, limit: 50 },
       }),
     ]);
 
-    setBranches(b.data.data);
     setSports(s.data.data);
     setTournaments(t.data.data);
   };
 
   const fetchStudents = async (search: string) => {
-    if (!form.branchId) return;
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
+    if (!branchId) return;
 
     setLoadingStudents(true);
     const res = await axiosInstance.get(`${API}/students`, {
@@ -134,7 +134,7 @@ export default function AchievementsTab() {
         name: search || undefined,
         page: 1,
         perPage: 10,
-        branch: form.branchId,
+        branch: branchId,
       },
     });
 
@@ -151,22 +151,16 @@ export default function AchievementsTab() {
   }, []);
 
   useEffect(() => {
-    if (!form.branchId) return;
-
     const delay = setTimeout(() => {
       fetchStudents(studentSearch);
     }, 400);
 
     return () => clearTimeout(delay);
-  }, [studentSearch, form.branchId]);
+  }, [studentSearch]);
 
   useEffect(() => {
-    if (form.branchId) {
-      setFilteredSports(sports.filter((s) => s.branchId === form.branchId));
-    } else setFilteredSports([]);
-
-    setForm((f) => ({ ...f, sportId: "", tournamentId: "" }));
-  }, [form.branchId]);
+    setFilteredSports(sports);
+  }, [sports]);
 
   useEffect(() => {
     if (form.sportId) {
@@ -177,13 +171,6 @@ export default function AchievementsTab() {
 
     setForm((f) => ({ ...f, tournamentId: "" }));
   }, [form.sportId]);
-
-  useEffect(() => {
-    setSelectedStudent(null);
-    setStudents([]);
-    setStudentSearch("");
-    setForm((f) => ({ ...f, studentId: "" }));
-  }, [form.branchId]);
 
   const handleCreate = async () => {
     await axiosInstance.post(`${API}/sports/achievements`, form);
@@ -211,7 +198,6 @@ export default function AchievementsTab() {
 
     setForm({
       studentId: a.studentId,
-      branchId: a.Sport?.branchId || "",
       sportId: a.sportId,
       tournamentId: a.tournamentId,
       title: a.title,
@@ -225,36 +211,22 @@ export default function AchievementsTab() {
     setStudentSearch(a.Student?.name);
   };
 
-  const renderForm = (isEdit = false) => (
-    <div className="space-y-3 mt-4">
-      {/* Branch */}
-      <Select
-        value={form.branchId}
-        onValueChange={(v) => setForm({ ...form, branchId: v })}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select Branch" />
-        </SelectTrigger>
-        <SelectContent>
-          {branches.map((b) => (
-            <SelectItem key={b.id} value={b.id}>
-              {b.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+  const renderForm = (isEdit = false) => {
+    const branchId = typeof window !== "undefined" ? localStorage.getItem("branchId") : null;
 
-      {/* Student Selection */}
-      <div className="space-y-2">
-        <Input
-          placeholder="Search student..."
-          value={studentSearch}
-          disabled={!form.branchId || !!selectedStudent}
-          onChange={(e) => setStudentSearch(e.target.value)}
-        />
+    return (
+      <div className="space-y-3 mt-4">
+        {/* Student Selection */}
+        <div className="space-y-2">
+          <Input
+            placeholder="Search student..."
+            value={studentSearch}
+            disabled={!branchId || !!selectedStudent}
+            onChange={(e) => setStudentSearch(e.target.value)}
+          />
 
-        <div className="border rounded-md max-h-40 overflow-y-auto">
-          {!form.branchId ? (
+          <div className="border rounded-md max-h-40 overflow-y-auto">
+            {!branchId ? (
             <p className="p-2 text-sm text-muted-foreground">
               Select branch first
             </p>
@@ -303,7 +275,7 @@ export default function AchievementsTab() {
       <Select
         value={form.sportId}
         onValueChange={(v) => setForm({ ...form, sportId: v })}
-        disabled={!form.branchId}
+        disabled={!branchId}
       >
         <SelectTrigger>
           <SelectValue placeholder="Select Sport" />
@@ -371,7 +343,7 @@ export default function AchievementsTab() {
         onClick={isEdit ? handleUpdate : handleCreate}
         disabled={
           !form.studentId ||
-          !form.branchId ||
+          !branchId ||
           !form.sportId ||
           !form.tournamentId ||
           !form.title ||
@@ -383,7 +355,8 @@ export default function AchievementsTab() {
         {isEdit ? "Update" : "Save"}
       </Button>
     </div>
-  );
+    );
+  }
 
   return (
     <div className="space-y-4">

@@ -1,162 +1,9 @@
-// "use client";
-
-// import { useState } from "react";
-// import Link from "next/link";
-// import { usePathname } from "next/navigation";
-// import {
-//   LayoutDashboard,
-//   Users,
-//   BookOpen,
-//   Calendar,
-//   ClipboardCheck,
-//   FileText,
-//   Bell,
-//   Settings,
-//   ChevronLeft,
-//   ChevronRight,
-//   GraduationCap,
-//   MessageSquare,
-// } from "lucide-react";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { cn } from "@/lib/utils";
-
-// interface NavItem {
-//   icon: React.ElementType;
-//   label: string;
-//   path: string;
-// }
-
-// const navItems: NavItem[] = [
-//   { icon: LayoutDashboard, label: "Dashboard", path: "/teacher/dashboard" },
-//   { icon: Users, label: "My Students", path: "/teacher/students" },
-//   { icon: BookOpen, label: "My Classes", path: "/teacher/classes" },
-//   { icon: Calendar, label: "Schedule", path: "/teacher/schedule" },
-//   { icon: ClipboardCheck, label: "Attendance", path: "/teacher/attendance" },
-//   { icon: FileText, label: "Assignments", path: "/teacher/assignments" },
-//   { icon: GraduationCap, label: "Grades", path: "/teacher/grades" },
-//   { icon: MessageSquare, label: "Messages", path: "/teacher/messages" },
-// ];
-
-// const bottomNavItems: NavItem[] = [
-//   { icon: Bell, label: "Notifications", path: "/teacher/notifications" },
-//   { icon: Settings, label: "Settings", path: "/teacher/settings" },
-// ];
-
-// export function TeacherSidebar() {
-//   const [collapsed, setCollapsed] = useState(false);
-//   const pathname = usePathname();
-
-//   return (
-//     <aside
-//       className={cn(
-//         "h-screen bg-gray-900 text-gray-100 flex flex-col transition-all duration-300 sticky top-0",
-//         collapsed ? "w-20" : "w-64"
-//       )}
-//     >
-//       {/* Logo */}
-//       <div className="flex items-center gap-3 h-16 px-4 border-b border-gray-700">
-//         <div className="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-xl flex-shrink-0">
-//           <GraduationCap className="w-6 h-6" />
-//         </div>
-//         {!collapsed && (
-//           <div className="flex flex-col">
-//             <span className="font-semibold text-gray-100">School</span>
-//             <span className="text-xs text-gray-400">Teacher Panel</span>
-//           </div>
-//         )}
-//       </div>
-
-//       {/* Navigation */}
-//       <nav className="flex-1 overflow-y-auto py-3 flex flex-col gap-1">
-//         {navItems.map((item) => {
-//           const isActive = pathname.startsWith(item.path);
-//           return (
-//             <Link
-//               key={item.path}
-//               href={item.path}
-//               className={cn(
-//                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-//                 isActive ? "bg-gray-800 font-medium" : "hover:bg-gray-700",
-//                 collapsed && "justify-center px-0"
-//               )}
-//               title={collapsed ? item.label : undefined}
-//             >
-//               <item.icon className="w-5 h-5 flex-shrink-0" />
-//               {!collapsed && <span>{item.label}</span>}
-//             </Link>
-//           );
-//         })}
-//       </nav>
-
-//       {/* Bottom Navigation + Collapse */}
-//       <div className="px-3 py-2 border-t border-gray-700 flex flex-col gap-1 mt-auto">
-//         {bottomNavItems.map((item) => {
-//           const isActive = pathname.startsWith(item.path);
-//           return (
-//             <Link
-//               key={item.path}
-//               href={item.path}
-//               className={cn(
-//                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-//                 isActive ? "bg-gray-800 font-medium" : "hover:bg-gray-700",
-//                 collapsed && "justify-center px-0"
-//               )}
-//               title={collapsed ? item.label : undefined}
-//             >
-//               <item.icon className="w-5 h-5 flex-shrink-0" />
-//               {!collapsed && <span>{item.label}</span>}
-//             </Link>
-//           );
-//         })}
-
-//         {/* Collapse Button */}
-//         <button
-//           onClick={() => setCollapsed(!collapsed)}
-//           className="flex items-center gap-3 justify-center px-3 py-2 rounded-md text-sm mt-2 hover:bg-gray-700 transition-colors"
-//           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-//         >
-//           {collapsed ? (
-//             <ChevronRight className="w-5 h-5" />
-//           ) : (
-//             <>
-//               <ChevronLeft className="w-5 h-5" />
-//               <span>Collapse</span>
-//             </>
-//           )}
-//         </button>
-//       </div>
-
-//       {/* Profile */}
-//       <div
-//         className={cn(
-//           "px-3 py-4 border-t border-gray-700 flex items-center gap-3",
-//           collapsed && "justify-center"
-//         )}
-//       >
-//         <Avatar className="w-10 h-10 flex-shrink-0">
-//           <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" />
-//           <AvatarFallback>JD</AvatarFallback>
-//         </Avatar>
-//         {!collapsed && (
-//           <div className="flex flex-col overflow-hidden">
-//             <span className="font-medium truncate text-gray-100">
-//               Jane Doe
-//             </span>
-//             <span className="text-xs text-gray-400">Mathematics Teacher</span>
-//           </div>
-//         )}
-//       </div>
-//     </aside>
-//   );
-// }
-
-
-
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -169,16 +16,33 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
-  MessageSquare,
+  // MessageSquare,
+  LogOut,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 interface NavItem {
   icon: React.ElementType;
   label: string;
   path: string;
 }
+
+const dummyData = {
+  name: "Rahul",
+  avatar: "https://pngtree.com/so/user"
+};
+
+const getInitials = (name) => {
+  if (!name) return "";
+
+  const words = name.trim().split(" ");
+  if (words.length === 1) {
+    return words[0][0].toUpperCase();
+  }
+
+  return (words[0][0] + words[1][0]).toUpperCase();
+};
 
 const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/teacher/dashboard" },
@@ -187,8 +51,8 @@ const navItems: NavItem[] = [
   { icon: Calendar, label: "Schedule", path: "/teacher/schedule" },
   { icon: ClipboardCheck, label: "Attendance", path: "/teacher/attendance" },
   { icon: FileText, label: "Assignments", path: "/teacher/assignments" },
-  { icon: GraduationCap, label: "Grades", path: "/teacher/grades" },
-  { icon: MessageSquare, label: "Messages", path: "/teacher/messages" },
+  // { icon: GraduationCap, label: "Grades", path: "/teacher/grades" },
+  // { icon: MessageSquare, label: "Messages", path: "/teacher/messages" },
 ];
 
 const bottomNavItems: NavItem[] = [
@@ -199,6 +63,46 @@ const bottomNavItems: NavItem[] = [
 export function TeacherSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+
+  const router=useRouter();
+
+  const [data, setData] = useState({
+    name: "",
+    avatar: "",
+  });
+  const [loading, setLoading] = useState(true);
+
+
+
+
+useEffect(() => {
+
+  const fetchProfile = async () => {
+    try {
+      const response = await axiosInstance.get("/api/v1/users/me");
+
+      console.log("Full API Response:", response.data);
+
+      const profile = response?.data?.data || response?.data;
+
+      setData({
+        name: profile?.name ?? dummyData.name,
+        avatar: profile?.avatar ?? "", // 👈 add this
+      });
+    } catch (error) {
+      console.log(
+        "API failed, using dummy data:",
+        error instanceof Error ? error.message : String(error)
+      );
+      setData(dummyData);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProfile();
+}, []);
+
 
   return (
     <aside
@@ -277,27 +181,41 @@ export function TeacherSidebar() {
         })}
       </div>
 
-      {/* Profile */}
-      <div
-        className={cn(
-          "px-3 py-4 flex items-center gap-3",
-          collapsed && "justify-center"
-        )}
-      >
-        <Avatar className="w-10 h-10">
-          <AvatarImage src="" />
-          <AvatarFallback className="bg-primary dark:bg-primary text-primary-foreground dark:text-primary-foreground">
-            T
-          </AvatarFallback>
-        </Avatar>
-
+        {/* User Section */}
         {!collapsed && (
-          <div className="flex flex-col">
-            <span className="font-medium">Jane Doe</span>
-            <span className="text-xs text-muted-foreground dark:text-muted-foreground">Teacher</span>
+          <div className="p-4 border-t border-white/20 bg-white/10 backdrop-blur-md dark:bg-gray-900 dark:text-gray-400">
+            <div className="flex items-center gap-3">
+              {/* <div className="w-10 h-10 rounded-full bg-white text-indigo-600 flex items-center justify-center font-bold">
+                {loading ? "..." : getInitials(data.name)}
+              </div> */}
+
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center font-bold">
+                {loading ? (
+                  "..."
+                ) : data?.avatar ? (
+                  <img
+                    src={data.avatar}
+                    alt={data.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-indigo-600">
+                    {getInitials(data.name)}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{loading ? "..." : data.name}</p>
+                <p className="text-xs opacity-80">Teacher</p>
+              </div>
+              <button onClick={() => router.push("/")}>
+                <LogOut className="w-4 h-4 cursor-pointer hover:text-red-300" />
+              </button>
+              
+            </div>
           </div>
         )}
-      </div>
     </aside>
   );
 }

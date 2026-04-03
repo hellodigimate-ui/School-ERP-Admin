@@ -17,27 +17,27 @@ const classStats: ClassStat[] = [
 
 export function ClassPerformance() {
   return (
-    <div className="dashboard-section animate-fade-in">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="section-title mb-0">Class Performance</h2>
-        <a href="/grades" className="text-sm text-primary hover:underline font-medium">
+    <div className="bg-card rounded-xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-foreground">Class Performance</h2>
+        <a href="/grades" className="text-sm text-accent hover:text-accent/80 font-medium transition-colors">
           Details →
         </a>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {classStats.map((stat) => (
-          <div key={stat.className} className="flex items-center justify-between py-2 border-b border-border/50 last:border-b-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                <span className="text-sm font-bold text-foreground">
+          <div key={stat.className} className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/5 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                <span className="text-lg font-bold text-accent">
                   {stat.avgScore}
                 </span>
               </div>
-              <span className="font-medium">{stat.className}</span>
+              <span className="font-semibold text-foreground">{stat.className}</span>
             </div>
             <div className="flex items-center gap-2">
               <span
-                className={`text-sm font-medium ${
+                className={`text-sm font-semibold ${
                   stat.trend === "up"
                     ? "text-success"
                     : stat.trend === "down"
@@ -47,9 +47,9 @@ export function ClassPerformance() {
               >
                 {stat.change}
               </span>
-              {stat.trend === "up" && <TrendingUp className="w-4 h-4 text-success" />}
-              {stat.trend === "down" && <TrendingDown className="w-4 h-4 text-destructive" />}
-              {stat.trend === "stable" && <Minus className="w-4 h-4 text-muted-foreground" />}
+              {stat.trend === "up" && <TrendingUp className="w-5 h-5 text-success" />}
+              {stat.trend === "down" && <TrendingDown className="w-5 h-5 text-destructive" />}
+              {stat.trend === "stable" && <Minus className="w-5 h-5 text-muted-foreground" />}
             </div>
           </div>
         ))}

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Calendar, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,10 +8,14 @@ interface Event {
   title: string;
   date: string;
   time: string;
-  color: "purple" | "yellow" | "red" | "gray";
+  color?: "purple" | "yellow" | "red" | "gray";
 }
 
-const events: Event[] = [
+interface UpcomingEventsProps {
+  events?: Event[];
+}
+
+const defaultEvents: Event[] = [
   {
     id: "1",
     title: "Mathematics Test",
@@ -42,6 +46,13 @@ const events: Event[] = [
   },
 ];
 
+const colorOptions: ("purple" | "yellow" | "red" | "gray")[] = [
+  "purple",
+  "yellow",
+  "red",
+  "gray",
+];
+
 const borderColors = {
   purple: "border-l-event-purple",
   yellow: "border-l-event-yellow",
@@ -56,11 +67,43 @@ const bgColors = {
   gray: "bg-secondary/50",
 };
 
-export function UpcomingEvents() {
+export function UpcomingEvents({ events: passedEvents }: UpcomingEventsProps) {
+  // Use passed events with color assignment, fallback to defaults
+  const events = passedEvents
+    ? passedEvents.map((event, index) => ({
+        ...event,
+        color: event.color || colorOptions[index % colorOptions.length],
+        date:
+          typeof event.date === "string" && event.date.includes("T")
+            ? new Date(event.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : event.date,
+      }))
+    : defaultEvents;
+
+  if (!events || events.length === 0) {
+    return (
+      <div className="bg-card rounded-xl border border-border shadow-sm">
+        <div className="p-5 border-b border-border">
+          <h3 className="text-base font-semibold text-foreground">
+            Upcoming Events
+          </h3>
+        </div>
+        <div className="p-4">
+          <p className="text-sm text-muted-foreground">No upcoming events</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-card rounded-xl border border-border shadow-sm">
       <div className="p-5 border-b border-border">
-        <h3 className="text-base font-semibold text-foreground">Upcoming Events</h3>
+        <h3 className="text-base font-semibold text-foreground">
+          Upcoming Events
+        </h3>
       </div>
       <div className="p-4 space-y-3">
         {events.map((event) => (
@@ -68,11 +111,13 @@ export function UpcomingEvents() {
             key={event.id}
             className={cn(
               "p-3 rounded-lg border-l-4",
-              borderColors[event.color],
-              bgColors[event.color]
+              borderColors[event.color!],
+              bgColors[event.color!],
             )}
           >
-            <h4 className="text-sm font-medium text-foreground">{event.title}</h4>
+            <h4 className="text-sm font-medium text-foreground">
+              {event.title}
+            </h4>
             <div className="flex items-center gap-4 mt-1.5">
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
