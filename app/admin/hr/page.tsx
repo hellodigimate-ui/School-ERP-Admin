@@ -177,6 +177,12 @@ function HRPage({ highlightId }: { highlightId: string | null }) {
 
   const [loadingStaff, setLoadingStaff] = useState(false)
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalStaff, setTotalStaff] = useState(0);
+
 const [formData, setFormData] = useState<any>({
   name: "",
   email: "",
@@ -213,31 +219,27 @@ const [formData, setFormData] = useState<any>({
 
 
 const fetchStaff = async () => {
-
   try {
-
-    setLoadingStaff(true)
+    setLoadingStaff(true);
 
     const res = await axiosInstance.get("/api/v1/staff", {
       params: {
-        page: 1,
-        perPage: 50,
+        page: currentPage,
+        perPage: rowsPerPage,
         name: searchTerm || undefined,
         branchId: selectedBranch || undefined,
         role: roleFilter !== "all" ? roleFilter : undefined,
       },
-    })
+    });
 
-    setStaffData(res.data?.data || [])
+    setStaffData(res.data?.data || []);
+    setTotalPages(res.data?.pagination?.totalPages || 1);
+    setTotalStaff(res.data?.pagination?.total || res.data?.pagination?.totalItems || 0);
 
   } catch (error) {
-
-    toast.error("Failed to load staff")
-
+    toast.error("Failed to load staff");
   } finally {
-
-    setLoadingStaff(false)
-
+    setLoadingStaff(false);
   }
 }
 
@@ -339,10 +341,8 @@ useEffect(()=>{
 }, [])
 
 useEffect(() => {
-
-  fetchStaff()
-
-}, [selectedBranch, roleFilter, searchTerm])
+  fetchStaff();
+}, [selectedBranch, roleFilter, searchTerm, currentPage, rowsPerPage]);
 
 const fetchAttendance = async () => {
   try {
@@ -468,15 +468,19 @@ const fetchAttendance = async () => {
                   <Input placeholder="Search staff name..." 
                   className="pl-9 w-56" 
                   value={searchTerm} 
-                  onChange={e => 
-                    setSearchTerm(e.target.value)
-                  } 
+                  onChange={e => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }} 
                   />
                 </div>
 
-                <Select
+                {/* <Select
                   value={selectedBranch}
-                  onValueChange={setSelectedBranch}
+                  onValueChange={(val) => {
+                    setSelectedBranch(val);
+                    setCurrentPage(1);
+                  }}
                 >
                   <SelectTrigger className="w-[140px]">
                     <SelectValue placeholder="Select Branch" />
@@ -488,9 +492,12 @@ const fetchAttendance = async () => {
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select> */}
                 
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <Select value={roleFilter} onValueChange={(val) => {
+                  setRoleFilter(val);
+                  setCurrentPage(1);
+                }}>
                   <SelectTrigger className="w-36"><SelectValue placeholder="Role" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Roles</SelectItem>
@@ -519,7 +526,7 @@ const fetchAttendance = async () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
 
                       {/* Branch */}
-                      <div className="flex flex-col gap-1">
+                      {/* <div className="flex flex-col gap-1">
                         <Label className="text-sm text-gray-600">Branch *</Label>
                         <Select 
                           value={formData.branchId}
@@ -538,7 +545,7 @@ const fetchAttendance = async () => {
                             ))}
                           </SelectContent>
                         </Select>
-                      </div>
+                      </div> */}
 
                       {/* Name */}
                       <div className="flex flex-col gap-1">
@@ -979,6 +986,50 @@ const fetchAttendance = async () => {
                   ))}
               </TableBody>
             </Table>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between gap-4 mt-4">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Showing page {currentPage} of {totalPages} ({totalStaff} staff)
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={currentPage <= 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                >
+                  Prev
+                </Button>
+
+                <select
+                  className="border rounded px-2 py-1 text-sm"
+                  value={rowsPerPage}
+                  onChange={(e) => {
+                    setRowsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  {[5, 10, 20, 50].map((n) => (
+                    <option key={n} value={n}>
+                      {n} / page
+                    </option>
+                  ))}
+                </select>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </div>
         </TabsContent>
 

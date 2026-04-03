@@ -1542,7 +1542,7 @@ export default function SystemSettingsPage() {
   const path = typeof window !== "undefined" ? window.location.pathname : "";
   const defaultTab = path.includes("/settings/language")
     ? "language"
-    : "currency";
+    : "profile";
 
   return (
     <AdminLayout>

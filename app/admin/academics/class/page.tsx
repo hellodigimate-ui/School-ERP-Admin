@@ -31,12 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
   Pagination,
   PaginationContent,
@@ -45,7 +40,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Plus, MoreHorizontal, BookOpen, Users, GraduationCap, Layers, BookMarked, Filter, Search, Pencil, Trash2, Save } from "lucide-react";
+import { Plus,  BookOpen, Users, GraduationCap, Layers, BookMarked,  Search, Pencil, Trash2, Save, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 import { AdminLayout } from "@/components/layout/AdminLayout";
@@ -110,9 +105,14 @@ export default function Classes() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassData | null>(null);
-  const [filterBranch, setFilterBranch] = useState("")
 
   const [formData, setFormData] = useState({ name: "", branchId: "" });
+
+    // ✅ ADD IT HERE
+  const branchId =
+    typeof window !== "undefined"
+      ? localStorage.getItem("branchId") || ""
+      : "";
 
   /** Fetch branches */
   const fetchBranches = async () => {
@@ -153,6 +153,15 @@ export default function Classes() {
   useEffect(() => {
   fetchClasses(pagination.currentPage);
 }, [searchQuery, branchFilter, pagination.currentPage, pagination.perPage]);
+
+  useEffect(() => {
+    if (isAddDialogOpen) {
+      setFormData({
+        name: "",
+        branchId: branchId,
+      });
+    }
+  }, [isAddDialogOpen]);
 
   /** Add class */
   const handleAddClass = async () => {
@@ -197,11 +206,21 @@ export default function Classes() {
   };
 
   /** Open edit dialog */
+  // const openEditDialog = (cls: ClassData) => {
+  //   setEditingClass(cls);
+  //   setFormData({ name: cls.name, branchId: cls.branchId });
+  //   setIsEditDialogOpen(true);
+  // };
+
   const openEditDialog = (cls: ClassData) => {
     setEditingClass(cls);
-    setFormData({ name: cls.name, branchId: cls.branchId });
+    setFormData({
+      name: cls.name,
+      branchId: cls.branchId, // 👈 show existing branch
+    });
     setIsEditDialogOpen(true);
   };
+
 
   return (
     <AdminLayout>
@@ -348,7 +367,7 @@ export default function Classes() {
                     </div>
 
                     {/* Branch */}
-                    <div className="grid gap-2">
+                    {/* <div className="grid gap-2">
                       <Label>Branch</Label>
                       <div className="relative">
                         <Layers className="absolute left-3 top-3 text-muted-foreground" size={16} />
@@ -370,8 +389,29 @@ export default function Classes() {
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
+                    </div> */}
 
+                    <div className="grid gap-2">
+                      <Label>Branch</Label>
+
+                      <Select value={formData.branchId} disabled>
+                        <SelectTrigger className="pl-3 bg-muted cursor-not-allowed opacity-70">
+                          <SelectValue placeholder="Branch" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {branches.map((branch) => (
+                            <SelectItem key={branch.id} value={branch.id}>
+                              {branch.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <p className="text-xs text-muted-foreground">
+                        Branch is assigned automatically based on your account
+                      </p>
+                    </div>
                   </div>
 
                   {/* Footer */}
@@ -412,7 +452,7 @@ export default function Classes() {
               </div>
 
               {/* Filter */}
-              <div className="relative w-full sm:w-[220px]">
+              {/* <div className="relative w-full sm:w-[220px]">
                 <Filter className="absolute left-3 top-3 text-muted-foreground" size={16} />
                 <Select
                   value={filterBranch}
@@ -433,21 +473,26 @@ export default function Classes() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
             </div>
 
               {/* ================= Table ================= */}
-              <div className="rounded-2xl border border-border/40 bg-card shadow-lg overflow-hidden">
+              <div className="rounded-2xl border border-border/40 bg-gradient-to-br from-white to-slate-50 shadow-xl overflow-hidden">
 
                 <Table>
 
                   {/* ===== Table Header ===== */}
-                  <TableHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
+                  <TableHeader className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
                     <TableRow>
-                      <TableHead className="font-semibold text-foreground">Class Name</TableHead>
-                      <TableHead className="font-semibold text-foreground">Branch</TableHead>
-                      <TableHead className="font-semibold text-foreground text-center">Actions</TableHead>
+                      <TableHead className="text-white font-semibold tracking-wide">
+                        Class Name
+                      </TableHead>
+
+                      <TableHead className="text-white text-center font-semibold tracking-wide">
+                        Actions
+                      </TableHead>
+
                       <TableHead className="w-[50px]" />
                     </TableRow>
                   </TableHeader>
@@ -457,65 +502,46 @@ export default function Classes() {
                     {classes.map((cls) => (
                       <TableRow
                         key={cls.id}
-                        className="group hover:bg-muted/50 transition-all duration-200"
+                        className="group transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:scale-[1.01]"
                       >
                         {/* Class Name */}
-                        <TableCell className="font-medium flex items-center gap-2">
-                          <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-sm">
-                            <GraduationCap size={14} />
+                        <TableCell className="font-medium flex items-center gap-3 py-4">
+                          
+                          {/* Icon Badge */}
+                          <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md group-hover:scale-110 transition">
+                            <GraduationCap size={16} />
                           </div>
-                          {cls.name}
-                        </TableCell>
 
-                        {/* Branch */}
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="p-1.5 rounded-md bg-emerald-100 text-emerald-600">
-                              <Layers size={14} />
-                            </div>
-                            <span className="text-muted-foreground">
-                              {cls.branch?.name || "—"}
-                            </span>
-                          </div>
+                          {/* Text */}
+                          <span className="text-slate-700 group-hover:text-indigo-600 transition">
+                            {cls.name}
+                          </span>
                         </TableCell>
 
                         {/* Actions */}
                         <TableCell className="text-center">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-9 w-9 rounded-lg hover:bg-muted transition"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
+                          <div className="flex justify-center gap-3">
 
-                            <DropdownMenuContent
-                              align="end"
-                              className="rounded-xl shadow-xl border border-border/40 p-2"
+                            {/* Edit Button */}
+                            <button
+                              onClick={() => openEditDialog(cls)}
+                              className="p-2 rounded-lg bg-indigo-100 text-indigo-600 hover:bg-indigo-500 hover:text-white shadow-sm hover:shadow-md transition-all duration-200"
                             >
-                              <DropdownMenuItem
-                                onClick={() => openEditDialog(cls)}
-                                className="gap-2 cursor-pointer"
-                              >
-                                <Pencil className="h-4 w-4 text-indigo-500" />
-                                Edit Class
-                              </DropdownMenuItem>
+                              <Edit size={16} />
+                            </button>
 
-                              <DropdownMenuItem
-                                className="gap-2 text-red-500 focus:text-red-500 cursor-pointer"
-                                onClick={() => handleDelete(cls.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                Delete Class
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                            {/* Delete Button */}
+                            <button
+                              onClick={() => handleDelete(cls.id)}
+                              className="p-2 rounded-lg bg-red-100 text-red-500 hover:bg-red-500 hover:text-white shadow-sm hover:shadow-md transition-all duration-200"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+
+                          </div>
                         </TableCell>
 
-                        {/* Extra spacing column */}
+                        {/* Extra spacing */}
                         <TableCell />
                       </TableRow>
                     ))}
@@ -625,7 +651,7 @@ export default function Classes() {
                     </div>
 
                     {/* Branch */}
-                    <div className="grid gap-2">
+                    {/* <div className="grid gap-2">
                       <Label>Branch</Label>
                       <div className="relative">
                         <Layers className="absolute left-3 top-3 text-muted-foreground" size={16} />
@@ -647,6 +673,24 @@ export default function Classes() {
                           </SelectContent>
                         </Select>
                       </div>
+                    </div> */}
+
+                    <div className="grid gap-2">
+                      <Label>Branch</Label>
+
+                      <Select value={formData.branchId} disabled>
+                        <SelectTrigger className="pl-3 bg-muted cursor-not-allowed opacity-70">
+                          <SelectValue placeholder="Branch" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {branches.map((branch) => (
+                            <SelectItem key={branch.id} value={branch.id}>
+                              {branch.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                   </div>

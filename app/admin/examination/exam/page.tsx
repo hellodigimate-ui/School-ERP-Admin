@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 // /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
@@ -59,6 +60,10 @@ const Page = () => {
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [selectedBranch, setSelectedBranch] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editExam, setEditExam] = useState<any>(null);
+
   const [newExam, setNewExam] = useState({
     branchId: "",
     classId: "",
@@ -83,23 +88,20 @@ const Page = () => {
     }
   };
 
-  const fetchClasses = async (branchId: string) => {
-    if (!branchId) {
-      setClasses([]);
-      return;
-    }
+const fetchClasses = async (branchId?: string) => {
+  try {
+    const res = await axiosInstance.get(API_CLASS, {
+      params: {
+        perPage: 100,
+        ...(branchId && { branchId }),
+      },
+    });
 
-    try {
-      const response = await axiosInstance.get(
-        `${API_CLASS}?branchId=${branchId}&perPage=100`,
-      );
-      if (response.data.success) {
-        setClasses(response.data.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to fetch classes", error);
-    }
-  };
+    setClasses(res.data?.data || []);
+  } catch (error) {
+    console.error("Failed to fetch classes", error);
+  }
+};
 
   const fetchExams = async () => {
     try {
@@ -155,25 +157,54 @@ const Page = () => {
     }
   };
 
+  const handleUpdateExam = async () => {
+    if (!editExam.name || !editExam.code || !editExam.type) return;
+
+    try {
+      const response = await axiosInstance.put(
+        `${API_BASE}/${editExam.id}`,
+        editExam
+      );
+
+      if (response.data.success) {
+        fetchExams();
+        setEditDialogOpen(false);
+        setEditExam(null);
+      }
+    } catch (error) {
+      console.error("Failed to update exam", error);
+    }
+  };
+
+useEffect(() => {
+  const storedBranchId = localStorage.getItem("branchId");
+
+  if (storedBranchId) {
+    setSelectedBranch(storedBranchId);
+
+    setNewExam((prev) => ({
+      ...prev,
+      branchId: storedBranchId,
+    }));
+
+    fetchClasses(storedBranchId); // ✅ load classes immediately
+  }
+
+  fetchBranches();
+  fetchExams();
+}, []);
+
+
   useEffect(() => {
     fetchBranches();
     fetchExams();
   }, []);
 
-  useEffect(() => {
-    if (selectedBranch) {
-      fetchClasses(selectedBranch);
-      setSelectedClass("");
-      setNewExam((prev) => ({
-        ...prev,
-        branchId: selectedBranch,
-        classId: "",
-      }));
-    } else {
-      setClasses([]);
-      setNewExam((prev) => ({ ...prev, branchId: "", classId: "" }));
-    }
-  }, [selectedBranch]);
+useEffect(() => {
+  if (selectedBranch) {
+    fetchClasses(selectedBranch);
+  }
+}, [selectedBranch]);
 
   useEffect(() => {
     fetchExams();
@@ -203,7 +234,7 @@ const Page = () => {
                 <DialogTitle>Add Exam</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 mt-4">
-                <div>
+                {/* <div>
                   <Label>Branch</Label>
                   <Select
                     value={newExam.branchId}
@@ -223,7 +254,7 @@ const Page = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
                 <div>
                   <Label>Class</Label>
                   <Select
@@ -231,7 +262,7 @@ const Page = () => {
                     onValueChange={(value) =>
                       setNewExam({ ...newExam, classId: value })
                     }
-                    disabled={!newExam.branchId}
+                    disabled={!classes.length}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Choose class" />
@@ -315,7 +346,7 @@ const Page = () => {
             />
           </div>
 
-          <Select
+          {/* <Select
             value={selectedBranch}
             onValueChange={(value) => {
               setSelectedBranch(value === "ALL_BRANCHES" ? "" : value);
@@ -353,7 +384,7 @@ const Page = () => {
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
 
         <div className="bg-white/80 backdrop-blur-md rounded-xl border shadow-lg overflow-hidden">
@@ -371,9 +402,9 @@ const Page = () => {
                   <th className="text-left p-3 font-medium text-muted-foreground">
                     Type
                   </th>
-                  <th className="text-left p-3 font-medium text-muted-foreground">
+                  {/* <th className="text-left p-3 font-medium text-muted-foreground">
                     Branch
-                  </th>
+                  </th> */}
                   <th className="text-left p-3 font-medium text-muted-foreground">
                     Class
                   </th>
@@ -411,9 +442,9 @@ const Page = () => {
                         {exam.type}
                       </Badge>
                     </td>
-                    <td className="p-3">
+                    {/* <td className="p-3">
                       {exam.branch?.name || exam.branchId}
-                    </td>
+                    </td> */}
                     <td className="p-3">{exam.Class?.name || "-"}</td>
                     <td className="p-3">{exam.code}</td>
                     <td className="p-3 text-muted-foreground">
@@ -425,6 +456,15 @@ const Page = () => {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 hover:bg-blue-100 text-blue-600"
+                          onClick={()=>{
+                            setEditExam(exam);
+                            setEditDialogOpen(true);
+
+                             if (exam.branchId) {
+                              fetchClasses(exam.branchId);
+                             }
+
+                          }}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -442,6 +482,102 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
+
+            <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+              <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden">
+                <DialogHeader>
+                  <DialogTitle>Edit Exam</DialogTitle>
+                </DialogHeader>
+
+                {editExam && (
+                  <div className="space-y-4 mt-4 overflow-y-auto max-h-[65vh] pr-2">
+
+                    {/* Class */}
+                    <div>
+                      <Label>Class</Label>
+                      <Select
+                        value={editExam.classId}
+                        onValueChange={(value) =>
+                          setEditExam({ ...editExam, classId: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {classes.map((cls) => (
+                            <SelectItem key={cls.id} value={cls.id}>
+                              {cls.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Name */}
+                    <div>
+                      <Label>Exam Name</Label>
+                      <Input
+                        value={editExam.name}
+                        onChange={(e) =>
+                          setEditExam({ ...editExam, name: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    {/* Code */}
+                    <div>
+                      <Label>Exam Code</Label>
+                      <Input
+                        value={editExam.code}
+                        onChange={(e) =>
+                          setEditExam({ ...editExam, code: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    {/* Type */}
+                    <div>
+                      <Label>Exam Type</Label>
+                      <Select
+                        value={editExam.type}
+                        onValueChange={(value) =>
+                          setEditExam({ ...editExam, type: value })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Internal">Internal</SelectItem>
+                          <SelectItem value="Board">Board</SelectItem>
+                          <SelectItem value="Practical">Practical</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <Label>Description</Label>
+                      <Input
+                        value={editExam.description || ""}
+                        onChange={(e) =>
+                          setEditExam({ ...editExam, description: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <Button
+                      className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+                      onClick={handleUpdateExam}
+                    >
+                      Update Exam
+                    </Button>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
           </div>
         </div>
       </div>

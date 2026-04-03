@@ -36,7 +36,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, MoreHorizontal, Search, Filter, LayoutGrid, Layers, Users, GitBranch, GraduationCap, Pencil, Trash2, Inbox, Save } from "lucide-react";
+import { Plus, MoreHorizontal, Search, Filter, LayoutGrid, Layers, Users,  GraduationCap, Pencil, Trash2, Inbox, Save } from "lucide-react";
 import { toast } from "sonner";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 import { AdminLayout } from "@/components/layout/AdminLayout";
@@ -296,7 +296,7 @@ useEffect(() => {
                     </div>
 
                     {/* Branch */}
-                    <div>
+                    {/* <div>
                       <Label>Branch</Label>
                       <div className="relative mt-1">
                         <GitBranch className="absolute left-3 top-3 text-muted-foreground" size={16} />
@@ -318,7 +318,7 @@ useEffect(() => {
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Class */}
                     <div>
@@ -382,7 +382,7 @@ useEffect(() => {
               </div>
 
               {/* Filter */}
-              <div className="relative w-full sm:w-[220px]">
+              {/* <div className="relative w-full sm:w-[220px]">
                 <Filter className="absolute left-3 top-3 text-muted-foreground" size={16} />
                 <Select
                   value={filterBranch}
@@ -403,7 +403,7 @@ useEffect(() => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
             </div>
 
@@ -417,7 +417,7 @@ useEffect(() => {
                   <TableRow>
                     <TableHead className="font-semibold">Section</TableHead>
                     <TableHead className="font-semibold">Class</TableHead>
-                    <TableHead className="font-semibold">Branch</TableHead>
+                    {/* <TableHead className="font-semibold">Branch</TableHead> */}
                     <TableHead className="font-semibold">Students</TableHead>
                     <TableHead className="text-center font-semibold">Actions</TableHead>
                     <TableHead />
@@ -463,14 +463,14 @@ useEffect(() => {
                         </TableCell>
 
                         {/* Branch */}
-                        <TableCell>
+                        {/* <TableCell>
                           <div className="flex items-center gap-2">
                             <div className="p-1.5 rounded-md bg-emerald-100 text-emerald-600">
                               <GitBranch size={14} />
                             </div>
                             {section.class.branch?.name || "N/A"}
                           </div>
-                        </TableCell>
+                        </TableCell> */}
 
                         {/* Students */}
                         <TableCell>
@@ -577,7 +577,7 @@ useEffect(() => {
             </div>
 
             {/* Branch */}
-            <div>
+            {/* <div>
               <Label>Branch</Label>
               <div className="relative mt-1">
                 <GitBranch className="absolute left-3 top-3 text-muted-foreground" size={16} />
@@ -599,7 +599,7 @@ useEffect(() => {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
+            </div> */}
 
             {/* Class */}
             <div>

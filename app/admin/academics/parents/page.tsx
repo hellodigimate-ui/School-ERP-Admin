@@ -6,7 +6,7 @@
 import { useEffect, useState, Suspense } from "react";
 
 export const dynamic = 'force-dynamic';
-import { Search, Plus, MoreHorizontal, Mail, Phone, Users } from "lucide-react";
+import { Search,  MoreHorizontal, Mail, Phone, Users, User } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,21 +24,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
-// import { Badge } from "@/components/ui/badge";
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
   DialogDescription,
+  Dialog,
 } from "@/components/ui/dialog";
 import {
   Pagination,
@@ -81,8 +73,7 @@ const ParentsComponent = ({ highlightId }: { highlightId: string | null }) => {
   const [loading, setLoading] = useState(false);
   const itemsPerPage = 5;
 
-  // const searchParams = useSearchParams();
-  // const highlightId = searchParams.get('id');
+
 
   const [selectedParent, setSelectedParent] = useState<any>(null);
 
@@ -214,7 +205,6 @@ useEffect(() => {
           <h1 className="text-2xl font-semibold tracking-tight">Parents</h1>
           <p className="text-muted-foreground mt-1">Manage and view all registered parents</p>
         </div>
-        
       </div>
 
       {/* Filters */}
@@ -235,247 +225,302 @@ useEffect(() => {
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg bg-card">
+      <div className="border rounded-xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 shadow-md">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Parent Name</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Children</TableHead>
-              <TableHead>No. of Children</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+            <TableRow className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+              <TableHead className="text-white">👨 Parent Name</TableHead>
+              <TableHead className="text-white">📞 Contact</TableHead>
+              <TableHead className="text-white">👶 Children</TableHead>
+              <TableHead className="text-white">👥 Count</TableHead>
+              <TableHead className="text-white">⚙️ Action</TableHead>
+              <TableHead />
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {paginatedParents.map((parent) => (
-              <TableRow key={parent.id} id={`parent-${parent.userId}`} className={parent.userId === highlightId || parent.id === highlightId ? "bg-green-100 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-900" : ""}>
+              <TableRow
+                key={parent.id}
+                id={`parent-${parent.userId}`}
+                className={`transition-all duration-200 hover:scale-[1.01] hover:shadow-md ${
+                  parent.userId === highlightId || parent.id === highlightId
+                    ? "bg-green-100 dark:bg-green-900"
+                    : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`}
+              >
+                {/* Parent Name */}
                 <TableCell>
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium">{parent.fatherName}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                      <User className="w-4 h-4 text-indigo-600" />
+                    </div>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">
+                      {parent.fatherName}
+                    </span>
                   </div>
                 </TableCell>
+
+                {/* Contact */}
                 <TableCell>
-                  <div className="flex flex-col gap-1">
-                    <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <div className="flex flex-col gap-1 text-sm">
+                    <span className="flex items-center gap-1 text-blue-600">
                       <Mail className="w-3 h-3" /> {parent.email}
                     </span>
-                    <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1 text-green-600">
                       <Phone className="w-3 h-3" /> {parent.fatherPhone}
                     </span>
                   </div>
                 </TableCell>
+
+                {/* Children */}
                 <TableCell>
-                  <div className="flex flex-col gap-0.5">
-                    {parent?.Student?.map((child:any) => (
-                      <span key={child.id} className="text-sm">
-                        {child.name || "Abhi "}
+                  <div className="flex flex-wrap gap-1">
+                    {parent?.Student?.map((child: any) => (
+                      <span
+                        key={child.id}
+                        className="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900"
+                      >
+                        {child.name || "Abhi"}
                       </span>
                     ))}
                   </div>
                 </TableCell>
+
+                {/* Count */}
                 <TableCell>
-                  <div className="flex items-center gap-1.5">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <span>{parent.childrenCount || "5"}</span>
+                  <div className="flex items-center gap-2 text-orange-600 font-medium">
+                    <Users className="w-4 h-4" />
+                    {parent.childrenCount || "5"}
                   </div>
                 </TableCell>
+
+                {/* Actions */}
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-indigo-100 dark:hover:bg-indigo-800"
+                      >
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleViewParent(parent)} >View Profile</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleEditParent(parent)} >Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Message</DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive" onClick={() => deleteParent(parent.id)} >Delete</DropdownMenuItem>
+
+                    <DropdownMenuContent
+                      align="end"
+                      className="rounded-lg shadow-lg"
+                    >
+                      <DropdownMenuItem onClick={() => handleViewParent(parent)}>
+                        👁 View Profile
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem onClick={() => handleEditParent(parent)}>
+                        ✏️ Edit
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        className="text-red-500"
+                        onClick={() => deleteParent(parent.id)}
+                      >
+                        🗑 Delete
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-
-                  <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
-                    <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Parent Details</DialogTitle>
-                        <DialogDescription>
-                          View complete parent information
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      {selectedParent && (
-                        <div className="space-y-9">
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Father Name</p>
-                            <p className="font-medium">{selectedParent.fatherName}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Father Phone</p>
-                            <p>{selectedParent.fatherPhone}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Father Email</p>
-                            <p>{selectedParent.email}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Father Occupation</p>
-                            <p className="font-medium">{selectedParent.fatherOccupation}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Mother Name</p>
-                            <p className="font-medium">{selectedParent.motherName}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Mother Phone</p>
-                            <p>{selectedParent.motherPhone}</p>
-                          </div>
-
-                          
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Mother Occupation</p>
-                            <p className="font-medium">{selectedParent.motherOccupation}</p>
-                          </div>
-                          
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Guardian Name</p>
-                            <p className="font-medium">{selectedParent.guardianName}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Guardian Ralation</p>
-                            <p className="font-medium">{selectedParent.guardianRelation}</p>
-                          </div>
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Guardian Phone</p>
-                            <p className="font-medium">{selectedParent.guardianPhone}</p>
-                          </div>
-
-
-
-                          <div>
-                            <p className="text-sm text-muted-foreground">Children</p>
-                            {(selectedParent.children || []).map((child: string) => (
-                              <p key={child}>{child}</p>
-                            ))}
-                          </div>
-
-                          
-
-                        </div>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-
-                  <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-                    <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
-
-                      <DialogHeader>
-                        <DialogTitle>Edit Parent</DialogTitle>
-                        <DialogDescription>
-                          Update parent information
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      <div className="space-y-1">
-
-
-                        <label>Father Name</label>
-                        <Input
-                          placeholder="Father Name"
-                          value={editForm.fatherName}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, fatherName: e.target.value })
-                          }
-                        />
-
-                        <label>Father Phone</label>
-                        <Input
-                          placeholder="Father Phone"
-                          value={editForm.fatherPhone}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, fatherPhone: e.target.value })
-                          }
-                        />
-
-                        <label>Father Occupation</label>
-                        <Input
-                          placeholder="Father Occupation"
-                          value={editForm.fatherOccupation}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, fatherOccupation: e.target.value })
-                          }
-                        />
-
-                        <label>Mother Name</label>
-                        <Input
-                          placeholder="Mother Name"
-                          value={editForm.motherName}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, motherName: e.target.value })
-                          }
-                        />
-
-                        <label>Mother Phone</label>
-                        <Input
-                          placeholder="Mother Phone"
-                          value={editForm.motherPhone}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, motherPhone: e.target.value })
-                          }
-                        />
-                        <label>Guardian Name</label>
-                        <Input
-                          placeholder="Mother Name"
-                          value={editForm.guardianName}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, guardianName: e.target.value })
-                          }
-                        />
-
-                        <label>Guardian Phone</label>
-                        <Input
-                          placeholder="Guardian Phone"
-                          value={editForm.guardianPhone}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, guardianPhone: e.target.value })
-                          }
-                        />
-
-                        <label>Guardian Relation</label>
-                        <Input
-                          placeholder="Guardian Phone"
-                          value={editForm.guardianRelation}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, guardianRelation: e.target.value })
-                          }
-                        />
-
-
-
-                      </div>
-
-                      <DialogFooter>
-                        <Button onClick={updateParent}>Update Parent</Button>
-                      </DialogFooter>
-
-                    </DialogContent>
-                  </Dialog>
-
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
+        <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+        <DialogContent className="max-w-md rounded-2xl bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-gray-800 shadow-xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-indigo-600 flex items-center gap-2">
+              👨 Parent Details
+            </DialogTitle>
+            <DialogDescription>
+              Complete parent information
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedParent && (
+            <div className="space-y-4 text-sm">
+
+              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow">
+                <p className="text-gray-500">Father Name</p>
+                <p className="font-semibold">{selectedParent.fatherName}</p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow">
+                <p className="text-gray-500">Phone</p>
+                <p>{selectedParent.fatherPhone}</p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow">
+                <p className="text-gray-500">Email</p>
+                <p>{selectedParent.email}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-pink-100 dark:bg-pink-900 p-3 rounded-lg">
+                  <p className="text-xs">Mother</p>
+                  <p className="font-medium">{selectedParent.motherName}</p>
+                </div>
+
+                <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-lg">
+                  <p className="text-xs">Guardian</p>
+                  <p className="font-medium">{selectedParent.guardianName}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-gray-500 mb-1">Children</p>
+                <div className="flex flex-wrap gap-1">
+                  {(selectedParent.children || []).map((child: string) => (
+                    <span
+                      key={child}
+                      className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs"
+                    >
+                      👶 {child}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+        </Dialog>
+
+
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent className="max-w-md rounded-2xl bg-gradient-to-br from-white to-purple-50 dark:from-gray-900 dark:to-gray-800 shadow-xl p-6 max-h-[80vh] overflow-hidden">
+            
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-purple-600 flex items-center gap-2">
+                ✏️ Edit Parent
+              </DialogTitle>
+            </DialogHeader>
+
+            {/* Scrollable Form Area */}
+            <div className="space-y-4 overflow-y-auto pr-2 max-h-[60vh]">
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Father Name
+                </label>
+                <Input
+                  placeholder="Enter father name"
+                  value={editForm.fatherName}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, fatherName: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Father Phone
+                </label>
+                <Input
+                  placeholder="Enter father phone"
+                  value={editForm.fatherPhone}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, fatherPhone: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Father Occupation
+                </label>
+                <Input
+                  placeholder="Enter occupation"
+                  value={editForm.fatherOccupation}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, fatherOccupation: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Mother Name
+                </label>
+                <Input
+                  placeholder="Enter mother name"
+                  value={editForm.motherName}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, motherName: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Mother Phone
+                </label>
+                <Input
+                  placeholder="Enter mother phone"
+                  value={editForm.motherPhone}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, motherPhone: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Guardian Name
+                </label>
+                <Input
+                  placeholder="Enter guardian name"
+                  value={editForm.guardianName}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, guardianName: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Guardian Phone
+                </label>
+                <Input
+                  placeholder="Enter guardian phone"
+                  value={editForm.guardianPhone}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, guardianPhone: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Relation with Student
+                </label>
+                <Input
+                  placeholder="e.g. Uncle, Aunt"
+                  value={editForm.guardianRelation}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, guardianRelation: e.target.value })
+                  }
+                />
+              </div>
+
+            </div>
+
+            <DialogFooter className="pt-4">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white w-full rounded-lg shadow-md">
+                🚀 Update Parent
+              </Button>
+            </DialogFooter>
+
+          </DialogContent>
+        </Dialog>
+
       </div>
 
       {/* Pagination */}

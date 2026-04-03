@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-// /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// /* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 
 
@@ -197,6 +195,10 @@ useEffect(() => {
   console.log("Form Data Updated:", formData);
 }, [formData]);
 
+const filteredSections = sectionList.filter(
+  (section: any) => String(section.classId) === String(formData.className)
+);
+
 
 const fetchBranches = async () => {
   try {
@@ -204,7 +206,12 @@ const fetchBranches = async () => {
       params: { page: 1, perPage: 100 },
     });
 
-    setBranchList(res.data.data);
+    const filtered = res.data.data.find(
+      (branchId) => branchId.id === "MBBS"
+    );
+
+    // setBranchList(res.data.data);
+    setBranchList(filtered ? [filtered] : []);
   } catch (error) {
     toast({
       title: "Error",
@@ -616,7 +623,7 @@ const handleReset = () => {
                 <Input placeholder="Enter roll number" name="rollNumber" value={formData.rollNumber} onChange={(e)=>{handleChange(e)}}  className="h-10 text-sm rounded-lg" />
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label className="text-xs font-semibold text-muted-foreground">Branch *</Label>
                 <Select
                   value={formData.branch}
@@ -635,9 +642,9 @@ const handleReset = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label className="text-xs font-semibold text-muted-foreground">Class *</Label>
                 <Select
                 value={formData.className}
@@ -656,9 +663,9 @@ const handleReset = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label className="text-xs font-semibold text-muted-foreground">Section *</Label>
                 <Select
                 value={formData.sectionId}
@@ -677,7 +684,70 @@ const handleReset = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div> */}
+
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  Class *
+                </Label>
+                <Select
+                  value={formData.className}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      className: value,
+                      sectionId: "" // reset section when class changes
+                    }))
+                  }
+                >
+                  <SelectTrigger className="h-10 text-sm rounded-lg">
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classList.map((cls: any) => (
+                      <SelectItem key={cls.id} value={String(cls.id)}>
+                        {cls.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold text-muted-foreground">
+                  Section *
+                </Label>
+                <Select
+                  value={formData.sectionId}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, sectionId: value }))
+                  }
+                  disabled={!formData.className} // ✅ disable if no class selected
+                >
+                  <SelectTrigger className="h-10 text-sm rounded-lg">
+                    <SelectValue
+                      placeholder={
+                        formData.className ? "Select Section" : "Select class first"
+                      }
+                    />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {filteredSections.length > 0 ? (
+                      filteredSections.map((section: any) => (
+                        <SelectItem key={section.id} value={String(section.id)}>
+                          {section.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-xs text-gray-500">
+                        No sections available
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+
 
               <div className="space-y-2">
                 <Label className="text-xs font-semibold text-muted-foreground">Student Name *</Label>
@@ -817,9 +887,6 @@ const handleReset = () => {
                   />
                 </div>
 
-                {/* <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center border-2 border-dashed border-border/60 hover:border-primary transition-colors">
-                  <Camera className="w-6 h-6 text-muted-foreground" />
-                </div> */}
               </div>
             </CardContent>
           </Card>
@@ -899,9 +966,6 @@ const handleReset = () => {
                   />
                 </div>
 
-                {/* <button  className="w-20 h-20 cursor pointer rounded-2xl bg-muted flex items-center justify-center border-2 border-dashed border-border/60">
-                  <Upload className="w-6 h-6 text-muted-foreground" />
-                </button> */}
               </div>
 
               {/* UnMasked Aadhaar Upload */}
@@ -927,9 +991,6 @@ const handleReset = () => {
                   />
                 </div>
 
-                {/* <button className="w-20 h-20 cursor-pointer rounded-2xl bg-muted flex items-center justify-center border-2 border-dashed border-border/60">
-                  <Upload className="w-6 h-6 text-muted-foreground" />
-                </button> */}
               </div>
 
             </CardContent>

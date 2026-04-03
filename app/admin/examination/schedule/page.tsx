@@ -106,7 +106,7 @@ const Page = () => {
       const selectedExam = exams.find((exam) => exam.id === formData.examId);
       const res = await axiosInstance.post(API_BASE, {
         examId: formData.examId,
-        branchId: formData.branchId,
+        // branchId: formData.branchId,
         name: formData.name || selectedExam?.name,
         code: formData.code,
         date: formData.date,
@@ -269,7 +269,7 @@ const Page = () => {
               </DialogHeader>
 
               <div className="space-y-4 mt-2">
-                <div>
+                {/* <div>
                   <Label>Branch</Label>
                   <Select
                     value={formData.branchId || ""}
@@ -293,7 +293,7 @@ const Page = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
 
                 <div>
                   <Label>Exam</Label>
@@ -440,7 +440,7 @@ const Page = () => {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3 mt-4">
-          <Select
+          {/* <Select
             value={filterBranch}
             onValueChange={(val) => {
               setFilterBranch(val);
@@ -461,7 +461,7 @@ const Page = () => {
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
 
           <Select
             value={filterExam}
@@ -489,9 +489,9 @@ const Page = () => {
                 <th className="p-3 text-left font-semibold text-gray-600">
                   Exam
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                {/* <th className="p-3 text-left font-semibold text-gray-600">
                   Branch
-                </th>
+                </th> */}
                 <th className="p-3 text-left font-semibold text-gray-600">
                   Class
                 </th>
@@ -523,9 +523,9 @@ const Page = () => {
                 >
                   <td className="p-3">{i + 1}</td>
                   <td className="p-3 font-medium">{s.exam.name}</td>
-                  <td className="p-3">
+                  {/* <td className="p-3">
                     <Badge variant="outline">{s.branch?.name || "-"}</Badge>
-                  </td>
+                  </td> */}
                   <td className="p-3">
                     <Badge variant="outline">{s.class.name}</Badge>
                   </td>

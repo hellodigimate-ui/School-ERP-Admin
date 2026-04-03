@@ -411,7 +411,7 @@ useEffect(() => {
               />
             </div>
 
-            <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+            {/* <Select value={selectedBranch} onValueChange={setSelectedBranch}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Select Branch" />
               </SelectTrigger>
@@ -425,7 +425,7 @@ useEffect(() => {
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
 
           </div>
         </div>

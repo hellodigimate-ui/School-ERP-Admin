@@ -1,293 +1,3 @@
-
-// "use client"
-
-
-// import { useState } from "react";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Button } from "@/components/ui/button";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-// import { Badge } from "@/components/ui/badge";
-// import { TrendingUp, Users, GraduationCap, CreditCard, ClipboardList, Download, Printer } from "lucide-react";
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
-// import { AdminLayout } from "@/components/layout/AdminLayout";
-
-// const attendanceData = [
-//   { month: "Aug", present: 92, absent: 8 },
-//   { month: "Sep", present: 89, absent: 11 },
-//   { month: "Oct", present: 94, absent: 6 },
-//   { month: "Nov", present: 88, absent: 12 },
-//   { month: "Dec", present: 91, absent: 9 },
-//   { month: "Jan", present: 93, absent: 7 },
-//   { month: "Feb", present: 90, absent: 10 },
-// ];
-
-// const feeData = [
-//   { month: "Aug", collected: 450000, pending: 50000 },
-//   { month: "Sep", collected: 420000, pending: 80000 },
-//   { month: "Oct", collected: 480000, pending: 20000 },
-//   { month: "Nov", collected: 460000, pending: 40000 },
-//   { month: "Dec", collected: 430000, pending: 70000 },
-//   { month: "Jan", collected: 470000, pending: 30000 },
-//   { month: "Feb", collected: 440000, pending: 60000 },
-// ];
-
-// const examPerformance = [
-//   { subject: "Mathematics", classAvg: 72, highest: 98, lowest: 35, passRate: 88 },
-//   { subject: "Science", classAvg: 78, highest: 96, lowest: 42, passRate: 92 },
-//   { subject: "English", classAvg: 81, highest: 95, lowest: 48, passRate: 95 },
-//   { subject: "Hindi", classAvg: 75, highest: 92, lowest: 38, passRate: 90 },
-//   { subject: "Social Science", classAvg: 70, highest: 94, lowest: 30, passRate: 85 },
-// ];
-
-// const genderDistribution = [
-//   { name: "Boys", value: 580, color: "hsl(var(--primary))" },
-//   { name: "Girls", value: 520, color: "hsl(var(--accent))" },
-// ];
-
-// const classStrength = [
-//   { class: "Class 6", students: 180 },
-//   { class: "Class 7", students: 175 },
-//   { class: "Class 8", students: 190 },
-//   { class: "Class 9", students: 185 },
-//   { class: "Class 10", students: 170 },
-//   { class: "Class 11", students: 160 },
-//   { class: "Class 12", students: 140 },
-// ];
-
-
-
-// const Page = () => {
-//   const [selectedYear, setSelectedYear] = useState("2025-26");
-
-//   const stats = [
-//     { label: "Total Students", value: "1,100", icon: Users, change: "+5.2%" },
-//     { label: "Avg Attendance", value: "91%", icon: ClipboardList, change: "+2.1%" },
-//     { label: "Fee Collection", value: "₹32.5L", icon: CreditCard, change: "+8.4%" },
-//     { label: "Pass Rate", value: "90%", icon: GraduationCap, change: "+3.6%" },
-//   ];
-
-//   return (
-//     <AdminLayout>
-//       <div className="space-y-6">
-
-//         {/* 🔥 HEADER */}
-//         <div className="flex items-center justify-between bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 rounded-2xl shadow-lg text-white">
-//           <div>
-//             <h1 className="text-3xl font-bold">Reports Dashboard</h1>
-//             <p className="text-sm opacity-90">Comprehensive analytics & insights</p>
-//           </div>
-
-//           <div className="flex gap-2">
-//             <Select value={selectedYear} onValueChange={setSelectedYear}>
-//               <SelectTrigger className="w-36 bg-white/20 text-white border-0">
-//                 <SelectValue />
-//               </SelectTrigger>
-//               <SelectContent>
-//                 <SelectItem value="2025-26">2025-26</SelectItem>
-//                 <SelectItem value="2024-25">2024-25</SelectItem>
-//               </SelectContent>
-//             </Select>
-
-//             <Button variant="secondary" className="rounded-xl">
-//               <Printer className="h-4 w-4 mr-2" /> Print
-//             </Button>
-
-//             <Button className="bg-white text-indigo-600 hover:bg-gray-100 rounded-xl">
-//               <Download className="h-4 w-4 mr-2" /> Export
-//             </Button>
-//           </div>
-//         </div>
-
-//         {/* 🔥 STATS */}
-//         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-//           {stats.map((stat, i) => (
-//             <Card
-//               key={stat.label}
-//               className="border-0 shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl bg-gradient-to-br from-white to-muted/40"
-//             >
-//               <CardContent className="p-4 flex items-center gap-4">
-//                 <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow">
-//                   <stat.icon className="h-5 w-5" />
-//                 </div>
-
-//                 <div>
-//                   <p className="text-2xl font-bold">{stat.value}</p>
-//                   <div className="flex items-center gap-2">
-//                     <p className="text-sm text-muted-foreground">{stat.label}</p>
-//                     <span className="text-xs text-emerald-500 flex items-center font-medium">
-//                       <TrendingUp className="h-3 w-3 mr-1" />
-//                       {stat.change}
-//                     </span>
-//                   </div>
-//                 </div>
-//               </CardContent>
-//             </Card>
-//           ))}
-//         </div>
-
-//         {/* 🔥 TABS */}
-//         <Tabs defaultValue="attendance" className="space-y-6">
-
-//           <TabsList className="bg-muted p-1 rounded-xl shadow-sm">
-//             <TabsTrigger value="attendance">📊 Attendance</TabsTrigger>
-//             <TabsTrigger value="exam">📚 Exam</TabsTrigger>
-//             <TabsTrigger value="fees">💰 Fees</TabsTrigger>
-//             <TabsTrigger value="students">👨‍🎓 Students</TabsTrigger>
-//           </TabsList>
-
-//           {/* ATTENDANCE */}
-//           <TabsContent value="attendance">
-//             <Card className="rounded-2xl shadow-md border-0 bg-gradient-to-br   dark:bg-gray-900">
-//               <CardHeader>
-//                 <CardTitle className="text-lg font-semibold dark:text-gray-400">
-//                   Monthly Attendance Rate (%)
-//                 </CardTitle>
-//               </CardHeader>
-//               <CardContent className="h-80">  
-//                 <ResponsiveContainer width="100%" height="100%">
-//                   <BarChart data={attendanceData}>
-//                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-//                     <XAxis dataKey="month" />
-//                     <YAxis />
-//                     <Tooltip />
-//                     <Legend />
-//                     <Bar dataKey="present" fill="#6366f1" radius={[6,6,0,0]} />
-//                     <Bar dataKey="absent" fill="#ef4444" radius={[6,6,0,0]} />
-//                   </BarChart>
-//                 </ResponsiveContainer>
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-
-//           {/* EXAM */}
-//           <TabsContent value="exam" className="space-y-4">
-
-//             <Card className="rounded-2xl shadow-md border-0">
-//               <CardHeader>
-//                 <CardTitle>Subject-wise Performance</CardTitle>
-//               </CardHeader>
-
-//               <CardContent>
-//                 <Table>
-//                   <TableHeader>
-//                     <TableRow>
-//                       <TableHead>Subject</TableHead>
-//                       <TableHead>Avg</TableHead>
-//                       <TableHead>Highest</TableHead>
-//                       <TableHead>Lowest</TableHead>
-//                       <TableHead>Pass</TableHead>
-//                       <TableHead>Status</TableHead>
-//                     </TableRow>
-//                   </TableHeader>
-
-//                   <TableBody>
-//                     {examPerformance.map((item) => (
-//                       <TableRow key={item.subject} className="hover:bg-muted/40">
-//                         <TableCell className="font-medium">{item.subject}</TableCell>
-//                         <TableCell>{item.classAvg}%</TableCell>
-//                         <TableCell className="text-green-500 font-semibold">{item.highest}%</TableCell>
-//                         <TableCell className="text-red-500 font-semibold">{item.lowest}%</TableCell>
-//                         <TableCell>
-//                           <div className="flex items-center gap-2">
-//                             <div className="w-full h-2 bg-muted rounded-full">
-//                               <div
-//                                 className="h-full bg-indigo-500 rounded-full"
-//                                 style={{ width: `${item.passRate}%` }}
-//                               />
-//                             </div>
-//                             <span className="text-xs">{item.passRate}%</span>
-//                           </div>
-//                         </TableCell>
-//                         <TableCell>
-//                           <Badge className={item.passRate >= 90
-//                             ? "bg-green-100 text-green-600"
-//                             : "bg-yellow-100 text-yellow-600"}>
-//                             {item.passRate >= 90 ? "Good" : "Average"}
-//                           </Badge>
-//                         </TableCell>
-//                       </TableRow>
-//                     ))}
-//                   </TableBody>
-//                 </Table>
-//               </CardContent>
-//             </Card>
-
-//           </TabsContent>
-
-//           {/* FEES */}
-//           <TabsContent value="fees">
-//             <Card className="rounded-2xl shadow-md border-0 bg-gradient-to-br dark:bg-gray-900">
-//               <CardHeader>
-//                 <CardTitle>Monthly Fee Collection</CardTitle>
-//               </CardHeader>
-
-//               <CardContent className="h-80">
-//                 <ResponsiveContainer width="100%" height="100%">
-//                   <LineChart data={feeData}>
-//                     <CartesianGrid strokeDasharray="3 3" />
-//                     <XAxis dataKey="month" />
-//                     <YAxis />
-//                     <Tooltip />
-//                     <Legend />
-//                     <Line dataKey="collected" stroke="#6366f1" strokeWidth={3} />
-//                     <Line dataKey="pending" stroke="#ef4444" strokeWidth={3} />
-//                   </LineChart>
-//                 </ResponsiveContainer>
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-
-//           {/* STUDENTS */}
-//           <TabsContent value="students">
-//             <div className="grid md:grid-cols-2 gap-4">
-
-//               <Card className="rounded-2xl shadow-md border-0">
-//                 <CardHeader><CardTitle>Gender Distribution</CardTitle></CardHeader>
-//                 <CardContent className="h-64">
-//                   <ResponsiveContainer>
-//                     <PieChart>
-//                       <Pie data={genderDistribution} dataKey="value" innerRadius={60} outerRadius={90}>
-//                         {genderDistribution.map((entry, i) => (
-//                           <Cell key={i} fill={entry.color} />
-//                         ))}
-//                       </Pie>
-//                       <Tooltip />
-//                     </PieChart>
-//                   </ResponsiveContainer>
-//                 </CardContent>
-//               </Card>
-
-//               <Card className="rounded-2xl shadow-md border-0">
-//                 <CardHeader><CardTitle>Class Strength</CardTitle></CardHeader>
-//                 <CardContent className="h-64">
-//                   <ResponsiveContainer>
-//                     <BarChart data={classStrength}>
-//                       <CartesianGrid strokeDasharray="3 3" />
-//                       <XAxis dataKey="class" />
-//                       <YAxis />
-//                       <Tooltip />
-//                       <Bar dataKey="students" fill="#6366f1" radius={[6,6,0,0]} />
-//                     </BarChart>
-//                   </ResponsiveContainer>
-//                 </CardContent>
-//               </Card>
-
-//             </div>
-//           </TabsContent>
-
-//         </Tabs>
-//       </div>
-//     </AdminLayout>
-//   );
-// };
-
-// export default Page;
-
-
-// /* eslint-disable @typescript-eslint/no-unused-vars */
-
 "use client"
 
 import { useState } from "react";
@@ -363,15 +73,20 @@ const Reports = () => {
     <AdminLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="rounded-2xl gradient-hero p-6 text-primary-foreground">
+        <div className="rounded-2xl p-6 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground shadow-lg">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-2xl font-bold font-display">Reports Dashboard</h1>
-              <p className="text-primary-foreground/80 text-sm mt-1">Comprehensive analytics & insights</p>
+              <h1 className="text-2xl font-bold font-display tracking-tight">
+                Reports Dashboard
+              </h1>
+              <p className="text-primary-foreground/80 text-sm mt-1">
+                Comprehensive analytics & insights
+              </p>
             </div>
+
             <div className="flex items-center gap-3">
               <Select value={session} onValueChange={setSession}>
-                <SelectTrigger className="w-[130px] bg-white/20 border-white/30 text-primary-foreground">
+                <SelectTrigger className="w-[130px] bg-background/30 backdrop-blur border border-white/20 text-primary-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -380,10 +95,16 @@ const Reports = () => {
                   <SelectItem value="2023-24">2023-24</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="secondary" size="sm" className="gap-2">
+
+              <Button variant="secondary" size="sm" className="gap-2 shadow-sm">
                 <Printer className="w-4 h-4" /> Print
               </Button>
-              <Button variant="outline" size="sm" className="gap-2 bg-white/10 border-white/30 text-primary-foreground hover:bg-white/20">
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 bg-background/30 backdrop-blur border border-white/20 hover:bg-background/50"
+              >
                 <Download className="w-4 h-4" /> Export
               </Button>
             </div>
@@ -393,20 +114,29 @@ const Reports = () => {
         {/* Stat Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total Students", value: "1,100", change: "+5.2%", icon: Users, color: "bg-primary/10 text-primary" },
-            { label: "Avg Attendance", value: "91%", change: "+2.1%", icon: Clock, color: "bg-chart-2/10 text-chart-2" },
-            { label: "Fee Collection", value: "₹32.5L", change: "+8.4%", icon: DollarSign, color: "bg-chart-3/10 text-chart-3" },
-            { label: "Pass Rate", value: "90%", change: "+3.6%", icon: GraduationCap, color: "bg-chart-4/10 text-chart-4" },
+            { label: "Total Students", value: "1,100", change: "+5.2%", icon: Users, color: "text-primary bg-primary/10" },
+            { label: "Avg Attendance", value: "91%", change: "+2.1%", icon: Clock, color: "text-blue-500 bg-blue-500/10 dark:text-blue-400" },
+            { label: "Fee Collection", value: "₹32.5L", change: "+8.4%", icon: DollarSign, color: "text-green-500 bg-green-500/10 dark:text-green-400" },
+            { label: "Pass Rate", value: "90%", change: "+3.6%", icon: GraduationCap, color: "text-purple-500 bg-purple-500/10 dark:text-purple-400" },
           ].map((stat) => (
-            <Card key={stat.label} className="border-none shadow-md">
+            <Card
+              key={stat.label}
+              className="border border-border/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-background/80 backdrop-blur"
+            >
               <CardContent className="p-4 flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.color}`}>
                   <stat.icon className="w-6 h-6" />
                 </div>
+
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
-                  <span className="text-xs text-green-600 flex items-center gap-1">
+                  <p className="text-2xl font-bold text-foreground">
+                    {stat.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {stat.label}
+                  </p>
+
+                  <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" /> {stat.change}
                   </span>
                 </div>
@@ -416,14 +146,14 @@ const Reports = () => {
         </div>
 
         {/* Report Section Tabs */}
-        <div className="flex flex-wrap gap-2 p-1 bg-muted rounded-xl">
+        <div className="flex flex-wrap gap-2 p-1 rounded-xl bg-muted/60 backdrop-blur border border-border/50">
           {reportSections.map((sec) => (
             <button
               key={sec.id}
               onClick={() => setActiveSection(sec.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
                 activeSection === sec.id
-                  ? "gradient-hero text-primary-foreground shadow-lg"
+                  ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
                   : "text-muted-foreground hover:bg-background hover:text-foreground"
               }`}
             >
@@ -448,39 +178,63 @@ const Reports = () => {
   );
 };
 
-/* ===== STUDENT REPORTS ===== */
+{/* ===== STUDENT REPORTS ===== */}
 const StudentReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Users className="w-5 h-5 text-primary" /> Student Information Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <Users className="w-5 h-5" />
+          </div>
+          Student Information Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Report Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Student Report" />
-          <ReportLink label="Class & Section Report" />
-          <ReportLink label="Guardian Report" />
-          <ReportLink label="Student Profile Report" />
-          <ReportLink label="Sibling Report" />
-          <ReportLink label="Student History Report" />
-          <ReportLink label="Admission Report" />
-          <ReportLink label="Student Login Credential" />
-          <ReportLink label="Class Subject Report" />
+          {[
+            "Student Report",
+            "Class & Section Report",
+            "Guardian Report",
+            "Student Profile Report",
+            "Sibling Report",
+            "Student History Report",
+            "Admission Report",
+            "Student Login Credential",
+            "Class Subject Report",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-primary/10 hover:text-primary transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <SelectField label="Class" options={["Class 1","Class 2","Class 3","Class 4","Class 5"]} />
             <SelectField label="Section" options={["A","B","C","D"]} />
             <SelectField label="Category" options={["General","OBC","SC","ST"]} />
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
-        <div className="mt-6">
+
+        {/* Table */}
+        <div className="mt-6 rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
           <ResultTable
             headers={["Admission No", "Student Name", "Class", "Section", "Father Name", "DOB", "Gender", "Category"]}
             rows={[
@@ -495,61 +249,122 @@ const StudentReports = () => (
   </div>
 );
 
-/* ===== FINANCE REPORTS ===== */
+
+{/* ===== FINANCE REPORTS ===== */}
 const FinanceReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-primary" /> Finance Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-green-500/10 text-green-500 dark:text-green-400">
+            <DollarSign className="w-5 h-5" />
+          </div>
+          Finance Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Report Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Balance Fees Statement" />
-          <ReportLink label="Daily Collection Report" active />
-          <ReportLink label="Fees Statement" />
-          <ReportLink label="Balance Fees Report" />
-          <ReportLink label="Fees Collection Report" />
-          <ReportLink label="Online Fees Collection Report" />
-          <ReportLink label="Balance Fees Report With Remark" />
-          <ReportLink label="Income Report" />
-          <ReportLink label="Expense Report" />
-          <ReportLink label="Payroll Report" />
-          <ReportLink label="Income Group Report" />
-          <ReportLink label="Expense Group Report" />
-          <ReportLink label="Online Admission Fees Collection Report" />
-          <ReportLink label="Due Fees Report" />
-          <ReportLink label="Income Expense Balance Report" />
+          {[
+            "Balance Fees Statement",
+            "Daily Collection Report",
+            "Fees Statement",
+            "Balance Fees Report",
+            "Fees Collection Report",
+            "Online Fees Collection Report",
+            "Balance Fees Report With Remark",
+            "Income Report",
+            "Expense Report",
+            "Payroll Report",
+            "Income Group Report",
+            "Expense Group Report",
+            "Online Admission Fees Collection Report",
+            "Due Fees Report",
+            "Income Expense Balance Report",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-foreground">Date From <span className="text-destructive">*</span></label>
-              <Input type="date" defaultValue="2026-03-01" className="mt-1" />
+              <label className="text-sm font-medium text-foreground">
+                Date From <span className="text-destructive">*</span>
+              </label>
+              <Input
+                type="date"
+                defaultValue="2026-03-01"
+                className="mt-1 bg-background/70"
+              />
             </div>
+
             <div>
-              <label className="text-sm font-medium text-foreground">Date To <span className="text-destructive">*</span></label>
-              <Input type="date" defaultValue="2026-03-27" className="mt-1" />
+              <label className="text-sm font-medium text-foreground">
+                Date To <span className="text-destructive">*</span>
+              </label>
+              <Input
+                type="date"
+                defaultValue="2026-03-27"
+                className="mt-1 bg-background/70"
+              />
             </div>
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
+
+        {/* Chart */}
         <div className="mt-6">
-          <h3 className="font-semibold mb-4">Daily Collection Report</h3>
-          <div className="h-[300px]">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Daily Collection Report
+          </h3>
+
+          <div className="h-[300px] rounded-xl border border-border/50 bg-background/60 backdrop-blur p-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={feeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                <YAxis stroke="hsl(var(--muted-foreground))" />
+                <Tooltip
+                  contentStyle={{
+                    background: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                  }}
+                />
                 <Legend />
-                <Bar dataKey="collected" fill="hsl(var(--primary))" name="Collected" radius={[4,4,0,0]} />
-                <Bar dataKey="pending" fill="hsl(var(--chart-4))" name="Pending" radius={[4,4,0,0]} />
+
+                <Bar
+                  dataKey="collected"
+                  fill="hsl(var(--primary))"
+                  name="Collected"
+                  radius={[6, 6, 0, 0]}
+                />
+
+                <Bar
+                  dataKey="pending"
+                  fill="hsl(var(--chart-4))"
+                  name="Pending"
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -562,31 +377,70 @@ const FinanceReports = () => (
 /* ===== ATTENDANCE REPORTS ===== */
 const AttendanceReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Clock className="w-5 h-5 text-primary" /> Attendance Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 dark:text-blue-400">
+            <Clock className="w-5 h-5" />
+          </div>
+          Attendance Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Report Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Student Attendance Report" />
-          <ReportLink label="Daily Attendance Report" />
-          <ReportLink label="Period Attendance Report" />
-          <ReportLink label="Class Attendance Report" />
-          <ReportLink label="Monthly Attendance Report" />
-          <ReportLink label="Absentee Report" />
+          {[
+            "Student Attendance Report",
+            "Daily Attendance Report",
+            "Period Attendance Report",
+            "Class Attendance Report",
+            "Monthly Attendance Report",
+            "Absentee Report",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Monthly Attendance Rate (%)</h3>
-          <div className="h-[300px]">
+
+        {/* Chart Section */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Monthly Attendance Rate (%)
+          </h3>
+
+          <div className="h-[300px] rounded-xl border border-border/50 bg-background/60 backdrop-blur p-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={attendanceData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Bar dataKey="rate" fill="hsl(var(--primary))" name="Attendance %" radius={[4,4,0,0]} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                  }}
+                />
+
+                <Bar
+                  dataKey="rate"
+                  fill="hsl(var(--primary))"
+                  name="Attendance %"
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -596,50 +450,101 @@ const AttendanceReports = () => (
   </div>
 );
 
+
 /* ===== EXAMINATION REPORTS ===== */
 const ExaminationReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" /> Examination Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500 dark:text-purple-400">
+            <FileText className="w-5 h-5" />
+          </div>
+          Examination Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Report Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Exam Result Report" />
-          <ReportLink label="Marks Sheet Report" />
-          <ReportLink label="Merit List Report" />
-          <ReportLink label="Exam Rank Report" />
-          <ReportLink label="Subject Wise Report" />
-          <ReportLink label="Tabulation Sheet" />
+          {[
+            "Exam Result Report",
+            "Marks Sheet Report",
+            "Merit List Report",
+            "Exam Rank Report",
+            "Subject Wise Report",
+            "Tabulation Sheet",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-purple-500/10 hover:text-purple-600 dark:hover:text-purple-400 transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <SelectField label="Exam" options={["Unit Test 1","Half Yearly","Annual Exam"]} />
             <SelectField label="Class" options={["Class 1","Class 2","Class 3","Class 4","Class 5"]} />
             <SelectField label="Section" options={["A","B","C","D"]} />
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
+
+        {/* Results + Chart */}
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* Pie Chart */}
           <div>
-            <h3 className="font-semibold mb-4">Result Distribution</h3>
-            <div className="h-[280px]">
+            <h3 className="font-semibold mb-4 text-foreground">
+              Result Distribution
+            </h3>
+
+            <div className="h-[280px] rounded-xl border border-border/50 bg-background/60 backdrop-blur p-4">
               <ResponsiveContainer width="100%" height="100%">
                 <RPieChart>
-                  <Pie data={examPieData} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : '0'}%`}>
-                    {examPieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  <Pie
+                    data={examPieData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    dataKey="value"
+                    label={({ name, percent }) =>
+                      `${name} ${
+                        percent ? (percent * 100).toFixed(0) : "0"
+                      }%`
+                    }
+                  >
+                    {examPieData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
                   </Pie>
-                  <Tooltip />
+
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--background))",
+                      border: "1px solid hsl(var(--border))",
+                    }}
+                  />
                 </RPieChart>
               </ResponsiveContainer>
             </div>
           </div>
-          <div>
+
+          {/* Table */}
+          <div className="rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
             <ResultTable
               headers={["Admission No", "Student Name", "Class", "Total Marks", "Percentage", "Grade"]}
               rows={[
@@ -649,6 +554,7 @@ const ExaminationReports = () => (
               ]}
             />
           </div>
+
         </div>
       </CardContent>
     </Card>
@@ -658,32 +564,60 @@ const ExaminationReports = () => (
 /* ===== ONLINE EXAMINATION REPORTS ===== */
 const OnlineExamReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Globe className="w-5 h-5 text-primary" /> Online Examinations Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-teal-500/10 text-teal-500 dark:text-teal-400">
+            <Globe className="w-5 h-5" />
+          </div>
+          Online Examinations Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Report Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Result Report" active />
-          <ReportLink label="Exams Report" />
-          <ReportLink label="Student Exams Attempt Report" />
-          <ReportLink label="Exams Rank Report" />
+          {[
+            "Result Report",
+            "Exams Report",
+            "Student Exams Attempt Report",
+            "Exams Rank Report",
+          ].map((label, i) => (
+            <div
+              key={label}
+              className={`p-4 rounded-xl border border-border/50 bg-muted/40 cursor-pointer transition-all hover:shadow-md
+              ${i === 0 ? "bg-teal-500/10 text-teal-600 dark:text-teal-400" : "hover:bg-teal-500/10 hover:text-teal-600 dark:hover:text-teal-400"}`}
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <SelectField label="Exam" options={["Online Quiz 1","Online Mid Term","Online Final"]} />
             <SelectField label="Class" options={["Class 1","Class 2","Class 3","Class 4","Class 5"]} />
             <SelectField label="Section" options={["A","B","C","D"]} />
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
-        <div className="mt-6">
-          <h3 className="font-semibold mb-3">Result Report</h3>
+
+        {/* Table */}
+        <div className="mt-6 rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
+          <h3 className="font-semibold mb-3 text-foreground">
+            Result Report
+          </h3>
+
           <ResultTable
             headers={["Admission No", "Student Name", "Class", "Total Attempt", "Remaining Attempt", "Exam Status"]}
             rows={[
@@ -698,39 +632,78 @@ const OnlineExamReports = () => (
   </div>
 );
 
+
 /* ===== LESSON PLAN REPORTS ===== */
 const LessonPlanReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <BookMarked className="w-5 h-5 text-primary" /> Lesson Plan Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-orange-500/10 text-orange-500 dark:text-orange-400">
+            <BookMarked className="w-5 h-5" />
+          </div>
+          Lesson Plan Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
         <Tabs defaultValue="syllabus">
-          <TabsList className="mb-4">
-            <TabsTrigger value="syllabus" className="gap-2"><FileBarChart className="w-4 h-4" /> Syllabus Status Report</TabsTrigger>
-            <TabsTrigger value="lesson" className="gap-2"><BookOpen className="w-4 h-4" /> Subject Lesson Plan Report</TabsTrigger>
+
+          {/* Tabs */}
+          <TabsList className="mb-4 bg-muted/50 border border-border/50 p-1 rounded-lg">
+            <TabsTrigger
+              value="syllabus"
+              className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <FileBarChart className="w-4 h-4" />
+              Syllabus Status
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="lesson"
+              className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <BookOpen className="w-4 h-4" />
+              Lesson Plan
+            </TabsTrigger>
           </TabsList>
 
+          {/* ===== SYLLABUS ===== */}
           <TabsContent value="syllabus">
-            <h3 className="font-semibold mb-4">Select Criteria</h3>
+            <h3 className="font-semibold mb-4 text-foreground">
+              Select Criteria
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SelectField label="Class" options={["Class 1","Class 2","Class 3","Class 4","Class 5"]} />
               <SelectField label="Section" options={["A","B","C","D"]} />
-              <SelectField label="Subject Group" options={["Class 1st Subject Group","Class 2nd Subject Group","Class 3rd Subject Group"]} />
+              <SelectField label="Subject Group" options={["Group 1","Group 2","Group 3"]} />
             </div>
+
             <div className="flex justify-end mt-4">
-              <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+                <Search className="w-4 h-4" /> Search
+              </Button>
             </div>
+
+            {/* Progress Cards */}
             <div className="mt-6">
-              <h3 className="font-semibold mb-4">Syllabus Status Report</h3>
+              <h3 className="font-semibold mb-4 text-foreground">
+                Syllabus Status Report
+              </h3>
+
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
                 {syllabusData.map((s) => (
-                  <div key={s.subject} className="text-center space-y-2">
-                    <p className="text-sm font-semibold">{s.subject} ({s.code})</p>
-                    <div className="relative w-24 h-24 mx-auto">
+                  <div
+                    key={s.subject}
+                    className="text-center p-3 rounded-xl border border-border/50 bg-background/60 backdrop-blur hover:shadow-md transition-all"
+                  >
+                    <p className="text-sm font-semibold text-foreground">
+                      {s.subject}
+                    </p>
+
+                    {/* Circle Progress */}
+                    <div className="relative w-24 h-24 mx-auto my-2">
                       <svg viewBox="0 0 36 36" className="w-full h-full">
                         <path
                           d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -739,7 +712,7 @@ const LessonPlanReports = () => (
                           strokeWidth="3"
                         />
                         <path
-                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831"
                           fill="none"
                           stroke="hsl(var(--primary))"
                           strokeWidth="3"
@@ -747,12 +720,17 @@ const LessonPlanReports = () => (
                           strokeLinecap="round"
                         />
                       </svg>
+
                       <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground">
                         {s.completion}%
                       </div>
                     </div>
-                    <Badge variant={s.completion === 100 ? "default" : "secondary"} className="text-xs">
-                      Complete {s.completion}%
+
+                    <Badge
+                      variant={s.completion === 100 ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {s.completion === 100 ? "Completed" : "In Progress"}
                     </Badge>
                   </div>
                 ))}
@@ -760,27 +738,36 @@ const LessonPlanReports = () => (
             </div>
           </TabsContent>
 
+          {/* ===== LESSON PLAN ===== */}
           <TabsContent value="lesson">
-            <h3 className="font-semibold mb-4">Select Criteria</h3>
+            <h3 className="font-semibold mb-4 text-foreground">
+              Select Criteria
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SelectField label="Class" options={["Class 1","Class 2","Class 3","Class 4","Class 5"]} />
               <SelectField label="Section" options={["A","B","C","D"]} />
               <SelectField label="Subject" options={["English","Hindi","Mathematics","Science"]} />
             </div>
+
             <div className="flex justify-end mt-4">
-              <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+                <Search className="w-4 h-4" /> Search
+              </Button>
             </div>
-            <div className="mt-6">
+
+            <div className="mt-6 rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
               <ResultTable
                 headers={["Lesson", "Topic", "Sub Topic", "Status", "Completion Date", "Teaching Method"]}
                 rows={[
-                  ["Chapter 1", "Introduction to Grammar", "Nouns & Pronouns", "Completed", "15/04/2025", "Lecture"],
-                  ["Chapter 2", "Tenses", "Present Tense", "In Progress", "-", "Interactive"],
-                  ["Chapter 3", "Essay Writing", "Descriptive", "Pending", "-", "Workshop"],
+                  ["Chapter 1", "Grammar", "Nouns", "Completed", "15/04/2025", "Lecture"],
+                  ["Chapter 2", "Tenses", "Present", "In Progress", "-", "Interactive"],
+                  ["Chapter 3", "Essay", "Descriptive", "Pending", "-", "Workshop"],
                 ]}
               />
             </div>
           </TabsContent>
+
         </Tabs>
       </CardContent>
     </Card>
@@ -790,31 +777,55 @@ const LessonPlanReports = () => (
 /* ===== HUMAN RESOURCE REPORTS ===== */
 const HumanResourceReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-primary" /> Human Resource Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 dark:text-indigo-400">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          Human Resource Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Report Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Staff Report" />
-          <ReportLink label="Payroll Report" />
-          <ReportLink label="Leave Request Report" />
-          <ReportLink label="My Leave Request Report" />
+          {[
+            "Staff Report",
+            "Payroll Report",
+            "Leave Request Report",
+            "My Leave Request Report",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <SelectField label="Role" options={["Teacher","Accountant","Librarian","Receptionist","Admin"]} />
             <SelectField label="Department" options={["Science","Mathematics","English","Hindi","Computer"]} />
             <SelectField label="Designation" options={["Principal","Vice Principal","HOD","Senior Teacher","Teacher"]} />
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
-        <div className="mt-6">
+
+        {/* Table */}
+        <div className="mt-6 rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
           <ResultTable
             headers={["Staff ID", "Name", "Role", "Department", "Phone", "Joining Date", "Status"]}
             rows={[
@@ -829,38 +840,66 @@ const HumanResourceReports = () => (
   </div>
 );
 
+
 /* ===== HOMEWORK REPORTS ===== */
 const HomeworkReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <ClipboardList className="w-5 h-5 text-primary" /> Homework Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-pink-500/10 text-pink-500 dark:text-pink-400">
+            <ClipboardList className="w-5 h-5" />
+          </div>
+          Homework Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Homework Report" />
-          <ReportLink label="Homework Evaluation Report" />
-          <ReportLink label="Daily Assignment Report" />
-          <ReportLink label="Homework Marks Report" />
+          {[
+            "Homework Report",
+            "Homework Evaluation Report",
+            "Daily Assignment Report",
+            "Homework Marks Report",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-pink-500/10 hover:text-pink-600 dark:hover:text-pink-400 transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <SelectField label="Class" options={["Class 1","Class 2","Class 3","Class 4","Class 5"]} />
             <SelectField label="Section" options={["A","B","C","D"]} />
             <SelectField label="Subject" options={["English","Hindi","Mathematics","Science"]} />
+
             <div>
-              <label className="text-sm font-medium text-foreground">Date</label>
-              <Input type="date" defaultValue="2026-03-27" className="mt-1" />
+              <label className="text-sm font-medium text-foreground">
+                Date
+              </label>
+              <Input type="date" defaultValue="2026-03-27" className="mt-1 bg-background/70" />
             </div>
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
-        <div className="mt-6">
+
+        {/* Table */}
+        <div className="mt-6 rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
           <ResultTable
             headers={["Class", "Section", "Subject", "Homework Date", "Submission Date", "Created By", "Evaluation"]}
             rows={[
@@ -875,39 +914,69 @@ const HomeworkReports = () => (
   </div>
 );
 
+
 /* ===== LIBRARY REPORTS ===== */
 const LibraryReports = () => (
   <div className="space-y-6">
-    <Card>
+    <Card className="bg-background/80 backdrop-blur border border-border/50 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Library className="w-5 h-5 text-primary" /> Library Report
+        <CardTitle className="text-lg flex items-center gap-2 font-semibold">
+          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <Library className="w-5 h-5" />
+          </div>
+          Library Report
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ReportLink label="Book Issue Report" />
-          <ReportLink label="Book Return Report" />
-          <ReportLink label="Book Inventory Report" />
-          <ReportLink label="Overdue Book Report" />
+          {[
+            "Book Issue Report",
+            "Book Return Report",
+            "Book Inventory Report",
+            "Overdue Book Report",
+          ].map((label) => (
+            <div
+              key={label}
+              className="p-4 rounded-xl border border-border/50 bg-muted/40 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 transition-all cursor-pointer hover:shadow-md"
+            >
+              {label}
+            </div>
+          ))}
         </div>
-        <div className="border-t pt-6">
-          <h3 className="font-semibold mb-4">Select Criteria</h3>
+
+        {/* Filters */}
+        <div className="border-t border-border/50 pt-6">
+          <h3 className="font-semibold mb-4 text-foreground">
+            Select Criteria
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-foreground">Date From</label>
-              <Input type="date" defaultValue="2026-03-01" className="mt-1" />
+              <label className="text-sm font-medium text-foreground">
+                Date From
+              </label>
+              <Input type="date" defaultValue="2026-03-01" className="mt-1 bg-background/70" />
             </div>
+
             <div>
-              <label className="text-sm font-medium text-foreground">Date To</label>
-              <Input type="date" defaultValue="2026-03-27" className="mt-1" />
+              <label className="text-sm font-medium text-foreground">
+                Date To
+              </label>
+              <Input type="date" defaultValue="2026-03-27" className="mt-1 bg-background/70" />
             </div>
           </div>
+
           <div className="flex justify-end mt-4">
-            <Button className="gradient-hero text-primary-foreground gap-2"><Search className="w-4 h-4" /> Search</Button>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-md">
+              <Search className="w-4 h-4" /> Search
+            </Button>
           </div>
         </div>
-        <div className="mt-6">
+
+        {/* Table */}
+        <div className="mt-6 rounded-xl border border-border/50 bg-background/60 backdrop-blur p-2">
           <ResultTable
             headers={["Book ID", "Book Title", "Author", "Issue To", "Issue Date", "Return Date", "Status"]}
             rows={[
@@ -923,56 +992,110 @@ const LibraryReports = () => (
 );
 
 /* ===== SHARED COMPONENTS ===== */
-const ReportLink = ({ label, active }: { label: string; active?: boolean }) => (
-  <button className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-left transition-all border ${
-    active
-      ? "bg-primary/10 border-primary/30 text-primary"
-      : "border-border hover:bg-accent hover:text-accent-foreground"
-  }`}>
-    <FileBarChart className="w-4 h-4 flex-shrink-0" />
-    {label}
-  </button>
-);
+
+// const ReportLink = ({ label, active }: { label: string; active?: boolean }) => (
+//   <button
+//     className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-left transition-all border backdrop-blur
+//     ${
+//       active
+//         ? "bg-primary/10 border-primary/30 text-primary shadow-sm"
+//         : "border-border/50 bg-background/50 hover:bg-primary/10 hover:text-primary hover:shadow-md"
+//     }`}
+//   >
+//     <FileBarChart className="w-4 h-4 flex-shrink-0" />
+//     <span className="truncate">{label}</span>
+//   </button>
+// );
+
 
 const SelectField = ({ label, options }: { label: string; options: string[] }) => (
   <div>
-    <label className="text-sm font-medium text-foreground">{label} <span className="text-destructive">*</span></label>
+    <label className="text-sm font-medium text-foreground">
+      {label} <span className="text-destructive">*</span>
+    </label>
+
     <Select>
-      <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
-      <SelectContent>
-        {options.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+      <SelectTrigger className="mt-1 bg-background/70 backdrop-blur border border-border/50 focus:ring-2 focus:ring-primary/30">
+        <SelectValue placeholder="Select" />
+      </SelectTrigger>
+
+      <SelectContent className="bg-background border border-border/50">
+        {options.map((o) => (
+          <SelectItem key={o} value={o} className="focus:bg-primary/10">
+            {o}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   </div>
 );
 
-const ResultTable = ({ headers, rows }: { headers: string[]; rows: string[][] }) => (
-  <div className="border rounded-lg overflow-hidden">
-    <Table>
-      <TableHeader>
-        <TableRow className="bg-muted/50">
-          {headers.map((h) => <TableHead key={h} className="font-semibold text-foreground">{h}</TableHead>)}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map((row, i) => (
-          <TableRow key={i} className="hover:bg-accent/50">
-            {row.map((cell, j) => (
-              <TableCell key={j}>
-                {cell === "Completed" || cell === "Active" || cell === "Returned" ? (
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100">{cell}</Badge>
-                ) : cell === "Pending" || cell === "Issued" || cell === "In Progress" ? (
-                  <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">{cell}</Badge>
-                ) : cell === "Overdue" ? (
-                  <Badge className="bg-red-100 text-red-700 hover:bg-red-100">{cell}</Badge>
-                ) : cell}
-              </TableCell>
+
+const ResultTable = ({ headers, rows }: { headers: string[]; rows: string[][] }) => {
+
+  const getBadgeStyle = (value: string) => {
+    switch (value) {
+      case "Completed":
+      case "Active":
+      case "Returned":
+        return "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20";
+
+      case "Pending":
+      case "Issued":
+      case "In Progress":
+        return "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20";
+
+      case "Overdue":
+        return "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20";
+
+      default:
+        return "";
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-border/50 bg-background/70 backdrop-blur overflow-hidden">
+      <Table>
+        {/* Header */}
+        <TableHeader>
+          <TableRow className="bg-muted/50">
+            {headers.map((h) => (
+              <TableHead
+                key={h}
+                className="font-semibold text-foreground whitespace-nowrap"
+              >
+                {h}
+              </TableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </div>
-);
+        </TableHeader>
+
+        {/* Body */}
+        <TableBody>
+          {rows.map((row, i) => (
+            <TableRow
+              key={i}
+              className="hover:bg-muted/40 transition-colors"
+            >
+              {row.map((cell, j) => (
+                <TableCell key={j} className="text-foreground">
+                  {getBadgeStyle(cell) ? (
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium ${getBadgeStyle(cell)}`}
+                    >
+                      {cell}
+                    </span>
+                  ) : (
+                    cell
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
 
 export default Reports;

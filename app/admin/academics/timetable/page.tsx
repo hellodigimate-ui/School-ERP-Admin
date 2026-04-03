@@ -135,7 +135,7 @@ const ScheduleModal = ({ open, onClose, onSave, schedule, periods, teachers, day
         />
 
         {/* Branch */}
-        <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+        {/* <Select value={selectedBranch} onValueChange={setSelectedBranch}>
           <SelectTrigger className="w-full mb-2">
             <SelectValue placeholder="Select Branch" />
           </SelectTrigger>
@@ -146,7 +146,7 @@ const ScheduleModal = ({ open, onClose, onSave, schedule, periods, teachers, day
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
 
         {/* Class */}
         <Select
@@ -481,7 +481,7 @@ useEffect(()=>{
               <div className="flex flex-wrap items-center gap-3">
 
 
-                <Select
+                {/* <Select
                   value={selectedBranch}
                   onValueChange={setSelectedBranch}
                 >
@@ -495,7 +495,7 @@ useEffect(()=>{
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </Select> */}
 
                 <Select
                 value={selectedClass}

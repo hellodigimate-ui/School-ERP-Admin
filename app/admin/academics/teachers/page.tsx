@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/immutability */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -5,7 +6,7 @@
 import { useEffect, useState, Suspense } from "react";
 
 export const dynamic = 'force-dynamic';
-import { Search, Plus, MoreHorizontal, Mail, Phone, GitBranch, BookOpen, Award, Pencil, Trash2, Users, Save, User, ToggleRight, Lock } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Mail, Phone,  BookOpen, Award, Pencil, Trash2, Users, Save, User, ToggleRight, Lock } from "lucide-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -315,7 +316,7 @@ const fetchSubjects = async () => {
             <TableRow>
               <TableHead>Teacher</TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead>Branch</TableHead>
+              {/* <TableHead>Branch</TableHead> */}
               <TableHead>Subject</TableHead>
               <TableHead>Experience</TableHead>
               <TableHead>Status</TableHead>
@@ -363,14 +364,14 @@ const fetchSubjects = async () => {
                 </TableCell>
 
                 {/* Branch */}
-                <TableCell>
+                {/* <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 rounded-md bg-emerald-100 text-emerald-600">
                       <GitBranch size={14} />
                     </div>
                     {branches.find((b) => String(b.id) === String(t.branchId))?.name || "-"}
                   </div>
-                </TableCell>
+                </TableCell> */}
 
                 {/* Subject */}
                 <TableCell>
@@ -534,7 +535,7 @@ const fetchSubjects = async () => {
             </div>
 
             {/* Branch */}
-            <div className="relative">
+            {/* <div className="relative">
               <GitBranch className="absolute left-3 top-3 text-muted-foreground" size={16} />
               <Select
                 value={formData.branchId}
@@ -551,7 +552,7 @@ const fetchSubjects = async () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             {/* Subject */}
             <div className="relative">
@@ -652,7 +653,7 @@ const fetchSubjects = async () => {
             </div>
 
             {/* Branch */}
-            <div className="relative">
+            {/* <div className="relative">
               <GitBranch className="absolute left-3 top-3 text-muted-foreground" size={16} />
               <Select
                 value={formData.branchId}
@@ -667,7 +668,7 @@ const fetchSubjects = async () => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             {/* Subject */}
             <div className="relative">

@@ -280,7 +280,7 @@ useEffect(() => {
         </div>
 
         {/* ================= FILTERS ================= */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-5">
+        {/* <div className="flex flex-col sm:flex-row gap-4 mb-5">
 
           <div className="relative w-full sm:w-[260px]">
             <Filter className="absolute left-3 top-3 text-muted-foreground" size={16} />
@@ -304,7 +304,7 @@ useEffect(() => {
             </Select>
           </div>
 
-        </div>
+        </div> */}
 
         {/* ================= TABLE ================= */}
         <Card className="rounded-2xl border border-border/40 shadow-lg overflow-hidden">
@@ -431,7 +431,7 @@ useEffect(() => {
               </div>
 
               {/* Branch */}
-              <div>
+              {/* <div>
                 <Label>Branch</Label>
                 <div className="relative mt-1">
                   <GitBranch className="absolute left-3 top-3 text-muted-foreground" size={16} />
@@ -454,7 +454,7 @@ useEffect(() => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
+              </div> */}
 
               {/* Time Inputs */}
               <div className="grid grid-cols-2 gap-4">

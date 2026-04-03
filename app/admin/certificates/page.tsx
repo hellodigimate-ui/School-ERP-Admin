@@ -485,45 +485,47 @@ useEffect(() => {
 
               {/* Individual Category Tabs */}
               {(["ID_CARD", "ADMIT_CARD", "MARKSHEET", "TRANSFER_CERTIFICATE" ,"CV" ] as const).map((cat) => (
-                  <TabsContent className="transition-all duration-300" key={cat} value={cat}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {templates.filter((t) => t.type === cat).length === 0 ? (
-                      <Card className="col-span-full border-dashed border-2 border-gray-300 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 shadow-inner rounded-xl">
-                          <CardContent className="p-12 text-center text-gray-400 text-lg flex flex-col items-center justify-center gap-2">
-                          <span className="text-4xl">📄</span>
-                          No templates yet. Click <strong>Create Template</strong> to add one.
-                          </CardContent>
-                      </Card>
-                      ) : (
-                      templates
-                          .filter((t) => t.type === cat)
-                          .map((t) => (
-                          <TemplateCard
-                              key={t.id}
-                              template={t}
-                              onPreview={() => {
-                              setPreviewTemplate(t);
-                              setShowPreview(true);
-                              }}
-                              onEdit={() => handleEdit(t)}
-                              onDelete={() => handleDelete(t.id)}
-                              onDuplicate={() => handleDuplicate(t)}
-                              renderHtml={renderHtmlWithData}
-                          />
-                          ))
-                      )}
-                  </div>
+                  <TabsContent className="transition-all duration-300 min-h-[500px]" key={cat} value={cat}>
+                    <div className="min-h-[450px]">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {templates.filter((t) => t.type === cat).length === 0 ? (
+                          <Card className="col-span-full border-dashed border-2 border-gray-300 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 shadow-inner rounded-xl h-[300px] flex items-center justify-center">
+                              <CardContent className="text-center text-gray-400 text-lg flex flex-col items-center justify-center gap-2">
+                              <span className="text-4xl">📄</span>
+                              No templates yet. Click <strong>Create Template</strong> to add one.
+                              </CardContent>
+                          </Card>
+                          ) : (
+                          templates
+                              .filter((t) => t.type === cat)
+                              .map((t) => (
+                              <TemplateCard
+                                  key={t.id}
+                                  template={t}
+                                  onPreview={() => {
+                                  setPreviewTemplate(t);
+                                  setShowPreview(true);
+                                  }}
+                                  onEdit={() => handleEdit(t)}
+                                  onDelete={() => handleDelete(t.id)}
+                                  onDuplicate={() => handleDuplicate(t)}
+                                  renderHtml={renderHtmlWithData}
+                              />
+                              ))
+                          )}
+                      </div>
+                    </div>
                   </TabsContent>
               ))}
 
               {/* All Templates Tab with Filter */}
               <TabsContent className="transition-all duration-300" value="generate">
                   
-
+                <div className="min-h-[450px]">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {filtered.length === 0 ? (
-                          <Card className="col-span-full border-dashed border-2 border-gray-300 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 shadow-inner rounded-xl">
-                          <CardContent className="p-12 text-center text-gray-400 text-lg flex flex-col items-center justify-center gap-2">
+                          <Card className="col-span-full border-dashed border-2 border-gray-300 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 shadow-inner rounded-xl h-[300px] flex items-center justify-center">
+                          <CardContent className="text-center text-gray-400 text-lg flex flex-col items-center justify-center gap-2">
                               <span className="text-4xl">🔍</span>
                               No templates match this filter.
                           </CardContent>
@@ -545,6 +547,7 @@ useEffect(() => {
                           ))
                       )}
                   </div>
+                </div>
               </TabsContent>
             </Tabs>
 
