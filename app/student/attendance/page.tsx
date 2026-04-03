@@ -1,7 +1,6 @@
-"use client"
+"use client";
 
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StudentLayout } from "@/components/student/StudentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,14 +8,35 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarCheck, CalendarX, Clock, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarX,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  TrendingUp,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 interface AttendanceRecord {
   date: string;
   day: string;
-  status: "present" | "absent" | "leave" | "holiday";
+  status: "present" | "absent" | "leave" | "late" | "holiday";
   subject?: string;
+  remarks?: string;
+  type?: string;
+}
+
+interface ApiAttendanceRecord {
+  id: string;
+  userId: string;
+  date: string;
+  status: "PRESENT" | "ABSENT" | "LATE";
+  remarks?: string;
+  type?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface SubjectAttendance {
@@ -27,40 +47,152 @@ interface SubjectAttendance {
   teacher: string;
 }
 
-const monthlyRecords: AttendanceRecord[] = [
-  { date: "2026-02-01", day: "Saturday", status: "holiday" },
-  { date: "2026-02-02", day: "Sunday", status: "holiday" },
-  { date: "2026-02-03", day: "Monday", status: "present" },
-  { date: "2026-02-04", day: "Tuesday", status: "present" },
-  { date: "2026-02-05", day: "Wednesday", status: "present" },
-  { date: "2026-02-06", day: "Thursday", status: "absent", subject: "Mathematics" },
-  { date: "2026-02-07", day: "Friday", status: "present" },
-  { date: "2026-02-08", day: "Saturday", status: "holiday" },
-  { date: "2026-02-09", day: "Sunday", status: "holiday" },
-  { date: "2026-02-10", day: "Monday", status: "present" },
-  { date: "2026-02-11", day: "Tuesday", status: "leave" },
-  { date: "2026-02-12", day: "Wednesday", status: "present" },
-];
-
 const subjectAttendance: SubjectAttendance[] = [
-  { subject: "Mathematics", present: 28, total: 30, percentage: 93, teacher: "Mrs. Sharma" },
-  { subject: "Physics", present: 25, total: 28, percentage: 89, teacher: "Mr. Patel" },
-  { subject: "Chemistry", present: 26, total: 28, percentage: 93, teacher: "Dr. Singh" },
-  { subject: "English", present: 27, total: 30, percentage: 90, teacher: "Mrs. Gupta" },
-  { subject: "Computer Science", present: 24, total: 26, percentage: 92, teacher: "Mr. Kumar" },
-  { subject: "History", present: 20, total: 22, percentage: 91, teacher: "Mr. Verma" },
+  {
+    subject: "Mathematics",
+    present: 28,
+    total: 30,
+    percentage: 93,
+    teacher: "Mrs. Sharma",
+  },
+  {
+    subject: "Physics",
+    present: 25,
+    total: 28,
+    percentage: 89,
+    teacher: "Mr. Patel",
+  },
+  {
+    subject: "Chemistry",
+    present: 26,
+    total: 28,
+    percentage: 93,
+    teacher: "Dr. Singh",
+  },
+  {
+    subject: "English",
+    present: 27,
+    total: 30,
+    percentage: 90,
+    teacher: "Mrs. Gupta",
+  },
+  {
+    subject: "Computer Science",
+    present: 24,
+    total: 26,
+    percentage: 92,
+    teacher: "Mr. Kumar",
+  },
+  {
+    subject: "History",
+    present: 20,
+    total: 22,
+    percentage: 91,
+    teacher: "Mr. Verma",
+  },
 ];
 
 const Attendance = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [attendanceRecords, setAttendanceRecords] = useState<
+    AttendanceRecord[]
+  >([]);
+  const [stats, setStats] = useState({
+    totalDays: 0,
+    present: 0,
+    absent: 0,
+    leave: 0,
+    percentage: 0,
+  });
+  const [page, setPage] = useState(1);
+  const [perPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const stats = {
-    totalDays: 50,
-    present: 45,
-    absent: 3,
-    leave: 2,
-    percentage: 92,
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await axiosInstance.get("/api/v1/attendance/user", {
+          params: {
+            page,
+            perPage,
+          },
+        });
+
+        const records: ApiAttendanceRecord[] = response.data?.data || [];
+        const pagination = response.data?.pagination || {};
+
+        setTotalPages(pagination.totalPages || 1);
+        setTotalRecords(pagination.totalRecords || records.length);
+        const mappedRecords = records
+          .map((record) => {
+            const recordDate = new Date(record.date);
+            return {
+              date: recordDate.toISOString(),
+              day: recordDate.toLocaleDateString("en-US", { weekday: "long" }),
+              status:
+                record.status === "PRESENT"
+                  ? "present"
+                  : record.status === "ABSENT"
+                    ? "absent"
+                    : "late",
+              remarks: record.remarks,
+              type: record.type,
+            } as AttendanceRecord;
+          })
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
+
+        setAttendanceRecords(mappedRecords);
+
+        setTotalRecords(pagination.totalRecords || mappedRecords.length);
+
+        const presentCount = mappedRecords.filter(
+          (item) => item.status === "present",
+        ).length;
+        const absentCount = mappedRecords.filter(
+          (item) => item.status === "absent",
+        ).length;
+        const leaveCount = mappedRecords.filter(
+          (item) => item.status === "late",
+        ).length;
+        const totalDays = mappedRecords.length;
+        const percentage =
+          totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 0;
+
+        setStats({
+          totalDays,
+          present: presentCount,
+          absent: absentCount,
+          leave: leaveCount,
+          percentage,
+        });
+      } catch (fetchError: any) {
+        console.error("Error fetching student attendance:", fetchError);
+        setError(fetchError?.message || "Unable to load attendance data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAttendance();
+  }, [page, perPage]);
+
+  const handlePreviousPage = () => {
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setPage((prev) => Math.min(prev + 1, totalPages));
   };
 
   const getStatusColor = (status: string) => {
@@ -70,6 +202,7 @@ const Attendance = () => {
       case "absent":
         return "bg-destructive text-white";
       case "leave":
+      case "late":
         return "bg-stat-yellow text-white";
       case "holiday":
         return "bg-muted text-muted-foreground";
@@ -86,6 +219,8 @@ const Attendance = () => {
         return <Badge variant="destructive">Absent</Badge>;
       case "leave":
         return <Badge className="bg-stat-yellow text-foreground">Leave</Badge>;
+      case "late":
+        return <Badge className="bg-stat-yellow text-foreground">Late</Badge>;
       case "holiday":
         return <Badge variant="secondary">Holiday</Badge>;
       default:
@@ -99,7 +234,12 @@ const Attendance = () => {
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground">Attendance</h1>
-          <p className="text-sm text-muted-foreground">Track your attendance records</p>
+          <p className="text-sm text-muted-foreground">
+            Track your attendance records
+          </p>
+          {error ? (
+            <p className="mt-2 text-sm text-destructive">{error}</p>
+          ) : null}
         </div>
 
         {/* Stats Cards */}
@@ -195,14 +335,34 @@ const Attendance = () => {
                     onSelect={setSelectedDate}
                     className="rounded-md pointer-events-auto"
                     modifiers={{
-                      present: monthlyRecords.filter(r => r.status === "present").map(r => new Date(r.date)),
-                      absent: monthlyRecords.filter(r => r.status === "absent").map(r => new Date(r.date)),
-                      leave: monthlyRecords.filter(r => r.status === "leave").map(r => new Date(r.date)),
+                      present: attendanceRecords
+                        .filter((r) => r.status === "present")
+                        .map((r) => new Date(r.date)),
+                      absent: attendanceRecords
+                        .filter((r) => r.status === "absent")
+                        .map((r) => new Date(r.date)),
+                      leave: attendanceRecords
+                        .filter(
+                          (r) => r.status === "leave" || r.status === "late",
+                        )
+                        .map((r) => new Date(r.date)),
                     }}
                     modifiersStyles={{
-                      present: { backgroundColor: "hsl(var(--stat-green))", color: "white", borderRadius: "50%" },
-                      absent: { backgroundColor: "hsl(var(--destructive))", color: "white", borderRadius: "50%" },
-                      leave: { backgroundColor: "hsl(var(--stat-yellow))", color: "black", borderRadius: "50%" },
+                      present: {
+                        backgroundColor: "hsl(var(--stat-green))",
+                        color: "white",
+                        borderRadius: "50%",
+                      },
+                      absent: {
+                        backgroundColor: "hsl(var(--destructive))",
+                        color: "white",
+                        borderRadius: "50%",
+                      },
+                      leave: {
+                        backgroundColor: "hsl(var(--stat-yellow))",
+                        color: "black",
+                        borderRadius: "50%",
+                      },
                     }}
                   />
                   <div className="flex justify-center gap-4 mt-4 text-xs">
@@ -229,30 +389,52 @@ const Attendance = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {monthlyRecords.slice(0, 8).map((record, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center text-sm font-medium", getStatusColor(record.status))}>
-                            {new Date(record.date).getDate()}
+                    {isLoading ? (
+                      <p className="text-sm text-muted-foreground">
+                        Loading attendance...
+                      </p>
+                    ) : attendanceRecords.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        No attendance records available.
+                      </p>
+                    ) : (
+                      attendanceRecords.slice(0, 8).map((record, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={cn(
+                                "h-10 w-10 rounded-lg flex items-center justify-center text-sm font-medium",
+                                getStatusColor(record.status),
+                              )}
+                            >
+                              {new Date(record.date).getDate()}
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">
+                                {record.day}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(record.date).toLocaleDateString(
+                                  "en-US",
+                                  { month: "long", year: "numeric" },
+                                )}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-sm">{record.day}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(record.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                            </p>
+                          <div className="flex items-center gap-3">
+                            {record.subject && (
+                              <span className="text-xs text-muted-foreground">
+                                Missed: {record.subject}
+                              </span>
+                            )}
+                            {getStatusBadge(record.status)}
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          {record.subject && (
-                            <span className="text-xs text-muted-foreground">Missed: {record.subject}</span>
-                          )}
-                          {getStatusBadge(record.status)}
-                        </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -262,7 +444,9 @@ const Attendance = () => {
           <TabsContent value="subject-wise">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Subject-wise Attendance</CardTitle>
+                <CardTitle className="text-lg">
+                  Subject-wise Attendance
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -271,14 +455,21 @@ const Attendance = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div>
                           <h4 className="font-medium">{subject.subject}</h4>
-                          <p className="text-xs text-muted-foreground">{subject.teacher}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {subject.teacher}
+                          </p>
                         </div>
                         <div className="text-right">
-                          <span className={cn(
-                            "text-lg font-bold",
-                            subject.percentage >= 90 ? "text-stat-green" :
-                            subject.percentage >= 75 ? "text-stat-yellow" : "text-destructive"
-                          )}>
+                          <span
+                            className={cn(
+                              "text-lg font-bold",
+                              subject.percentage >= 90
+                                ? "text-stat-green"
+                                : subject.percentage >= 75
+                                  ? "text-stat-yellow"
+                                  : "text-destructive",
+                            )}
+                          >
                             {subject.percentage}%
                           </span>
                           <p className="text-xs text-muted-foreground">
@@ -290,8 +481,11 @@ const Attendance = () => {
                         value={subject.percentage}
                         className={cn(
                           "h-2",
-                          subject.percentage >= 90 ? "[&>div]:bg-stat-green" :
-                          subject.percentage >= 75 ? "[&>div]:bg-stat-yellow" : "[&>div]:bg-destructive"
+                          subject.percentage >= 90
+                            ? "[&>div]:bg-stat-green"
+                            : subject.percentage >= 75
+                              ? "[&>div]:bg-stat-yellow"
+                              : "[&>div]:bg-destructive",
                         )}
                       />
                     </div>
@@ -306,13 +500,36 @@ const Attendance = () => {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Attendance History</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentMonth(
+                        new Date(
+                          currentMonth.setMonth(currentMonth.getMonth() - 1),
+                        ),
+                      )
+                    }
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
                   <span className="text-sm font-medium min-w-[120px] text-center">
-                    {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                    {currentMonth.toLocaleDateString("en-US", {
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </span>
-                  <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentMonth(
+                        new Date(
+                          currentMonth.setMonth(currentMonth.getMonth() + 1),
+                        ),
+                      )
+                    }
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -322,27 +539,83 @@ const Attendance = () => {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">Date</th>
-                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">Day</th>
-                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
-                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">Remarks</th>
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">
+                          Date
+                        </th>
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">
+                          Day
+                        </th>
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">
+                          Status
+                        </th>
+                        <th className="text-left p-3 text-sm font-medium text-muted-foreground">
+                          Remarks
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {monthlyRecords.map((record, index) => (
-                        <tr key={index} className="border-b border-border/50 hover:bg-muted/30">
-                          <td className="p-3 text-sm">
-                            {new Date(record.date).toLocaleDateString("en-US", { day: "numeric", month: "short" })}
-                          </td>
-                          <td className="p-3 text-sm">{record.day}</td>
-                          <td className="p-3">{getStatusBadge(record.status)}</td>
-                          <td className="p-3 text-sm text-muted-foreground">
-                            {record.subject ? `Missed ${record.subject}` : record.status === "holiday" ? "School Holiday" : "-"}
+                      {attendanceRecords.length === 0 ? (
+                        <tr>
+                          <td
+                            colSpan={4}
+                            className="p-3 text-sm text-muted-foreground text-center"
+                          >
+                            {isLoading
+                              ? "Loading attendance history..."
+                              : "No attendance history found."}
                           </td>
                         </tr>
-                      ))}
+                      ) : (
+                        attendanceRecords.map((record, index) => (
+                          <tr
+                            key={index}
+                            className="border-b border-border/50 hover:bg-muted/30"
+                          >
+                            <td className="p-3 text-sm">
+                              {new Date(record.date).toLocaleDateString(
+                                "en-US",
+                                { day: "numeric", month: "short" },
+                              )}
+                            </td>
+                            <td className="p-3 text-sm">{record.day}</td>
+                            <td className="p-3">
+                              {getStatusBadge(record.status)}
+                            </td>
+                            <td className="p-3 text-sm text-muted-foreground">
+                              {record.remarks
+                                ? record.remarks
+                                : record.status === "holiday"
+                                  ? "School Holiday"
+                                  : "-"}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
+                </div>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Showing page {page} of {totalPages} • {totalRecords} records
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handlePreviousPage}
+                      disabled={page <= 1 || isLoading}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleNextPage}
+                      disabled={page >= totalPages || isLoading}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

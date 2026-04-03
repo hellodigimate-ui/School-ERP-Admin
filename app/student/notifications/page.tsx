@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StudentLayout } from "@/components/student/StudentLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Bell, 
-  BookOpen, 
-  Calendar, 
-  FileText, 
+import { axiosInstance } from "@/apiHome/axiosInstanc";
+import {
+  Bell,
+  BookOpen,
+  Calendar,
+  FileText,
   AlertCircle,
   CheckCircle,
   Clock,
   Trash2,
   Check,
-  MoreVertical
+  MoreVertical,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -29,7 +29,13 @@ import {
 
 interface Notification {
   id: string;
-  type: "assignment" | "grade" | "attendance" | "announcement" | "event";
+  type:
+    | "assignment"
+    | "grade"
+    | "attendance"
+    | "announcement"
+    | "event"
+    | string;
   title: string;
   message: string;
   time: string;
@@ -37,75 +43,30 @@ interface Notification {
   priority?: "high" | "medium" | "low";
 }
 
-const initialNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "assignment",
-    title: "New Assignment Posted",
-    message: "Data Structures assignment 'Binary Trees' has been posted. Due: Feb 12, 2026",
-    time: "10 minutes ago",
-    read: false,
-    priority: "high",
-  },
-  {
-    id: "2",
-    type: "grade",
-    title: "Grade Updated",
-    message: "Your grade for 'Database Systems - Mid Term' has been updated. Score: 85/100",
-    time: "1 hour ago",
-    read: false,
-  },
-  {
-    id: "3",
-    type: "attendance",
-    title: "Attendance Alert",
-    message: "Your attendance in Operating Systems is below 75%. Current: 72%",
-    time: "2 hours ago",
-    read: false,
-    priority: "high",
-  },
-  {
-    id: "4",
-    type: "announcement",
-    title: "College Announcement",
-    message: "Annual Tech Fest 'TechnoVerse 2026' registrations are now open!",
-    time: "5 hours ago",
-    read: true,
-  },
-  {
-    id: "5",
-    type: "event",
-    title: "Upcoming Event",
-    message: "Guest Lecture on 'AI in Healthcare' by Dr. Priya Sharma - Tomorrow at 2:00 PM",
-    time: "Yesterday",
-    read: true,
-  },
-  {
-    id: "6",
-    type: "assignment",
-    title: "Assignment Deadline Reminder",
-    message: "Computer Networks Lab Report due in 2 days",
-    time: "Yesterday",
-    read: true,
-    priority: "medium",
-  },
-  {
-    id: "7",
-    type: "grade",
-    title: "Quiz Results Published",
-    message: "Web Development Quiz 3 results are now available. Check your score.",
-    time: "2 days ago",
-    read: true,
-  },
-  {
-    id: "8",
-    type: "announcement",
-    title: "Holiday Notice",
-    message: "College will remain closed on Feb 15, 2026 for Republic Day celebrations",
-    time: "3 days ago",
-    read: true,
-  },
+const API_NOTIFICATION_TYPES = [
+  "assignment",
+  "grade",
+  "attendance",
+  "announcement",
+  "event",
 ];
+
+const formatTimeAgo = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMinutes < 1) return "Just now";
+  if (diffMinutes < 60)
+    return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffDays === 1) return "Yesterday";
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
 
 const getTypeIcon = (type: string) => {
   switch (type) {
@@ -142,15 +103,73 @@ const getTypeColor = (type: string) => {
 };
 
 export default function Notifications() {
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [perPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await axiosInstance.get("/api/v1/message/user", {
+          params: { page, perPage },
+        });
+
+        const messages = response.data?.data || [];
+        const pagination = response.data?.pagination || {};
+
+        setTotalPages(pagination.totalPages || 1);
+        setTotalRecords(pagination.totalRecords || messages.length);
+
+        const mapped = messages.map((message: any) => {
+          const type = API_NOTIFICATION_TYPES.includes(message.type)
+            ? message.type
+            : "announcement";
+
+          return {
+            id: message.id,
+            type,
+            title: message.title || "Notification",
+            message: message.content || message.message || "",
+            time: formatTimeAgo(message.createdAt),
+            read: false,
+            priority: message.priority || undefined,
+          } as Notification;
+        });
+
+        setNotifications(mapped);
+      } catch (fetchError: any) {
+        console.error("Error fetching notifications:", fetchError);
+        setError(fetchError?.message || "Unable to load notifications");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [page, perPage]);
+
+  const handlePreviousPage = () => {
+    setPage((current) => Math.max(current - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setPage((current) => Math.min(current + 1, totalPages));
+  };
+
   const markAsRead = (id: string) => {
-    setNotifications(notifications.map((n) => 
-      n.id === id ? { ...n, read: true } : n
-    ));
+    setNotifications(
+      notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
+    );
   };
 
   const markAllAsRead = () => {
@@ -171,7 +190,7 @@ export default function Notifications() {
     setSelectedIds(
       selectedIds.includes(id)
         ? selectedIds.filter((sid) => sid !== id)
-        : [...selectedIds, id]
+        : [...selectedIds, id],
     );
   };
 
@@ -195,19 +214,35 @@ export default function Notifications() {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Notifications</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              Notifications
+            </h1>
             <p className="text-muted-foreground">
-              You have {unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}
+              You have {unreadCount} unread notification
+              {unreadCount !== 1 ? "s" : ""}
             </p>
+            {error ? (
+              <p className="text-sm text-destructive mt-2">{error}</p>
+            ) : null}
           </div>
           <div className="flex items-center gap-2">
             {selectedIds.length > 0 && (
-              <Button variant="destructive" size="sm" onClick={deleteSelected} className="gap-2">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={deleteSelected}
+                className="gap-2"
+              >
                 <Trash2 className="h-4 w-4" />
                 Delete ({selectedIds.length})
               </Button>
             )}
-            <Button variant="outline" size="sm" onClick={markAllAsRead} className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={markAllAsRead}
+              className="gap-2"
+            >
               <Check className="h-4 w-4" />
               Mark all as read
             </Button>
@@ -219,11 +254,15 @@ export default function Notifications() {
             <TabsList className="bg-muted">
               <TabsTrigger value="all">
                 All
-                <Badge variant="secondary" className="ml-2">{notifications.length}</Badge>
+                <Badge variant="secondary" className="ml-2">
+                  {notifications.length}
+                </Badge>
               </TabsTrigger>
               <TabsTrigger value="unread">
                 Unread
-                <Badge variant="secondary" className="ml-2">{unreadCount}</Badge>
+                <Badge variant="secondary" className="ml-2">
+                  {unreadCount}
+                </Badge>
               </TabsTrigger>
               <TabsTrigger value="assignment">Assignments</TabsTrigger>
               <TabsTrigger value="grade">Grades</TabsTrigger>
@@ -231,96 +270,166 @@ export default function Notifications() {
             </TabsList>
           </div>
 
-          {["all", "unread", "assignment", "grade", "announcement"].map((tab) => (
-            <TabsContent key={tab} value={tab} className="space-y-2">
-              {/* Select All */}
-              <div className="flex items-center gap-2 px-2 py-1">
-                <Checkbox 
-                  checked={selectedIds.length === notifications.length && notifications.length > 0}
-                  onCheckedChange={selectAll}
-                />
-                <span className="text-sm text-muted-foreground">Select all</span>
-              </div>
+          {["all", "unread", "assignment", "grade", "announcement"].map(
+            (tab) => (
+              <TabsContent key={tab} value={tab} className="space-y-2">
+                {/* Select All */}
+                <div className="flex items-center gap-2 px-2 py-1">
+                  <Checkbox
+                    checked={
+                      selectedIds.length === notifications.length &&
+                      notifications.length > 0
+                    }
+                    onCheckedChange={selectAll}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Select all
+                  </span>
+                </div>
 
-              {filterNotifications(tab).length === 0 ? (
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-12">
-                    <Bell className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-lg font-medium text-foreground">No notifications</p>
-                    <p className="text-sm text-muted-foreground">You`re all caught up!</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="space-y-2">
-                  {filterNotifications(tab).map((notification) => (
-                    <Card 
-                      key={notification.id} 
-                      className={`transition-colors ${!notification.read ? "bg-accent/50 border-primary/20" : ""}`}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-4">
-                          <Checkbox 
-                            checked={selectedIds.includes(notification.id)}
-                            onCheckedChange={() => toggleSelect(notification.id)}
-                          />
-                          <div className={`p-2 rounded-lg ${getTypeColor(notification.type)}`}>
-                            {getTypeIcon(notification.type)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h3 className={`font-medium ${!notification.read ? "text-foreground" : "text-muted-foreground"}`}>
-                                    {notification.title}
-                                  </h3>
-                                  {notification.priority === "high" && (
-                                    <Badge variant="destructive" className="text-xs">Urgent</Badge>
-                                  )}
-                                  {!notification.read && (
-                                    <span className="h-2 w-2 rounded-full bg-primary" />
-                                  )}
+                {isLoading ? (
+                  <Card>
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                      <Bell className="h-12 w-12 text-muted-foreground mb-4 animate-pulse" />
+                      <p className="text-lg font-medium text-foreground">
+                        Loading notifications...
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Please wait while your messages load.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : filterNotifications(tab).length === 0 ? (
+                  <Card>
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                      <Bell className="h-12 w-12 text-muted-foreground mb-4" />
+                      <p className="text-lg font-medium text-foreground">
+                        No notifications
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        You`re all caught up!
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-2">
+                    {filterNotifications(tab).map((notification) => (
+                      <Card
+                        key={notification.id}
+                        className={`transition-colors ${!notification.read ? "bg-accent/50 border-primary/20" : ""}`}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-4">
+                            <Checkbox
+                              checked={selectedIds.includes(notification.id)}
+                              onCheckedChange={() =>
+                                toggleSelect(notification.id)
+                              }
+                            />
+                            <div
+                              className={`p-2 rounded-lg ${getTypeColor(notification.type)}`}
+                            >
+                              {getTypeIcon(notification.type)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <h3
+                                      className={`font-medium ${!notification.read ? "text-foreground" : "text-muted-foreground"}`}
+                                    >
+                                      {notification.title}
+                                    </h3>
+                                    {notification.priority === "high" && (
+                                      <Badge
+                                        variant="destructive"
+                                        className="text-xs"
+                                      >
+                                        Urgent
+                                      </Badge>
+                                    )}
+                                    {!notification.read && (
+                                      <span className="h-2 w-2 rounded-full bg-primary" />
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {notification.message}
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Clock className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-xs text-muted-foreground">
+                                      {notification.time}
+                                    </span>
+                                  </div>
                                 </div>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {notification.message}
-                                </p>
-                                <div className="flex items-center gap-2 mt-2">
-                                  <Clock className="h-3 w-3 text-muted-foreground" />
-                                  <span className="text-xs text-muted-foreground">{notification.time}</span>
-                                </div>
-                              </div>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  {!notification.read && (
-                                    <DropdownMenuItem onClick={() => markAsRead(notification.id)}>
-                                      <CheckCircle className="h-4 w-4 mr-2" />
-                                      Mark as read
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8"
+                                    >
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    {!notification.read && (
+                                      <DropdownMenuItem
+                                        onClick={() =>
+                                          markAsRead(notification.id)
+                                        }
+                                      >
+                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                        Mark as read
+                                      </DropdownMenuItem>
+                                    )}
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        deleteNotification(notification.id)
+                                      }
+                                      className="text-destructive focus:text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete
                                     </DropdownMenuItem>
-                                  )}
-                                  <DropdownMenuItem 
-                                    onClick={() => deleteNotification(notification.id)}
-                                    className="text-destructive focus:text-destructive"
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          ))}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            ),
+          )}
         </Tabs>
+
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            Page {page} of {totalPages} • {totalRecords} notifications
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePreviousPage}
+              disabled={page <= 1 || isLoading}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={page >= totalPages || isLoading}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
     </StudentLayout>
   );

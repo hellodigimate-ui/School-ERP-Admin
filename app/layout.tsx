@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { BranchProvider } from "@/context/BranchContext";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -32,8 +33,10 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <LanguageProvider>
-            {children}
-            <Toaster position="top-right" richColors />
+            <BranchProvider>
+              {children}
+              <Toaster position="top-right" richColors />
+            </BranchProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

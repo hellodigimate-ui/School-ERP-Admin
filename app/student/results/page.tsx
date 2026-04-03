@@ -1,58 +1,24 @@
 "use client"
 
-
+import { useEffect, useState } from "react";
 import { StudentLayout } from "@/components/student/StudentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Trophy, TrendingUp, Award, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
-const semesterResults = [
-  {
-    semester: "Semester 6",
-    sgpa: 8.9,
-    credits: 22,
-    status: "current",
-    subjects: [
-      { name: "Data Structures", code: "CS301", credits: 4, grade: "A", marks: 85, maxMarks: 100 },
-      { name: "Database Systems", code: "CS302", credits: 4, grade: "A+", marks: 92, maxMarks: 100 },
-      { name: "Computer Networks", code: "CS303", credits: 3, grade: "B+", marks: 78, maxMarks: 100 },
-      { name: "Operating Systems", code: "CS304", credits: 4, grade: "A", marks: 88, maxMarks: 100 },
-      { name: "Software Engineering", code: "CS305", credits: 3, grade: "A", marks: 84, maxMarks: 100 },
-      { name: "Web Technologies", code: "CS306", credits: 4, grade: "A+", marks: 95, maxMarks: 100 },
-    ],
-  },
-  {
-    semester: "Semester 5",
-    sgpa: 8.7,
-    credits: 21,
-    status: "completed",
-    subjects: [
-      { name: "Algorithm Design", code: "CS251", credits: 4, grade: "A", marks: 86, maxMarks: 100 },
-      { name: "Computer Architecture", code: "CS252", credits: 3, grade: "B+", marks: 76, maxMarks: 100 },
-      { name: "Discrete Mathematics", code: "CS253", credits: 4, grade: "A", marks: 82, maxMarks: 100 },
-      { name: "Object Oriented Programming", code: "CS254", credits: 4, grade: "A+", marks: 91, maxMarks: 100 },
-      { name: "Statistics", code: "MA251", credits: 3, grade: "B", marks: 72, maxMarks: 100 },
-      { name: "Communication Skills", code: "HS251", credits: 3, grade: "A", marks: 85, maxMarks: 100 },
-    ],
-  },
-  {
-    semester: "Semester 4",
-    sgpa: 8.5,
-    credits: 22,
-    status: "completed",
-    subjects: [
-      { name: "Data Analysis", code: "CS201", credits: 4, grade: "A", marks: 84, maxMarks: 100 },
-      { name: "Digital Logic", code: "CS202", credits: 3, grade: "B+", marks: 77, maxMarks: 100 },
-      { name: "Linear Algebra", code: "MA201", credits: 4, grade: "A", marks: 83, maxMarks: 100 },
-      { name: "Java Programming", code: "CS203", credits: 4, grade: "A+", marks: 90, maxMarks: 100 },
-      { name: "Economics", code: "HS201", credits: 3, grade: "B+", marks: 75, maxMarks: 100 },
-      { name: "Environmental Science", code: "ES201", credits: 4, grade: "A", marks: 86, maxMarks: 100 },
-    ],
-  },
-];
+interface ResultRecord {
+  id: string;
+  examName: string;
+  className: string;
+  totalMarks: number;
+  obtained: number;
+  percentage: number;
+  grade: string;
+  status: string;
+  rank: number;
+}
 
 const getGradeColor = (grade: string) => {
   switch (grade) {
@@ -65,6 +31,45 @@ const getGradeColor = (grade: string) => {
 };
 
 export default function Results() {
+  const [results, setResults] = useState<ResultRecord[]>([]);
+  const [loadingResults, setLoadingResults] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const totalResults = results.length;
+  const averagePercentage =
+    totalResults > 0
+      ? Number(
+          (
+            results.reduce((sum, item) => sum + item.percentage, 0) /
+            totalResults
+          ).toFixed(2),
+        )
+      : 0;
+  const passCount = results.filter((item) => item.status === "Pass").length;
+  const failCount = results.filter((item) => item.status === "Fail").length;
+
+  const fetchResults = async () => {
+    setLoadingResults(true);
+    setError(null);
+
+    try {
+      const response = await axiosInstance.get("/api/v1/results/me");
+      if (response.data?.success) {
+        setResults(response.data.data || []);
+      } else {
+        setError(response.data?.message || "Unable to load results.");
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.message || err.message || "Failed to load results.");
+    } finally {
+      setLoadingResults(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchResults();
+  }, []);
+
   return (
     <StudentLayout>
       <div className="space-y-6">
@@ -121,100 +126,111 @@ export default function Results() {
           </Card>
         </div>
 
-        {/* CGPA Progress */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Trophy className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Total Exams</p>
+                <p className="text-xl font-bold text-foreground">{totalResults}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-emerald-500" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Average %</p>
+                <p className="text-xl font-bold text-foreground">{averagePercentage}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <Award className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Passed</p>
+                <p className="text-xl font-bold text-foreground">{passCount}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-amber-500" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Failed</p>
+                <p className="text-xl font-bold text-foreground">{failCount}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">CGPA Trend</CardTitle>
+          <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between pb-2">
+            <div>
+              <CardTitle>Exam Results</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                View your latest exam results and progress summary.
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={fetchResults} disabled={loadingResults}>
+              <Download className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5", "Sem 6"].map((sem, i) => {
-                const cgpas = [8.2, 8.4, 8.3, 8.5, 8.7, 8.9];
-                return (
-                  <div key={sem} className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground w-14">{sem}</span>
-                    <div className="flex-1">
-                      <Progress value={cgpas[i] * 10} className="h-2" />
-                    </div>
-                    <span className="text-sm font-medium w-10">{cgpas[i]}</span>
-                  </div>
-                );
-              })}
-            </div>
+            {loadingResults ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">Loading results...</div>
+            ) : error ? (
+              <div className="text-center py-8 text-sm text-destructive">{error}</div>
+            ) : results.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">No results available yet.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 font-medium">Exam</th>
+                      <th className="text-left py-3 font-medium">Class</th>
+                      <th className="text-center py-3 font-medium">Total</th>
+                      <th className="text-center py-3 font-medium">Obtained</th>
+                      <th className="text-center py-3 font-medium">%</th>
+                      <th className="text-center py-3 font-medium">Grade</th>
+                      <th className="text-center py-3 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((result) => (
+                      <tr key={result.id} className="border-b last:border-0 hover:bg-muted/10">
+                        <td className="py-3">
+                          <div className="font-medium">{result.examName || "Exam"}</div>
+                        </td>
+                        <td className="py-3 text-muted-foreground">{result.className || "-"}</td>
+                        <td className="py-3 text-center">{result.totalMarks}</td>
+                        <td className="py-3 text-center">{result.obtained}</td>
+                        <td className="py-3 text-center">{result.percentage}%</td>
+                        <td className="py-3 text-center">
+                          <Badge variant="outline" className={getGradeColor(result.grade)}>
+                            {result.grade}
+                          </Badge>
+                        </td>
+                        <td className="py-3 text-center">{result.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </CardContent>
         </Card>
-
-        {/* Semester Results */}
-        <Tabs defaultValue="semester-6" className="space-y-4">
-          <TabsList className="flex-wrap h-auto">
-            {semesterResults.map((sem) => (
-              <TabsTrigger key={sem.semester} value={sem.semester.toLowerCase().replace(" ", "-")}>
-                {sem.semester}
-                {sem.status === "current" && (
-                  <Badge variant="secondary" className="ml-2 text-[10px]">Current</Badge>
-                )}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {semesterResults.map((sem) => (
-            <TabsContent key={sem.semester} value={sem.semester.toLowerCase().replace(" ", "-")}>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <div>
-                    <CardTitle>{sem.semester} Results</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      SGPA: {sem.sgpa} | Credits: {sem.credits}
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 font-medium">Subject</th>
-                          <th className="text-left py-3 font-medium hidden sm:table-cell">Code</th>
-                          <th className="text-center py-3 font-medium">Credits</th>
-                          <th className="text-center py-3 font-medium">Marks</th>
-                          <th className="text-center py-3 font-medium">Grade</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {sem.subjects.map((subject) => (
-                          <tr key={subject.code} className="border-b last:border-0">
-                            <td className="py-3">
-                              <span className="font-medium">{subject.name}</span>
-                              <span className="text-muted-foreground sm:hidden text-xs block">
-                                {subject.code}
-                              </span>
-                            </td>
-                            <td className="py-3 text-muted-foreground hidden sm:table-cell">
-                              {subject.code}
-                            </td>
-                            <td className="py-3 text-center">{subject.credits}</td>
-                            <td className="py-3 text-center">
-                              {subject.marks}/{subject.maxMarks}
-                            </td>
-                            <td className="py-3 text-center">
-                              <Badge variant="outline" className={getGradeColor(subject.grade)}>
-                                {subject.grade}
-                              </Badge>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
-        </Tabs>
       </div>
     </StudentLayout>
   );
