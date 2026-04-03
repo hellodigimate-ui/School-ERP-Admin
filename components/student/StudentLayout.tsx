@@ -34,7 +34,6 @@ return (
       isMobile && "ml-0"
     )}>
       <StudentHeader 
-        studentName="Rahul Kumar" 
         onMenuClick={() => setMobileOpen(true)}
         showMenuButton={isMobile}
       />
