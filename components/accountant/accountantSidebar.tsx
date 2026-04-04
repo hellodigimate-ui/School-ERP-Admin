@@ -9,7 +9,7 @@ import {
   ChevronRight,
   CreditCard,
   BookOpenCheck,
-  ArrowLeftRight,
+  // ArrowLeftRight,
   BarChart3,
   PanelLeftClose,
   PanelLeftOpen,
@@ -72,7 +72,7 @@ const navItems: NavItem[] = [
   
   // },
   { label: "Student Ledger", icon: BookOpenCheck, path: "/accountant/studentLedger" },
-  { label: "Transactions", icon: ArrowLeftRight, path: "/accountant/transactions" },
+  // { label: "Transactions", icon: ArrowLeftRight, path: "/accountant/transactions" },
   {
     label: "Finance Reports",
     icon: BarChart3,

@@ -2,9 +2,6 @@ import { Search, Bell } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const TopBar = () => {
-//   const today = new Date().toLocaleDateString('en-IN', {
-//     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-//   });
 
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 sticky top-0 z-20">
