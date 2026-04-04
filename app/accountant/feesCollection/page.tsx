@@ -7,7 +7,7 @@ import {  Search } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useState, useEffect, Suspense } from "react";
 import Layout from "@/components/accountant/Layout";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { axiosInstance } from "@/apiHome/axiosInstanc";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 const CollectFees = () => {
   const [fees, setFees] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -171,10 +172,15 @@ const CollectFees = () => {
 
                       <td className="px-5 py-3 text-center">
                         <button
+                          onClick={() => {
+                            if (due !== 0) {
+                              router.push("/accountant/feesSetup"); // 👈 change route as needed
+                            }
+                          }}
                           className="px-4 py-1.5 rounded-lg bg-primary text-white text-xs hover:opacity-90 disabled:opacity-50"
                           disabled={due === 0}
                         >
-                          {due === 0 ? "Paid" : "Unpaid"}
+                          {due === 0 ? "Paid" : "Collect"}
                         </button>
                       </td>
                     </tr>
@@ -220,11 +226,6 @@ const Page = () => {
 
   return (
     <Layout>
-      {/* <Header
-        title="Fees Collection"
-        description="Collect and manage student fees"
-        icon={IndianRupee}
-      /> */}
 
       <Tabs defaultValue={tab}>
         <TabsContent value="collect">

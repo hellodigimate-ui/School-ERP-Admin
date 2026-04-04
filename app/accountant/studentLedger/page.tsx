@@ -1,178 +1,373 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState } from "react";
-import { BookOpenCheck, Search, Download, Filter, Calendar, User,  CheckCircle2, Clock, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  BookOpenCheck,
+  Search,
+  Download,
+  User,
+  CheckCircle2,
+  Clock,
+  XCircle,
+} from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+
 import Layout from "@/components/accountant/Layout";
 import Header from "@/components/accountant/header";
-
-const sampleStudents = [
-  { id: "STU001", name: "Aarav Sharma", class: "10-A", father: "Rajesh Sharma", phone: "9876543210" },
-  { id: "STU002", name: "Priya Patel", class: "8-B", father: "Vikram Patel", phone: "9876543211" },
-  { id: "STU003", name: "Rohit Singh", class: "12-A", father: "Amit Singh", phone: "9876543212" },
-];
-
-const ledgerEntries = [
-  { date: "2026-01-05", particular: "Admission Fees", debit: 15000, credit: 15000, balance: 0, status: "Paid", mode: "UPI" },
-  { date: "2026-01-10", particular: "Tuition Fees (Jan)", debit: 5000, credit: 5000, balance: 0, status: "Paid", mode: "Cash" },
-  { date: "2026-02-01", particular: "Tuition Fees (Feb)", debit: 5000, credit: 5000, balance: 0, status: "Paid", mode: "Bank Transfer" },
-  { date: "2026-02-05", particular: "Transport Fees (Q1)", debit: 8000, credit: 4000, balance: 4000, status: "Partial", mode: "Cheque" },
-  { date: "2026-02-10", particular: "Book Fees", debit: 3500, credit: 0, balance: 3500, status: "Unpaid", mode: "-" },
-  { date: "2026-02-15", particular: "Exam Fees", debit: 2000, credit: 0, balance: 2000, status: "Unpaid", mode: "-" },
-  { date: "2026-02-18", particular: "Uniform Fees", debit: 4500, credit: 4500, balance: 0, status: "Paid", mode: "UPI" },
-];
+import { axiosInstance } from "@/apiHome/axiosInstanc";
 
 const Page = () => {
-  const [selectedStudent, setSelectedStudent] = useState<string | null>("STU001");
+  const [students, setStudents] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [classFilter, setClassFilter] = useState("all");
 
-  const student = sampleStudents.find((s) => s.id === selectedStudent);
-  const totalDebit = ledgerEntries.reduce((sum, e) => sum + e.debit, 0);
-  const totalCredit = ledgerEntries.reduce((sum, e) => sum + e.credit, 0);
-  const totalBalance = totalDebit - totalCredit;
+  const [paymentData, setPaymentData] = useState<any>(null);
 
-  const statusBadge = (status: string) => {
-    switch (status) {
-      case "Paid": return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100"><CheckCircle2 className="w-3 h-3 mr-1" />{status}</Badge>;
-      case "Partial": return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100"><Clock className="w-3 h-3 mr-1" />{status}</Badge>;
-      case "Unpaid": return <Badge className="bg-red-100 text-red-700 hover:bg-red-100"><XCircle className="w-3 h-3 mr-1" />{status}</Badge>;
-      default: return <Badge variant="secondary">{status}</Badge>;
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [loadingPayments, setLoadingPayments] = useState(false);
+  const [loadingClasses, setLoadingClasses] = useState(false);
+
+  /* ================= FETCH CLASSES ================= */
+
+  const fetchClasses = async () => {
+    try {
+      setLoadingClasses(true);
+
+      const res = await axiosInstance.get("/api/v1/classes");
+
+      if (res?.data?.success) {
+        // ✅ SAFE FALLBACK
+        setClasses(res?.data?.data || []);
+      } else {
+        setClasses([]);
+      }
+    } catch (err) {
+      console.error("Class fetch error", err);
+      setClasses([]); // ✅ NEVER undefined
+    } finally {
+      setLoadingClasses(false);
     }
   };
 
+  /* ================= FETCH STUDENTS ================= */
+
+  const fetchStudents = async () => {
+    try {
+      setLoadingStudents(true);
+
+      const params = new URLSearchParams();
+
+      if (searchQuery) params.append("search", searchQuery);
+      if (classFilter !== "all") params.append("class", classFilter);
+
+      const res = await axiosInstance.get(
+        `/api/v1/students?${params.toString()}`
+      );
+
+      if (res.data.success) {
+        setStudents(res.data.data.students);
+      }
+    } catch (err) {
+      console.error("Student fetch error", err);
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
+
+  /* ================= FETCH PAYMENTS ================= */
+
+  const fetchPayments = async (studentId: string) => {
+    try {
+      setLoadingPayments(true);
+
+      const res = await axiosInstance.get(
+        `/api/v1/payments/student/${studentId}`
+      );
+
+      if (res.data.success) {
+        setPaymentData(res.data.data);
+      }
+    } catch (err) {
+      console.error("Payment fetch error", err);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
+  /* ================= EFFECTS ================= */
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [searchQuery, classFilter]);
+
+  useEffect(() => {
+    if (selectedStudent?.id) {
+      fetchPayments(selectedStudent.id);
+    }
+  }, [selectedStudent]);
+
+  /* ================= PAYMENT LOGIC ================= */
+
+  const payments = paymentData?.payments || [];
+  const totalFee = paymentData?.fee?.totalFee || 0;
+
+  const totalPaid = payments.reduce(
+    (sum: number, p: any) => sum + Number(p.amount),
+    0
+  );
+
+  const totalBalance = totalFee - totalPaid;
+
+  const installments = payments.map((payment: any, i: number) => ({
+    name: `Installment ${i + 1}`,
+    date: payment.paymentDate,
+    total: totalFee,
+    paid: Number(payment.amount),
+    due: totalFee - totalPaid,
+    payments: [payment.paymentMode],
+    status:
+      payment.status === "COMPLETED"
+        ? "Paid"
+        : payment.status === "PENDING"
+        ? "Partial"
+        : "Failed",
+  }));
+
+  /* ================= STATUS BADGE ================= */
+
+  const statusBadge = (status: string) => {
+    if (status === "Paid")
+      return (
+        <Badge className="bg-green-100 text-green-700 hover:bg-green-200">
+          <CheckCircle2 className="w-3 h-3 mr-1" />
+          Paid
+        </Badge>
+      );
+
+    if (status === "Partial")
+      return (
+        <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200">
+          <Clock className="w-3 h-3 mr-1" />
+          Partial
+        </Badge>
+      );
+
+    return (
+      <Badge className="bg-red-100 text-red-700 hover:bg-red-200">
+        <XCircle className="w-3 h-3 mr-1" />
+        Failed
+      </Badge>
+    );
+  };
+
+  /* ================= UI ================= */
+
   return (
     <Layout>
-      <Header title="Student Ledger" description="View complete fee ledger for individual students" icon={BookOpenCheck} />
+      <Header
+        title="Student Ledger"
+        description="Track fees, payments & dues"
+        icon={BookOpenCheck}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Student Search Panel */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold">Find Student</CardTitle>
+
+        {/* LEFT PANEL */}
+        <Card className="h-[600px] flex flex-col shadow-lg border-0 bg-gradient-to-b from-white to-gray-50">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold">
+              Find Student
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+
+          <CardContent className="space-y-3 flex flex-col h-full">
+
+            {/* SEARCH */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Name or ID..." className="pl-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Search student..."
+                className="pl-9 focus:ring-2 focus:ring-primary"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+
+            {/* CLASS FILTER (API BASED) */}
             <Select value={classFilter} onValueChange={setClassFilter}>
-              <SelectTrigger><SelectValue placeholder="Filter by Class" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Class" />
+              </SelectTrigger>
+
               <SelectContent>
                 <SelectItem value="all">All Classes</SelectItem>
-                {["8-B", "10-A", "12-A"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+
+                {loadingClasses ? (
+                  <SelectItem value="loading" disabled>
+                    Loading...
+                  </SelectItem>
+                ) : (
+                  classes.map((cls) => (
+                    <SelectItem key={cls.id} value={cls.id}>
+                      {cls.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
-            <div className="space-y-1 pt-2">
-              {sampleStudents
-                .filter((s) => classFilter === "all" || s.class === classFilter)
-                .filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.id.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((s) => (
+
+            {/* STUDENT LIST */}
+            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+
+              {loadingStudents ? (
+                <p className="text-center text-sm">Loading...</p>
+              ) : students.length === 0 ? (
+                <p className="text-center text-sm text-gray-500">
+                  No students found
+                </p>
+              ) : (
+                students.map((s) => (
                   <div
                     key={s.id}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedStudent === s.id ? "bg-primary/10 border border-primary/30" : "hover:bg-muted"}`}
-                    onClick={() => setSelectedStudent(s.id)}
+                    onClick={() => setSelectedStudent(s)}
+                    className={`p-3 rounded-xl cursor-pointer transition-all ${
+                      selectedStudent?.id === s.id
+                        ? "bg-blue-100 border border-blue-300 shadow"
+                        : "hover:bg-gray-100"
+                    }`}
                   >
-                    <p className="text-sm font-medium text-foreground">{s.name}</p>
-                    <p className="text-xs text-muted-foreground">{s.id} · Class {s.class}</p>
+                    <p className="text-sm font-medium">{s.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {s.class || "N/A"}
+                    </p>
                   </div>
-                ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Ledger Details */}
+        {/* RIGHT PANEL (UNCHANGED CORE, JUST STYLE BOOST) */}
         <div className="lg:col-span-3 space-y-4">
-          {student && (
+
+          {selectedStudent && (
             <>
-              {/* Student Info Bar */}
-              <Card>
-                <CardContent className="py-4 flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="w-5 h-5 text-primary" />
-                    </div>
+              <Card className="shadow-md">
+                <CardContent className="flex justify-between items-center py-4">
+                  <div className="flex gap-3 items-center">
+                    <User />
                     <div>
-                      <p className="font-semibold text-foreground">{student.name}</p>
-                      <p className="text-xs text-muted-foreground">ID: {student.id} · Class: {student.class} · Father: {student.father}</p>
+                      <p className="font-semibold">
+                        {selectedStudent.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {selectedStudent.class}
+                      </p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-1" />Export PDF</Button>
+
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-1" />
+                    Export
+                  </Button>
                 </CardContent>
               </Card>
 
-              {/* Summary Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Card className="border-l-4 border-l-blue-500">
+              {/* SUMMARY */}
+              <div className="grid grid-cols-3 gap-4">
+                <Card className="bg-gradient-to-r from-blue-50 to-blue-100">
                   <CardContent className="py-4">
-                    <p className="text-xs text-muted-foreground mb-1">Total Fees</p>
-                    <p className="text-xl font-bold text-foreground">₹{totalDebit.toLocaleString("en-IN")}</p>
+                    ₹{totalFee}
+                    <p className="text-xs">Total Fee</p>
                   </CardContent>
                 </Card>
-                <Card className="border-l-4 border-l-emerald-500">
-                  <CardContent className="py-4">
-                    <p className="text-xs text-muted-foreground mb-1">Total Paid</p>
-                    <p className="text-xl font-bold text-emerald-600">₹{totalCredit.toLocaleString("en-IN")}</p>
+
+                <Card className="bg-gradient-to-r from-green-50 to-green-100">
+                  <CardContent className="py-4 text-green-700">
+                    ₹{totalPaid}
+                    <p className="text-xs">Paid</p>
                   </CardContent>
                 </Card>
-                <Card className="border-l-4 border-l-red-500">
-                  <CardContent className="py-4">
-                    <p className="text-xs text-muted-foreground mb-1">Balance Due</p>
-                    <p className="text-xl font-bold text-red-600">₹{totalBalance.toLocaleString("en-IN")}</p>
+
+                <Card className="bg-gradient-to-r from-red-50 to-red-100">
+                  <CardContent className="py-4 text-red-600">
+                    ₹{totalBalance}
+                    <p className="text-xs">Due</p>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Ledger Table */}
-              <Card>
-                <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm font-semibold">Fee Ledger</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm"><Filter className="w-3.5 h-3.5 mr-1" />Filter</Button>
-                    <Button variant="outline" size="sm"><Calendar className="w-3.5 h-3.5 mr-1" />Date Range</Button>
-                  </div>
+              {/* TABLE */}
+              <Card className="shadow-md">
+                <CardHeader>
+                  <CardTitle>Installment Ledger</CardTitle>
                 </CardHeader>
+
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Particular</TableHead>
-                        <TableHead className="text-right">Debit (₹)</TableHead>
-                        <TableHead className="text-right">Credit (₹)</TableHead>
-                        <TableHead className="text-right">Balance (₹)</TableHead>
-                        <TableHead>Mode</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {ledgerEntries.map((entry, i) => (
-                        <TableRow key={i}>
-                          <TableCell className="text-muted-foreground">{entry.date}</TableCell>
-                          <TableCell className="font-medium">{entry.particular}</TableCell>
-                          <TableCell className="text-right">{entry.debit.toLocaleString("en-IN")}</TableCell>
-                          <TableCell className="text-right text-emerald-600">{entry.credit > 0 ? entry.credit.toLocaleString("en-IN") : "-"}</TableCell>
-                          <TableCell className="text-right font-medium">{entry.balance > 0 ? entry.balance.toLocaleString("en-IN") : "0"}</TableCell>
-                          <TableCell><Badge variant="outline" className="text-xs">{entry.mode}</Badge></TableCell>
-                          <TableCell>{statusBadge(entry.status)}</TableCell>
+                  {loadingPayments ? (
+                    <p className="text-center">Loading...</p>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Installment</TableHead>
+                          <TableHead>Paid</TableHead>
+                          <TableHead>Mode</TableHead>
+                          <TableHead>Status</TableHead>
                         </TableRow>
-                      ))}
-                      <TableRow className="bg-muted/50 font-semibold">
-                        <TableCell colSpan={2}>Total</TableCell>
-                        <TableCell className="text-right">{totalDebit.toLocaleString("en-IN")}</TableCell>
-                        <TableCell className="text-right text-emerald-600">{totalCredit.toLocaleString("en-IN")}</TableCell>
-                        <TableCell className="text-right text-red-600">{totalBalance.toLocaleString("en-IN")}</TableCell>
-                        <TableCell colSpan={2}></TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+
+                      <TableBody>
+                        {installments.map((inst, i) => (
+                          <TableRow key={i}>
+                            <TableCell>
+                              {new Date(inst.date).toLocaleDateString("en-IN")}
+                            </TableCell>
+                            <TableCell>{inst.name}</TableCell>
+                            <TableCell>₹{inst.paid}</TableCell>
+                            <TableCell>{inst.payments.join(", ")}</TableCell>
+                            <TableCell>{statusBadge(inst.status)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </CardContent>
               </Card>
             </>
@@ -184,344 +379,3 @@ const Page = () => {
 };
 
 export default Page;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client";
-
-// import { useEffect, useMemo, useState } from "react";
-// import {
-//   BookOpenCheck,
-//   Download,
-//   CheckCircle2,
-//   Clock,
-//   XCircle,
-// } from "lucide-react";
-
-
-// import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from "@/components/ui/table";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
-// import { Badge } from "@/components/ui/badge";
-// import Layout from "@/components/accountant/Layout";
-// import Header from "@/components/accountant/header";
-// import { axiosInstance } from "@/apiHome/axiosInstanc";
-
-// const Page = () => {
-//   const [students, setStudents] = useState<any[]>([]);
-//   const [ledger, setLedger] = useState<any[]>([]);
-//   const [fee, setFee] = useState<any>(null);
-
-//   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [classFilter, setClassFilter] = useState("all");
-
-//   const [loadingStudents, setLoadingStudents] = useState(false);
-//   const [loadingLedger, setLoadingLedger] = useState(false);
-//   const [error, setError] = useState("");
-
-//   // ===============================
-//   // 📡 Fetch Students
-//   // ===============================
-//   useEffect(() => {
-//     const fetchStudents = async () => {
-//       try {
-//         setLoadingStudents(true);
-//         const res = await axiosInstance.get("/students");
-//         setStudents(res.data);
-//         if (res.data.length > 0) {
-//           setSelectedStudent(res.data[0].id);
-//         }
-//       } catch (err: any) {
-//         setError("Failed to load students");
-//       } finally {
-//         setLoadingStudents(false);
-//       }
-//     };
-
-//     fetchStudents();
-//   }, []);
-
-//   // ===============================
-//   // 📡 Fetch Payments + Fee
-//   // ===============================
-//   useEffect(() => {
-//     if (!selectedStudent) return;
-
-//     const fetchLedger = async () => {
-//       try {
-//         setLoadingLedger(true);
-//         const res = await axiosInstance.get(
-//           `/api/v1/payments/student/${selectedStudent}`
-//         );
-
-//         const { fee, payments } = res.data.data;
-
-//         setFee(fee);
-
-//         // 🔥 Convert payments → ledger format
-//         const ledgerData = payments.map((p: any) => ({
-//           date: p.paymentDate,
-//           particular: "Fee Payment",
-//           debit: 0,
-//           credit: Number(p.amount),
-//           mode: p.paymentMode,
-//           status: p.status === "COMPLETED" ? "Paid" : "Failed",
-//         }));
-
-//         // Add total fee as first debit entry
-//         if (fee) {
-//           ledgerData.unshift({
-//             date: fee.createdAt,
-//             particular: "Total Fee",
-//             debit: Number(fee.totalFee),
-//             credit: 0,
-//             mode: "-",
-//             status: "Unpaid",
-//           });
-//         }
-
-//         setLedger(ledgerData);
-//       } catch (err: any) {
-//         setError(
-//           err?.response?.data?.message || "Failed to fetch ledger data"
-//         );
-//       } finally {
-//         setLoadingLedger(false);
-//       }
-//     };
-
-//     fetchLedger();
-//   }, [selectedStudent]);
-
-//   // ===============================
-//   // 🔍 Filter Students
-//   // ===============================
-//   const filteredStudents = useMemo(() => {
-//     return students
-//       .filter((s) => classFilter === "all" || s.class === classFilter)
-//       .filter(
-//         (s) =>
-//           s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//           s.id.toLowerCase().includes(searchQuery.toLowerCase())
-//       );
-//   }, [students, searchQuery, classFilter]);
-
-//   // ===============================
-//   // 🧮 Running Balance
-//   // ===============================
-//   let runningBalance = 0;
-//   const computedLedger = ledger.map((entry) => {
-//     runningBalance += entry.debit - entry.credit;
-//     return { ...entry, balance: runningBalance };
-//   });
-
-//   const totalDebit = ledger.reduce((sum, e) => sum + e.debit, 0);
-//   const totalCredit = ledger.reduce((sum, e) => sum + e.credit, 0);
-//   const totalBalance = totalDebit - totalCredit;
-
-//   // ===============================
-//   // 🎨 Helpers
-//   // ===============================
-//   const formatDate = (date: string) =>
-//     new Date(date).toLocaleDateString("en-IN");
-
-//   const statusBadge = (status: string) => {
-//     switch (status) {
-//       case "Paid":
-//         return (
-//           <Badge className="bg-emerald-100 text-emerald-700">
-//             <CheckCircle2 className="w-3 h-3 mr-1" />
-//             Paid
-//           </Badge>
-//         );
-//       case "Partial":
-//         return (
-//           <Badge className="bg-amber-100 text-amber-700">
-//             <Clock className="w-3 h-3 mr-1" />
-//             Partial
-//           </Badge>
-//         );
-//       default:
-//         return (
-//           <Badge className="bg-red-100 text-red-700">
-//             <XCircle className="w-3 h-3 mr-1" />
-//             Unpaid
-//           </Badge>
-//         );
-//     }
-//   };
-
-//   const student = students.find((s) => s.id === selectedStudent);
-
-//   // ===============================
-//   // UI
-//   // ===============================
-//   return (
-//     <Layout>
-//       <Header
-//         title="Student Ledger"
-//         description="Dynamic fee & payment tracking"
-//         icon={BookOpenCheck}
-//       />
-
-//       {error && (
-//         <p className="text-red-500 text-sm mb-3">{error}</p>
-//       )}
-
-//       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-//         {/* LEFT PANEL */}
-//         <Card>
-//           <CardHeader>
-//             <CardTitle className="text-sm">Find Student</CardTitle>
-//           </CardHeader>
-
-//           <CardContent className="space-y-3">
-//             <Input
-//               placeholder="Search..."
-//               value={searchQuery}
-//               onChange={(e) => setSearchQuery(e.target.value)}
-//             />
-
-//             <Select value={classFilter} onValueChange={setClassFilter}>
-//               <SelectTrigger>
-//                 <SelectValue placeholder="Class" />
-//               </SelectTrigger>
-//               <SelectContent>
-//                 <SelectItem value="all">All</SelectItem>
-//                 {[...new Set(students.map((s) => s.class))].map((c) => (
-//                   <SelectItem key={c} value={c}>
-//                     {c}
-//                   </SelectItem>
-//                 ))}
-//               </SelectContent>
-//             </Select>
-
-//             {loadingStudents ? (
-//               <p className="text-xs">Loading...</p>
-//             ) : (
-//               filteredStudents.map((s) => (
-//                 <div
-//                   key={s.id}
-//                   onClick={() => setSelectedStudent(s.id)}
-//                   className="p-2 cursor-pointer hover:bg-muted rounded"
-//                 >
-//                   <p className="text-sm">{s.name}</p>
-//                   <p className="text-xs text-muted-foreground">
-//                     {s.id} · {s.class}
-//                   </p>
-//                 </div>
-//               ))
-//             )}
-//           </CardContent>
-//         </Card>
-
-//         {/* RIGHT PANEL */}
-//         <div className="lg:col-span-3 space-y-4">
-//           {student && (
-//             <>
-//               <Card>
-//                 <CardContent className="flex justify-between py-4">
-//                   <div>
-//                     <p className="font-semibold">{student.name}</p>
-//                     <p className="text-xs">
-//                       Class: {student.class}
-//                     </p>
-//                   </div>
-
-//                   <Button variant="outline">
-//                     <Download className="w-4 h-4 mr-1" />
-//                     Export
-//                   </Button>
-//                 </CardContent>
-//               </Card>
-
-//               {/* SUMMARY */}
-//               <div className="grid grid-cols-3 gap-4">
-//                 <Card>
-//                   <CardContent>₹{totalDebit}</CardContent>
-//                 </Card>
-//                 <Card>
-//                   <CardContent>₹{totalCredit}</CardContent>
-//                 </Card>
-//                 <Card>
-//                   <CardContent>₹{totalBalance}</CardContent>
-//                 </Card>
-//               </div>
-
-//               {/* TABLE */}
-//               <Card>
-//                 <CardHeader className="flex justify-between">
-//                   <CardTitle>Ledger</CardTitle>
-//                 </CardHeader>
-
-//                 <CardContent>
-//                   {loadingLedger ? (
-//                     <p>Loading ledger...</p>
-//                   ) : (
-//                     <Table>
-//                       <TableHeader>
-//                         <TableRow>
-//                           <TableHead>Date</TableHead>
-//                           <TableHead>Particular</TableHead>
-//                           <TableHead>Debit</TableHead>
-//                           <TableHead>Credit</TableHead>
-//                           <TableHead>Balance</TableHead>
-//                           <TableHead>Mode</TableHead>
-//                           <TableHead>Status</TableHead>
-//                         </TableRow>
-//                       </TableHeader>
-
-//                       <TableBody>
-//                         {computedLedger.map((e, i) => (
-//                           <TableRow key={i}>
-//                             <TableCell>{formatDate(e.date)}</TableCell>
-//                             <TableCell>{e.particular}</TableCell>
-//                             <TableCell>{e.debit || "-"}</TableCell>
-//                             <TableCell>{e.credit || "-"}</TableCell>
-//                             <TableCell>{e.balance}</TableCell>
-//                             <TableCell>{e.mode}</TableCell>
-//                             <TableCell>{statusBadge(e.status)}</TableCell>
-//                           </TableRow>
-//                         ))}
-//                       </TableBody>
-//                     </Table>
-//                   )}
-//                 </CardContent>
-//               </Card>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </Layout>
-//   );
-// };
-
-// export default Page;
