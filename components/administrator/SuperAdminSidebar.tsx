@@ -36,30 +36,30 @@ import {
 import { useState } from "react";
 
 const menuItems = [
-  { title: "Dashboard", url: "/superAdmin/dashboard", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/administrator/dashboard", icon: LayoutDashboard },
   {
     title: "Front CMS",
     icon: Globe,
     children: [
-      { title: "Pages", url: "/superAdmin/cms/pages" },
-      { title: "Menus", url: "/superAdmin/cms/menus" },
-      { title: "Banner Images", url: "/superAdmin/cms/banners" },
-      { title: "Gallery", url: "/superAdmin/cms/gallery" },
-      { title: "News", url: "/superAdmin/cms/news" },
-      { title: "Events", url: "/superAdmin/cms/events" },
+      { title: "Pages", url: "/administrator/cms/pages" },
+      { title: "Menus", url: "/administrator/cms/menus" },
+      { title: "Banner Images", url: "/administrator/cms/banners" },
+      { title: "Gallery", url: "/administrator/cms/gallery" },
+      { title: "News", url: "/administrator/cms/news" },
+      { title: "Events", url: "/administrator/cms/events" },
     ],
   },
-  { title: "Reports", url: "/superAdmin/reports", icon: BarChart3 },
+  { title: "Reports", url: "/administrator/reports", icon: BarChart3 },
   {
     title: "Admin Management",
     icon: ShieldCheck,
     children: [
-      { title: "Manage Users", url: "/superAdmin/management/users" },
-      { title: "Roles & Permissions", url: "/superAdmin/management/roles" },
+      { title: "Manage Users", url: "/administrator/management/users" },
+      { title: "Roles & Permissions", url: "/administrator/management/roles" },
     ],
   },
-  { title: "Pricing Plans", url: "/superAdmin/pricing", icon: CreditCard },
-  { title: "System Settings", url: "/superAdmin/settings", icon: Settings },
+  { title: "Pricing Plans", url: "/administrator/pricing", icon: CreditCard },
+  { title: "System Settings", url: "/administrator/settings", icon: Settings },
 ];
 
 export function SuperAdminSidebar() {
